@@ -71,4 +71,4 @@ server-binary:
 	go build -o build/relreg-server cmd/server/main.go
 
 server-image:
-	docker build . -t quay.io/rhacs-eng/release-artifacts:latest
+	docker build . -t quay.io/rhacs-eng/release-artifacts:$(VERSION)
