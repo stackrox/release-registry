@@ -37,6 +37,7 @@ jobs:
           go mod download && go mod verify
           make proto-install && make proto-generate
           make cli-binary
+          make cli-run-local
 
   build-server:
     runs-on: ubuntu-latest
@@ -46,7 +47,6 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
-          path: go/src/github.com/stackrox/release-registry
 
       - name: Build server image
         run: |
