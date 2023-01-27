@@ -22,12 +22,18 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.19
+          go-version: 1.19.5
+
+      - name: Setup env
+        run: |
+          GOPATH="$GITHUB_WORKSPACE/go"
+          echo GOPATH="${GOPATH}" >> "$GITHUB_ENV"
+          PATH="${PATH}:${GOPATH}/bin"
+          echo PATH="${PATH}" >> "$GITHUB_ENV"
 
       - name: Build CLI
         run: |
-          ls -lisa
-          pwd
+          set -euo pipefail
           go mod download && go mod verify
           make proto-install && make proto-generate
           make cli-binary
