@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option go_package = "api/v1";
+
+import "google/protobuf/timestamp.proto";
+
+package v1;
+
+message NewRelease {
+    string Tag = 1;
+}
+
+message Release {
+    uint64 Id = 1;
+    string Tag = 2;
+    google.protobuf.Timestamp CreatedAt = 3;
+    google.protobuf.Timestamp UpdatedAt = 4;
+    bool Approved = 5;
+}
+
+message ReleaseParams {
+    string Tag = 1;
+}
+
+service ReleaseRegistry {
+    rpc Get(ReleaseParams) returns (Release);
+    rpc GetLatest(ReleaseParams) returns (Release);
+    rpc List(ReleaseParams) returns (stream Release);
+    rpc Put(NewRelease) returns (Release);
+    rpc Approve(Release) returns (Release);
+}

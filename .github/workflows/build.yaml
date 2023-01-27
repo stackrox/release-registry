@@ -1,0 +1,41 @@
+name: Build
+on:
+  push:
+    branches:
+      - main
+      - tm/repo-setup
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  build-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: go/src/github.com/stackrox/release-registry
+
+      - name: Build CLI
+        run: |
+          go mod download && go mod verify
+          make proto-install && make proto-generate
+          make cli-binary
+
+  build-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: go/src/github.com/stackrox/release-registry
+
+      - name: Build server image
+        run: |
+          make server-image

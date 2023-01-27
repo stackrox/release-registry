@@ -1,0 +1,11 @@
+.DS_Store
+Dockerfile
+Makefile
+.vscode/
+
+build/
+config/
+data/
+docs/
+generated/
+vendor/

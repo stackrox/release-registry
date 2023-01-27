@@ -1,0 +1,8 @@
+{
+    "protoc": {
+        "options": [
+            "--proto_path=proto/api/v1",
+            "--proto_path=proto/third_party"
+        ]
+    }
+}
