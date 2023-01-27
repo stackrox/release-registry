@@ -22,6 +22,8 @@ jobs:
 
       - name: Build CLI
         run: |
+          ls -lisa
+          pwd
           go mod download && go mod verify
           make proto-install && make proto-generate
           make cli-binary
