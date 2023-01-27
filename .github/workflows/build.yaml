@@ -18,7 +18,11 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
-          path: go/src/github.com/stackrox/release-registry
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
 
       - name: Build CLI
         run: |
