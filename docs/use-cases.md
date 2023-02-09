@@ -1,6 +1,6 @@
 # Supported use cases
 
-This document describes the supported use cases for an MVP and lays out extensions and next steps for each use case.
+This document describes the supported use cases for an MVP and lays out extensions and next steps for each use case. The methods required to implement the use cases are laid out in [this document](./required-methods.md).
 
 ## Table of contents
 
