@@ -2,17 +2,20 @@
 
 ## MVP
 
-Based on the [./use-cases.md](Use cases) and required methods for the MVP, we have created a data model.
+Based on the [Use cases](./use-cases.md) and required methods for the MVP, we have created a data model.
 
 ![Data model MVP](./images/data-model-mvp.png)
 
 The service operator creates QualityMilestoneDefinitions to model the release process.
 The nightly reviewer (or later a CI system) creates a Release.
 The nightly reviewer (or later a CI system) approves a Release for a QualityMilestone, at which time a QualityMilestone object is created based on the QualityMilestoneDefinition which was provided by name.
+
 Users of the system can find Releases, their approved QualityMilestones and their associated information through joins on the Release, QualityMilestone and QualityMilestoneDefinition tables.
+
 Releases and QualityMilestones both have Metadata attached to them to capture additional information in a more flexible format.
 For example, Releases can track the name of the container images in Metadata, while Quality Milestones can keep URLs to build jobs.
 QualityMilestoneDefinitions define the expected metadata keys for a QualityMilestone, which needs to be provided during approval.
+
 The data model does not contain a ReleaseDefinition (similar to QualityMilestoneDefinition), because we do not expect multiple Release types to exist.
 Rejecting a Release, e.g. because it was found to contain bugs after publication, is implemented through a field on a Release.
 That enables filtering, so users can also find rejected Releases.
@@ -25,7 +28,7 @@ That would enable the release registry to act as a process orchestrator.
 ![Data model including webhooks](./images/data-model-webhooks.png)
 
 The proposal for a data model including webhooks adds WebhookDefinitions attached to QualityMilestoneDefinitions and WebhookDeliveryAttempts bound to the QualityMilestone.
-A separate process / thread / Go routine may be used to deliver webhooks from the WebHookDeliveryAttempts queue and update their status.
+A separate process / thread / Go routine may be used to deliver webhooks from the WebhookDeliveryAttempts queue and update their status.
 The implementation will have to answer additional questions with regards to the error handling:
 
 - Use of atomic transactions for triggering webhooks
@@ -39,8 +42,8 @@ The implementation will have to answer additional questions with regards to the 
 - What does that mean for the MVP and its data model?
   - There is no need to include user or role management in the MVP. Distinguishing between authenticated and anonymous users is sufficient.
 - What does that mean for future versions?
-  - For future versions, we can consider implementing a role management with roles like Admin, Content Editor (editing Quality Milestone Definitions), Approver, Release Creator, Viewer.
-  - In the spirit of open culture and because we do not plan to have multi-tenancy support, the data model and backend for user and role management in future versions can be developed independently of the core functionality.
+  - For future versions, we can consider implementing a role management with roles like Admin, Content Editor (editing QualityMilestoneDefinitions), Approver, Release Creator, Viewer.
+  - In the spirit of open culture and because we do not plan to have multi-tenancy support, the data model and backend for user and role management in future versions can be developed independently of the core release functionality.
 
 ### For future versions
 
