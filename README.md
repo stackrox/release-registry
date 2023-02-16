@@ -4,6 +4,7 @@ A mechanism to mark, identify and search release artifacts using Quality Milesto
 
 ## Documentation
 
-- [Introduction and Requirements](./docs/introduction)
-- [Use Cases](./docs/use-cases)
-- [Architecture](./docs/architecture)
+- [Introduction and Requirements](./docs/introduction.md)
+- [Use Cases](./docs/use-cases.md)
+- [Data Model](./docs/data-model.md)
+- [Architecture](./docs/architecture.md)

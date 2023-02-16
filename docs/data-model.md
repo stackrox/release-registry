@@ -7,8 +7,9 @@ Based on the [Use cases](./use-cases.md) and required methods for the MVP, we ha
 ![Data model MVP](./images/data-model-mvp.png)
 
 The service operator creates QualityMilestoneDefinitions to model the release process.
+
 The nightly reviewer (or later a CI system) creates a Release.
-The nightly reviewer (or later a CI system) approves a Release for a QualityMilestone, at which time a QualityMilestone object is created based on the QualityMilestoneDefinition which was provided by name.
+The nightly reviewer (or later a CI system) approves a Release for a QualityMilestone, at which time a QualityMilestone object is created based on the QualityMilestoneDefinition, which was provided by name.
 
 Users of the system can find Releases, their approved QualityMilestones and their associated information through joins on the Release, QualityMilestone and QualityMilestoneDefinition tables.
 
@@ -17,7 +18,7 @@ For example, Releases can track the name of the container images in Metadata, wh
 QualityMilestoneDefinitions define the expected metadata keys for a QualityMilestone, which needs to be provided during approval.
 
 The data model does not contain a ReleaseDefinition (similar to QualityMilestoneDefinition), because we do not expect multiple Release types to exist.
-Rejecting a Release, e.g. because it was found to contain bugs after publication, is implemented through a field on a Release.
+Outright rejecting a Release, e.g. because it was found to contain bugs after publication, is implemented through a field on a Release.
 That enables filtering, so users can also find rejected Releases.
 
 ## MVP + Webhooks
