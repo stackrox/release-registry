@@ -2,3 +2,6 @@
 
 data/*.sqlite
 data/*.sqlite-journal
+
+build/
+outputs/

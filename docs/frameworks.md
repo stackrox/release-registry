@@ -25,10 +25,10 @@ Therefore, we can pick the best database for two use cases:
 
 We choose:
 
-* Postgres for deployments, scale tests, ...
+* **Postgres** for deployments, scale tests, ...
   * Industry standard, reliable and stable database
   * Already used in StackRox project
-* SQLite for CI tests, local development
+* **SQLite** for CI tests, local development
   * Lightweight, ease of use
   * Possibility to create empty database in memory and throw away after test run
   * Possibility to check SQLite database files as fixtures into the repository to setup (integration) tests
