@@ -8,3 +8,5 @@ Entries in this file should be limited to:
 Please avoid adding duplicate information across this changelog and JIRA/doc input pages.
 
 ## [NEXT RELEASE]
+
+- Bootstrap repository - linters, configuration & logging frameworks, build and deploy mechanisms
