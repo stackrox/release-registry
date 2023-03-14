@@ -6,7 +6,8 @@ WORKDIR /go/src/github.com/stackrox/release-registry
 
 COPY cmd cmd
 COPY pkg pkg
-COPY go.* .
+COPY go.mod .
+COPY go.sum .
 COPY Makefile Makefile
 
 RUN make server-binary
