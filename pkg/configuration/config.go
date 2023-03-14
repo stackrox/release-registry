@@ -45,7 +45,7 @@ func enableEnvVarOverride() {
 	viper.SetEnvPrefix("RELREG")
 }
 
-// New is used to generate a configuration instance to pass around the app
+// New is used to generate a configuration instance to pass around the app.
 func New() *Config {
 	once.Do(func() {
 		setupConfigLocation()
