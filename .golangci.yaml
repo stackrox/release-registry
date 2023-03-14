@@ -115,7 +115,7 @@ linters:
     - godox
     - goerr113
     - gofmt
-    - gofumpt
+    # - gofumpt
     - goheader
     - goimports
     - gomnd

@@ -28,8 +28,17 @@ server-binary: ## Builds server binary
 server-image: ## Builds server image
 	@docker build . -f image/Dockerfile -t quay.io/rhacs-eng/release-registry:${TAG}
 
+.PHONY: server-image-push
 server-image-push: ## Pushes server image to registry
 	@docker push quay.io/rhacs-eng/release-registry:${TAG}
+
+.PHONY: tests-unit
+tests-unit: ## Runs all unit tests without cache
+	@go test ./pkg/... -count=1
+
+.PHONY: tests-integration
+tests-integration: ## Runs all integration tests without cache
+	@go test -v ./tests/storage/... -count=1
 
 .PHONE: help
 help: ## Display this help

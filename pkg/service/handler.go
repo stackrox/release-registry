@@ -7,12 +7,9 @@ import (
 )
 
 //nolint:gochecknoglobals
-var (
-	log    = logging.CreateProductionLogger()
-	config = configuration.LoadConfig()
-)
+var log = logging.CreateProductionLogger()
 
 // HelloWorld is a stub function to test log and config initialization from another package.
-func HelloWorld() {
+func HelloWorld(config *configuration.Config) {
 	log.Infow("Hello from service", "database-path", config.Database.Path)
 }
