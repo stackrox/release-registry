@@ -5,37 +5,40 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/pkg/errors"
 	"github.com/stackrox/release-registry/pkg/configuration"
+	"github.com/stackrox/release-registry/pkg/logging"
 	"github.com/stackrox/release-registry/pkg/service"
 	"github.com/stackrox/release-registry/pkg/storage"
 )
+
+//nolint:gochecknoglobals
+var log = logging.CreateProductionLogger()
 
 func main() {
 	config := configuration.New()
 
 	err := storage.InitDB(config)
 	if err != nil {
-		panic(err)
+		log.Fatalw("received an error on database init", "error", err)
 	}
 
 	err = storage.MigrateAll()
 	if err != nil {
-		panic(err)
+		log.Fatalw("received an error on migration", "error", err)
 	}
 
-	errCh, err := service.Run(config)
-	if err != nil {
-		panic(err)
+	server := service.New(config)
+	if err = server.Run(); err != nil {
+		log.Fatalw("received an error on server start", "error", err)
 	}
 
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 
 	select {
-	case err := <-errCh:
-		panic(errors.Wrap(err, "server error received"))
-	case <-sigCh:
-		panic(errors.New("signal caught"))
+	case err := <-server.ErrCh:
+		log.Fatalw("server error received", "error", err)
+	case signal := <-sigCh:
+		log.Fatalw("signal caught", "signal", signal)
 	}
 }

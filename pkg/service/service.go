@@ -3,8 +3,11 @@ package service
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -16,33 +19,50 @@ import (
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 )
+
+type server struct {
+	*grpc.Server
+	Config *configuration.Config
+	ErrCh  chan error
+}
 
 //nolint:gochecknoglobals
 var log = logging.CreateProductionLogger()
 
-// Run runs a gRPC + HTTP server on a single port.
-func Run(config *configuration.Config) (<-chan error, error) {
-	// listenAddress is the address that the server will listen on.
-	listenAddress := fmt.Sprintf("0.0.0.0:%d", config.Server.Port)
-	// connectAddress is the address that the gateway client will connect to.
-	connectAddress := fmt.Sprintf("localhost:%d", config.Server.Port)
+// New creates and returns a new server instance.
+func New(config *configuration.Config) server {
+	return server{
+		grpc.NewServer(),
+		config,
+		make(chan error, 1),
+	}
+}
 
-	mux := http.NewServeMux()
-	errCh := make(chan error, 1)
-
-	server := grpc.NewServer()
-
+func (s *server) registerServiceServers() {
 	// TODO: loop here over all APIs
-	v1.RegisterHelloWorldServiceServer(server, helloworld.NewHelloWorldServer())
+	v1.RegisterHelloWorldServiceServer(s, helloworld.NewHelloWorldServer())
+}
 
-	// muxHandler is a HTTP handler that can route both HTTP/2 gRPC and HTTP1.1
-	// requests.
+func registerServiceHandlers(mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	// TODO: make loop
+	if err := v1.RegisterHelloWorldServiceHandler(context.Background(), mux, conn); err != nil {
+		return errors.Wrap(err, "could not register hello world service handler")
+	}
+
+	return nil
+}
+
+func (s *server) initMux() *http.ServeMux {
+	// listenAddress is the address that the server will listen on.
+	listenAddress := fmt.Sprintf("0.0.0.0:%d", s.Config.Server.Port)
+	mux := http.NewServeMux()
+	// muxHandler is a HTTP handler that can route both HTTP/2 gRPC and HTTP1.1 requests.
 	muxHandler := http.HandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
 		// Is the current request gRPC?
 		if request.ProtoMajor == 2 && strings.HasPrefix(request.Header.Get("Content-Type"), "application/grpc") {
-			server.ServeHTTP(responseWriter, request)
+			s.ServeHTTP(responseWriter, request)
 
 			return
 		}
@@ -54,39 +74,97 @@ func Run(config *configuration.Config) (<-chan error, error) {
 	log.Infow("starting gRPC server", "listenAddress", listenAddress)
 
 	go func() {
-		// TODO: make TLS
-		if err := http.ListenAndServe(listenAddress, h2c.NewHandler(muxHandler, &http2.Server{})); err != nil {
-			errCh <- err
+		err := http.ListenAndServeTLS(
+			listenAddress,
+			"example/server.crt", "example/server.key",
+			h2c.NewHandler(muxHandler, &http2.Server{}),
+		)
+		if err != nil {
+			s.ErrCh <- err
 		}
 	}()
 
-	dialOptions := []grpc.DialOption{
-		grpc.WithBlock(),
-		// TODO: make secure credentials
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	return mux
+}
+
+func (s *server) initGateway() (*runtime.ServeMux, error) {
+	certOpt, err := grpcLocalCredentials("example/server.crt")
+	if err != nil {
+		return nil, err
 	}
 
-	log.Infow("starting gRPC-Gateway client", "connectAddress", connectAddress)
-	conn, err := grpc.Dial(connectAddress, dialOptions...)
+	dialOptions := []grpc.DialOption{
+		grpc.WithBlock(),
+		certOpt,
+	}
 
+	// connectAddress is the address that the gateway client will connect to.
+	connectAddress := fmt.Sprintf("localhost:%d", s.Config.Server.Port)
+
+	log.Infow("starting gRPC-Gateway client", "connectAddress", connectAddress)
+
+	conn, err := grpc.Dial(connectAddress, dialOptions...)
 	if err != nil {
-		return nil, errors.Wrap(err, "dialing gRPC")
+		return nil, errors.Wrap(err, "dialing grpc")
 	}
 
 	gwMux := runtime.NewServeMux(
+
 		runtime.WithMarshalerOption("*", &runtime.JSONPb{}),
 	)
 
 	// Register each service
-	// TODO: make loop
-	if err = v1.RegisterHelloWorldServiceHandler(context.Background(), gwMux, conn); err != nil {
-		return nil, errors.Wrap(err, "error registering hello world service handler")
+	if err = registerServiceHandlers(gwMux, conn); err != nil {
+		return nil, err
 	}
 
-	routeMux := http.NewServeMux()
-	routeMux.Handle("/", gwMux)
+	return gwMux, nil
+}
 
-	mux.Handle("/", routeMux)
+func newDocsHandler() http.Handler {
+	generatedDocsDir := "./gen/openapiv2/proto/api/v1"
 
-	return errCh, nil
+	return http.StripPrefix(
+		"/docs/",
+		http.FileServer(http.Dir(generatedDocsDir)),
+	)
+}
+
+// Run runs a gRPC + HTTP server on a single port.
+func (s *server) Run() error {
+	s.registerServiceServers()
+	mux := s.initMux()
+
+	gwMux, err := s.initGateway()
+	if err != nil {
+		return err
+	}
+
+	mux.Handle("/docs/", newDocsHandler())
+	mux.Handle("/v1/", gwMux)
+
+	return nil
+}
+
+//nolint:ireturn
+func grpcLocalCredentials(certFile string) (grpc.DialOption, error) {
+	// Read the x509 PEM public certificate file
+	pem, err := os.ReadFile(certFile)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot read certificate file")
+	}
+
+	// Create an empty certificate pool, and add our single "CA" certificate to
+	// it. This allows us to trust the local server specifically, as its
+	// serving the same exact certificate.
+	rootCAs := x509.NewCertPool()
+	if !rootCAs.AppendCertsFromPEM(pem) {
+		return nil, fmt.Errorf("no root CA certs parsed from file %q", certFile)
+	}
+
+	return grpc.WithTransportCredentials(
+		credentials.NewTLS(&tls.Config{
+			RootCAs:    rootCAs,
+			ServerName: "localhost",
+		})), nil
 }

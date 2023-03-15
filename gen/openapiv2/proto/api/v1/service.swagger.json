@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/proto.api.v1.HelloWorldService/Echo": {
+    "/v1/echo": {
       "post": {
         "summary": "Echo returns a modified input.",
         "operationId": "HelloWorldService_Echo",

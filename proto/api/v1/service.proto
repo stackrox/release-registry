@@ -1,6 +1,8 @@
 syntax = "proto3";
 package proto.api.v1;
 
+import "google/api/annotations.proto";
+
 option go_package = "api/v1";
 
 // EchoRequest encapsulates a string message for requests.
@@ -16,5 +18,10 @@ message EchoResponse {
 // HelloWorld service demonstrates gRPC + gRPC gateway capabilities.
 service HelloWorldService {
   // Echo returns a modified input.
-  rpc Echo(EchoRequest) returns (EchoResponse) {}
+  rpc Echo(EchoRequest) returns (EchoResponse) {
+    option (google.api.http) = {
+      post: "/v1/echo",
+      body: "*"
+    };
+  }
 }

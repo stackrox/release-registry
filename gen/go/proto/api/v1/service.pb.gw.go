@@ -77,7 +77,7 @@ func RegisterHelloWorldServiceHandlerServer(ctx context.Context, mux *runtime.Se
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.api.v1.HelloWorldService/Echo", runtime.WithHTTPPathPattern("/proto.api.v1.HelloWorldService/Echo"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.api.v1.HelloWorldService/Echo", runtime.WithHTTPPathPattern("/v1/echo"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -139,7 +139,7 @@ func RegisterHelloWorldServiceHandlerClient(ctx context.Context, mux *runtime.Se
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/proto.api.v1.HelloWorldService/Echo", runtime.WithHTTPPathPattern("/proto.api.v1.HelloWorldService/Echo"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/proto.api.v1.HelloWorldService/Echo", runtime.WithHTTPPathPattern("/v1/echo"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -159,7 +159,7 @@ func RegisterHelloWorldServiceHandlerClient(ctx context.Context, mux *runtime.Se
 }
 
 var (
-	pattern_HelloWorldService_Echo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"proto.api.v1.HelloWorldService", "Echo"}, ""))
+	pattern_HelloWorldService_Echo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "echo"}, ""))
 )
 
 var (

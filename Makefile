@@ -33,6 +33,9 @@ server-image: ## Builds server image
 server-image-push: ## Pushes server image to registry
 	@docker push quay.io/rhacs-eng/release-registry:${TAG}
 
+server-helm-deploy: ## Deploys the server with Helm
+	@helm upgrade release-registry --install deploy/chart/release-registry --set image.tag=${TAG}
+
 .PHONY: tests-unit
 tests-unit: ## Runs all unit tests without cache
 	@go test ./pkg/... -count=1
