@@ -11,7 +11,7 @@ init-dev-environment: ## Initializes local development environment after first c
 install-linters: ## Install linters and setup environment
 	@mkdir -p outputs
 	@./scripts/ci/install-linters.sh
-	@./scripts/ci/install-buf.sh
+	@./scripts/install-buf.sh
 
 .PHONY: format
 format: ## Format code
