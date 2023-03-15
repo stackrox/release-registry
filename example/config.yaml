@@ -2,4 +2,4 @@ database:
   type: sqlite
   path: "data/database.sqlite"
 server:
-  addr: localhost:8443
+  port: 8443

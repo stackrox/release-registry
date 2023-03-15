@@ -34,7 +34,7 @@ type DatabaseConfig struct {
 
 // ServerConfig holds the configuration for the server.
 type ServerConfig struct {
-	Addr string `mapstructure:"addr"`
+	Port int `mapstructure:"port"`
 }
 
 func setupConfigLocation() {

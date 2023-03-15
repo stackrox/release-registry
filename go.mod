@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
+	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.2
 	go.uber.org/zap v1.24.0
@@ -40,7 +41,7 @@ require (
 	github.com/subosito/gotenv v1.4.2 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
-	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/net v0.7.0
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
 	google.golang.org/genproto v0.0.0-20230223222841-637eb2293923 // indirect

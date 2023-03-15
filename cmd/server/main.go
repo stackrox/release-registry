@@ -1,18 +1,18 @@
 package main
 
 import (
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/pkg/errors"
 	"github.com/stackrox/release-registry/pkg/configuration"
-	"github.com/stackrox/release-registry/pkg/logging"
 	"github.com/stackrox/release-registry/pkg/service"
 	"github.com/stackrox/release-registry/pkg/storage"
 )
 
-//nolint:gochecknoglobals
-var log = logging.CreateProductionLogger()
-
 func main() {
 	config := configuration.New()
-	log.Infow("Hello from main", "database-type", config.Database.Type, "database-path", config.Database.Path)
 
 	err := storage.InitDB(config)
 	if err != nil {
@@ -24,5 +24,18 @@ func main() {
 		panic(err)
 	}
 
-	service.Run(config)
+	errCh, err := service.Run(config)
+	if err != nil {
+		panic(err)
+	}
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+
+	select {
+	case err := <-errCh:
+		panic(errors.Wrap(err, "server error received"))
+	case <-sigCh:
+		panic(errors.New("signal caught"))
+	}
 }
