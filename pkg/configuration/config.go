@@ -17,8 +17,8 @@ var (
 
 // Config is the super structure to hold the database configuration.
 type Config struct {
-	Server   ServerConfig   `mapstructure:"server"`
 	Database DatabaseConfig `mapstructure:"database"`
+	Server   ServerConfig   `mapstructure:"server"`
 }
 
 // DatabaseConfig holds the configuration to access the database.

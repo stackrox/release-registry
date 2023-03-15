@@ -6,6 +6,7 @@ WORKDIR /go/src/github.com/stackrox/release-registry
 
 COPY cmd cmd
 COPY pkg pkg
+COPY gen gen
 COPY go.mod .
 COPY go.sum .
 COPY Makefile Makefile
