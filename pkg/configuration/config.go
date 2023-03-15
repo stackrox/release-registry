@@ -43,6 +43,7 @@ func setupConfigLocation() {
 	viper.AddConfigPath("example")
 	viper.AddConfigPath("../../example")
 	viper.AddConfigPath("/etc")
+	viper.AddConfigPath("/config")
 }
 
 func enableEnvVarOverride() {

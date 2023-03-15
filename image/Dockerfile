@@ -1,7 +1,7 @@
 # Builder
 FROM golang:1.19.5 as builder
 
-ENV CGO_ENABLED=0
+ENV CGO_ENABLED=1
 WORKDIR /go/src/github.com/stackrox/release-registry
 
 COPY cmd cmd
@@ -11,7 +11,7 @@ COPY go.mod .
 COPY go.sum .
 COPY Makefile Makefile
 
-RUN make server-binary
+RUN go build -o build/release-registry -a -ldflags '-linkmode external -extldflags "-static"' cmd/server/main.go
 
 # Application
 FROM scratch as app
