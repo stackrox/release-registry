@@ -5,12 +5,13 @@ tag: ## Describes current tag
 
 .PHONY: init-dev-environment
 init-dev-environment: ## Initializes local development environment after first clone
-	./tools/githooks/install-hooks.sh tools/githooks/pre-commit
+	@./scripts/install-buf.sh
 
 .PHONY: install-linters
 install-linters: ## Install linters and setup environment
 	@mkdir -p outputs
 	@./scripts/ci/install-linters.sh
+	@./scripts/ci/install-buf.sh
 
 .PHONY: format
 format: ## Format code
@@ -18,7 +19,7 @@ format: ## Format code
 
 .PHONY: lint
 lint: ## Lint code
-	@./scripts/ci/go-lint.sh
+	@./scripts/ci/lint.sh
 
 .PHONY: server-binary
 server-binary: ## Builds server binary

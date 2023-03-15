@@ -13,7 +13,6 @@ var log = logging.CreateProductionLogger()
 func main() {
 	config := configuration.New()
 	log.Infow("Hello from main", "database-type", config.Database.Type, "database-path", config.Database.Path)
-	service.HelloWorld(config)
 
 	err := storage.InitDB(config)
 	if err != nil {
@@ -24,4 +23,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	service.Run(config)
 }

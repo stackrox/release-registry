@@ -17,6 +17,7 @@ var (
 
 // Config is the super structure to hold the database configuration.
 type Config struct {
+	Server   ServerConfig   `mapstructure:"server"`
 	Database DatabaseConfig `mapstructure:"database"`
 }
 
@@ -29,6 +30,11 @@ type DatabaseConfig struct {
 	Password string `mapstructure:"password"`
 	Name     string `mapstructure:"name"`
 	Port     int    `mapstructure:"port"`
+}
+
+// ServerConfig holds the configuration for the server.
+type ServerConfig struct {
+	Addr string `mapstructure:"addr"`
 }
 
 func setupConfigLocation() {
