@@ -41,12 +41,12 @@ func New(config *configuration.Config) server {
 }
 
 func (s *server) registerServiceServers() {
-	// TODO: loop here over all APIs
+	// TODO: loop here over all APIs once more are defined
 	v1.RegisterHelloWorldServiceServer(s, helloworld.NewHelloWorldServer())
 }
 
 func registerServiceHandlers(mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	// TODO: make loop
+	// TODO: make loop over all APIs once more are defined
 	if err := v1.RegisterHelloWorldServiceHandler(context.Background(), mux, conn); err != nil {
 		return errors.Wrap(err, "could not register hello world service handler")
 	}
@@ -146,7 +146,7 @@ func (s *server) Run() error {
 	return nil
 }
 
-//nolint:ireturn
+//nolint:ireturn,nolintlint
 func grpcLocalCredentials(certFile string) (grpc.DialOption, error) {
 	// Read the x509 PEM public certificate file
 	pem, err := os.ReadFile(certFile)
@@ -159,7 +159,9 @@ func grpcLocalCredentials(certFile string) (grpc.DialOption, error) {
 	// serving the same exact certificate.
 	rootCAs := x509.NewCertPool()
 	if !rootCAs.AppendCertsFromPEM(pem) {
-		return nil, fmt.Errorf("no root CA certs parsed from file %q", certFile)
+		norootCaPassedErr := errors.New("no root CA certs parsed from file")
+
+		return nil, fmt.Errorf("%w: %s", norootCaPassedErr, certFile)
 	}
 
 	return grpc.WithTransportCredentials(

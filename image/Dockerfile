@@ -1,7 +1,6 @@
 # Builder
 FROM golang:1.19.5 as builder
 
-ENV CGO_ENABLED=1
 WORKDIR /go/src/github.com/stackrox/release-registry
 
 COPY cmd cmd
