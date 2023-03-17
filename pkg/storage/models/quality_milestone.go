@@ -55,6 +55,11 @@ func ApproveQualityMilestone(
 		return nil, err
 	}
 
+	release, err := GetRelease(tag, false, false)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not find release or already rejected")
+	}
+
 	qmd, err := GetQualityMilestoneDefinition(milestoneName)
 	if err != nil {
 		return nil, err
@@ -62,11 +67,6 @@ func ApproveQualityMilestone(
 
 	if err = ValidateExpectedMetadataKeysAreProvided(qmd, metadata); err != nil {
 		return nil, err
-	}
-
-	release, err := GetRelease(tag, false, false)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not find release or already rejected")
 	}
 
 	qualityMilestone := &QualityMilestone{

@@ -40,6 +40,15 @@ func TestCreateQualityMilestoneDefinition(t *testing.T) {
 	assert.ElementsMatch(t, metadataKeys, qmd.ExpectedMetadataKeys)
 }
 
+func TestCreateQualityMilestoneDefinitionWithInvalidMetadataKeysReturnsError(t *testing.T) {
+	setupQualityMilestoneDefinitionTest(t)
+
+	metadataKeys := []string{"Abc", "invalid"}
+	_, err := models.CreateQualityMilestoneDefinition(qualityMilestoneName, metadataKeys)
+	assert.Error(t, err)
+	assert.ErrorContains(t, err, "invalid is not a valid metadata key")
+}
+
 func TestGetQualityMilestoneDefinition(t *testing.T) {
 	setupQualityMilestoneDefinitionTest(t)
 
@@ -51,9 +60,12 @@ func TestGetQualityMilestoneDefinition(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, qmd.Name, qualityMilestoneName)
 	assert.ElementsMatch(t, metadataKeys, qmd.ExpectedMetadataKeys)
+}
 
-	// Test QMD not found
-	_, err = models.GetQualityMilestoneDefinition("unknown name")
+func TestGetUnknownQualityMilestoneDefinitionReturnsError(t *testing.T) {
+	setupQualityMilestoneDefinitionTest(t)
+
+	_, err := models.GetQualityMilestoneDefinition("unknown name")
 	assert.ErrorContains(t, err, "record not found")
 }
 

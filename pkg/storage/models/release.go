@@ -73,6 +73,7 @@ func GetRelease(tag string, preload, includeRejected bool) (*Release, error) {
 	tx = withPreloadedQualityMilestones(tx, preload)
 	tx = withIncludedRejectedReleases(tx, includeRejected)
 
+	// TODO: this panics on empty databases.
 	result := tx.First(release)
 	if result.Error != nil {
 		return nil, result.Error

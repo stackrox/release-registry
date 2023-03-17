@@ -29,23 +29,52 @@ func TestApproveQualityMilestone(t *testing.T) {
 	release := createFakeRelease(t)
 	qmd := createFakeQualityMilestoneDefinition(t)
 
+	qualityMilestoneMetadata := []models.QualityMilestoneMetadata{
+		{Key: "Abc", Value: "abc"},
+		{Key: "Def", Value: "def"},
+		{Key: "Ghi", Value: "ghi"},
+	}
 	qualityMilestone, err := models.ApproveQualityMilestone(
 		*configuration.New(),
 		release.Tag,
 		qmd.Name,
 		"roxbot@redhat.com",
-		[]models.QualityMilestoneMetadata{
-			{Key: "Abc", Value: "abc"},
-			{Key: "Def", Value: "def"},
-			{Key: "Ghi", Value: "ghi"},
-		},
+		qualityMilestoneMetadata,
 	)
 	assert.NoError(t, err)
 	assert.Equal(t, release.Tag, qualityMilestone.Release.Tag)
 	assert.Equal(t, qmd.Name, qualityMilestone.QualityMilestoneDefinition.Name)
 }
 
-func TestApproveRejectedQualityMilestoneReturnsError(t *testing.T) {
+func TestApproveUnknownReleaseReturnsError(t *testing.T) {
+	setupQualityMilestoneTest(t)
+
+	_, err := models.ApproveQualityMilestone(
+		*configuration.New(),
+		"unknown tag", "does not matter", "roxbot@redhat.com",
+		[]models.QualityMilestoneMetadata{},
+	)
+	assert.Error(t, err)
+	assert.ErrorContains(t, err, "record not found")
+}
+
+func TestApproveUnknownQualityMilestoneDefinitionReturnsError(t *testing.T) {
+	setupQualityMilestoneTest(t)
+
+	release := createFakeRelease(t)
+
+	_, err := models.ApproveQualityMilestone(
+		*configuration.New(),
+		release.Tag,
+		"unknown QualityMilestoneDefinition name",
+		"doesnotmatter@redhat.com",
+		[]models.QualityMilestoneMetadata{},
+	)
+	assert.Error(t, err)
+	assert.ErrorContains(t, err, "record not found")
+}
+
+func TestApprovingRejectedQualityMilestoneReturnsError(t *testing.T) {
 	setupQualityMilestoneTest(t)
 	release := createFakeRelease(t)
 
