@@ -23,6 +23,7 @@ func withPreloadedQualityMilestones(db *gorm.DB, preloadQualityMilestones bool) 
 	if preloadQualityMilestones {
 		return db.Preload("QualityMilestones")
 	}
+
 	return db
 }
 
