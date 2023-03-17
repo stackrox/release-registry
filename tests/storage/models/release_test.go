@@ -41,7 +41,45 @@ func createFakeRelease(t *testing.T) models.Release {
 	return *release
 }
 
-func releasesAreEqual(t *testing.T, expected, actual models.Release, checkPreload bool) {
+func createMultipleFakeReleases(t *testing.T) []models.Release {
+	t.Helper()
+
+	expectedReleases := []models.Release{
+		{
+			Tag:      "1.0.0",
+			Commit:   "b1d4c6264309de1da809dc85ed0825f817c58d8d",
+			Creator:  "roxbot@redhat.com",
+			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
+		}, {
+			Tag:      "1.0.1",
+			Commit:   "c289b8587a56462d7d64682053171ab69f5c5202",
+			Creator:  "roxbot@redhat.com",
+			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
+		}, {
+			Tag:      "2.0.0",
+			Commit:   "e4280c38e2bbb53cd60444e490ce0ea35f1b339c",
+			Creator:  "roxbot@redhat.com",
+			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
+		},
+	}
+
+	expectedReleaseDatabaseObjects := []models.Release{}
+
+	for _, release := range expectedReleases {
+		releaseDBO, err := models.CreateRelease(
+			*configuration.New(),
+			release.Tag, release.Commit,
+			release.Creator, release.Metadata,
+		)
+		assert.NoError(t, err)
+
+		expectedReleaseDatabaseObjects = append(expectedReleaseDatabaseObjects, *releaseDBO)
+	}
+
+	return expectedReleaseDatabaseObjects
+}
+
+func assertReleasesAreEqual(t *testing.T, expected, actual models.Release, checkPreload bool) {
 	t.Helper()
 	assert.Equal(t, expected.Commit, actual.Commit)
 	assert.Equal(t, expected.Tag, actual.Tag)
@@ -113,12 +151,12 @@ func TestGetReleaseByTag(t *testing.T) {
 	// Get a release without preloading metadata
 	retrievedRelease, err := models.GetRelease(defaultTag, false, false)
 	assert.NoError(t, err)
-	releasesAreEqual(t, *originalRelease, *retrievedRelease, false)
+	assertReleasesAreEqual(t, *originalRelease, *retrievedRelease, false)
 
 	// Get a release with preloading metadata
 	retrievedRelease, err = models.GetRelease(defaultTag, true, false)
 	assert.NoError(t, err)
-	releasesAreEqual(t, *originalRelease, *retrievedRelease, true)
+	assertReleasesAreEqual(t, *originalRelease, *retrievedRelease, true)
 
 	// Get an unknown release returns an error
 	_, err = models.GetRelease("unknown tag", false, false)
@@ -158,84 +196,30 @@ func TestGetReleaseByTagWithQualityMilestones(t *testing.T) {
 func TestListAllReleases(t *testing.T) {
 	setupReleaseTest(t)
 
-	expectedReleases := []models.Release{
-		{
-			Tag:      "1.0.0",
-			Commit:   "b1d4c6264309de1da809dc85ed0825f817c58d8d",
-			Creator:  "roxbot@redhat.com",
-			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
-		}, {
-			Tag:      "1.0.1",
-			Commit:   "c289b8587a56462d7d64682053171ab69f5c5202",
-			Creator:  "roxbot@redhat.com",
-			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
-		},
-	}
-
-	expectedReleaseDatabaseObjects := []models.Release{}
-
-	for _, release := range expectedReleases {
-		releaseDBO, err := models.CreateRelease(
-			*configuration.New(),
-			release.Tag, release.Commit,
-			release.Creator, release.Metadata,
-		)
-		assert.NoError(t, err)
-
-		expectedReleaseDatabaseObjects = append(expectedReleaseDatabaseObjects, *releaseDBO)
-	}
+	expectedReleases := createMultipleFakeReleases(t)
 
 	actualReleases, err := models.ListAllReleases(true, false)
 	assert.NoError(t, err)
 
-	assert.Len(t, actualReleases, 2)
+	assert.Len(t, actualReleases, 3)
 
-	releasesAreEqual(t, expectedReleaseDatabaseObjects[0], actualReleases[0], true)
-	releasesAreEqual(t, expectedReleaseDatabaseObjects[1], actualReleases[1], true)
+	for i, expectedRelease := range expectedReleases {
+		assertReleasesAreEqual(t, expectedRelease, actualReleases[i], true)
+	}
 }
 
 func TestListAllReleasesWithPrefix(t *testing.T) {
 	setupReleaseTest(t)
 
-	expectedReleases := []models.Release{
-		{
-			Tag:      "1.0.0",
-			Commit:   "b1d4c6264309de1da809dc85ed0825f817c58d8d",
-			Creator:  "roxbot@redhat.com",
-			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
-		}, {
-			Tag:      "1.0.1",
-			Commit:   "c289b8587a56462d7d64682053171ab69f5c5202",
-			Creator:  "roxbot@redhat.com",
-			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
-		}, {
-			Tag:      "2.0.0",
-			Commit:   "e4280c38e2bbb53cd60444e490ce0ea35f1b339c",
-			Creator:  "roxbot@redhat.com",
-			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
-		},
-	}
-
-	expectedReleaseDatabaseObjects := []models.Release{}
-
-	for _, release := range expectedReleases {
-		releaseDBO, err := models.CreateRelease(
-			*configuration.New(),
-			release.Tag, release.Commit,
-			release.Creator, release.Metadata,
-		)
-		assert.NoError(t, err)
-
-		expectedReleaseDatabaseObjects = append(expectedReleaseDatabaseObjects, *releaseDBO)
-	}
+	expectedReleaseDatabaseObjects := createMultipleFakeReleases(t)
 
 	// Expect only 2 releases due to the third release having the wrong prefix
 	actualReleases, err := models.ListAllReleasesWithPrefix("1.0", true, false)
 	assert.NoError(t, err)
 
 	assert.Len(t, actualReleases, 2)
-	releasesAreEqual(t, expectedReleaseDatabaseObjects[0], actualReleases[0], true)
-	releasesAreEqual(t, expectedReleaseDatabaseObjects[1], actualReleases[1], true)
+	assertReleasesAreEqual(t, expectedReleaseDatabaseObjects[0], actualReleases[0], true)
+	assertReleasesAreEqual(t, expectedReleaseDatabaseObjects[1], actualReleases[1], true)
 }
 
 func TestListAllReleasesAtQualityMilestone(t *testing.T) {
@@ -300,3 +284,21 @@ func TestListAllReleasesAtQualityMilestoneWithPrefix(t *testing.T) {
 	assert.Len(t, releases, 1)
 	assert.Equal(t, releases[0].Tag, prefixedRelease.Tag)
 }
+
+func TestFindLatestRelease(t *testing.T) {
+	setupReleaseTest(t)
+
+	expectedReleases := createMultipleFakeReleases(t)
+
+	latest, err := models.FindLatestRelease(false, false)
+	assert.NoError(t, err)
+	assertReleasesAreEqual(t, expectedReleases[2], *latest, false)
+
+	// TODO: what if no releases ?
+}
+
+func TestFindLatestReleaseWithPrefix(t *testing.T) {}
+
+func TestFindLatestReleaseAtQualityMilestone(t *testing.T) {}
+
+func TestFindLatestRelaseWithPrefixAtQualityMilestone(t *testing.T) {}
