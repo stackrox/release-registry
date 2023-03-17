@@ -15,6 +15,15 @@ import (
 //nolint:gochecknoglobals
 var log = logging.CreateProductionLogger()
 
+func joinReleasesWithQualityMilestoneDefinitions(tx *gorm.DB) *gorm.DB {
+	return tx.Joins(
+		"JOIN quality_milestones ON quality_milestones.release_id = releases.id",
+	).Joins(
+		//nolint:lll
+		"JOIN quality_milestone_definitions ON quality_milestones.quality_milestone_definition_id = quality_milestone_definitions.id",
+	)
+}
+
 // CreateRelease creates a new Release based on based information.
 func CreateRelease(config configuration.Config, tag, commit, creator string, metadata []Metadata) (*Release, error) {
 	if _, err := semver.StrictNewVersion(tag); err != nil {
@@ -109,19 +118,11 @@ func ListAllReleasesWithPrefix(prefix string, preload, includeRejected bool) ([]
 	return releases, nil
 }
 
-func joinReleasesWithQualityMilestoneDefinitions(qualityMilestoneName string) *gorm.DB {
-	return storage.DB.Joins(
-		"JOIN quality_milestones ON quality_milestones.release_id = releases.id",
-	).Joins(
-		//nolint:lll
-		"JOIN quality_milestone_definitions ON quality_milestones.quality_milestone_definition_id = quality_milestone_definitions.id",
-	).Where("quality_milestone_definitions.name = ?", qualityMilestoneName)
-}
-
 // ListAllReleasesAtQualityMilestone returns all Releases that have reached a specific QualityMilestone.
 func ListAllReleasesAtQualityMilestone(qualityMilestoneName string, preload, includeRejected bool) ([]Release, error) {
 	releases := []Release{}
-	tx := joinReleasesWithQualityMilestoneDefinitions(qualityMilestoneName)
+	tx := storage.DB.Where("quality_milestone_definitions.name = ?", qualityMilestoneName)
+	tx = joinReleasesWithQualityMilestoneDefinitions(tx)
 	tx = withPreloadedMetadata(tx, preload)
 	tx = withIncludedRejectedReleases(tx, includeRejected)
 
@@ -141,8 +142,9 @@ func ListAllReleasesWithPrefixAtQualityMilestone(
 ) ([]Release, error) {
 	releases := []Release{}
 
-	tx := joinReleasesWithQualityMilestoneDefinitions(qualityMilestoneName)
-	tx.Where("tag LIKE ?", fmt.Sprintf("%s%%", prefix))
+	tx := storage.DB.Where("quality_milestone_definitions.name = ?", qualityMilestoneName)
+	tx = joinReleasesWithQualityMilestoneDefinitions(tx)
+	tx.Where("releases.tag LIKE ?", fmt.Sprintf("%s%%", prefix))
 	tx = withPreloadedMetadata(tx, preload)
 	tx = withIncludedRejectedReleases(tx, includeRejected)
 
