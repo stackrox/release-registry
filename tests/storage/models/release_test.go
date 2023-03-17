@@ -20,7 +20,8 @@ func setupReleaseTest(t *testing.T) {
 	assert.NoError(t, err)
 	err = tests.Migrate(
 		&models.Release{},
-		&models.Metadata{},
+		&models.ReleaseMetadata{},
+		&models.QualityMilestoneMetadata{},
 		&models.QualityMilestoneDefinition{},
 		&models.QualityMilestone{},
 	)
@@ -30,8 +31,11 @@ func setupReleaseTest(t *testing.T) {
 func createFakeRelease(t *testing.T) models.Release {
 	t.Helper()
 
-	metadata := []models.Metadata{}
-	release, err := models.CreateRelease(*configuration.New(), defaultTag, defaultCommit, defaultCreator, metadata)
+	release, err := models.CreateRelease(
+		*configuration.New(),
+		defaultTag, defaultCommit, defaultCreator,
+		[]models.ReleaseMetadata{},
+	)
 	assert.NoError(t, err)
 
 	return *release
@@ -50,7 +54,7 @@ func releasesAreEqual(t *testing.T, expected, actual models.Release, checkPreloa
 		assert.Equal(t, expected.Metadata[1].Key, actual.Metadata[1].Key)
 		assert.Equal(t, expected.Metadata[1].Value, actual.Metadata[1].Value)
 	} else {
-		assert.Equal(t, []models.Metadata(nil), actual.Metadata)
+		assert.Equal(t, []models.ReleaseMetadata(nil), actual.Metadata)
 	}
 }
 
@@ -61,9 +65,12 @@ func TestCreateRelease(t *testing.T) {
 	assert.Equal(t, release.Tag, defaultTag)
 	assert.Equal(t, release.Commit, defaultCommit)
 	assert.Equal(t, release.Creator, defaultCreator)
-	assert.Equal(t, release.Metadata, []models.Metadata{})
+	assert.Equal(t, release.Metadata, []models.ReleaseMetadata{})
 
-	_, err := models.CreateRelease(*configuration.New(), "1.2.3.4.5.6", defaultCommit, defaultCreator, []models.Metadata{})
+	_, err := models.CreateRelease(
+		*configuration.New(),
+		"1.2.3.4.5.6", defaultCommit, defaultCreator, []models.ReleaseMetadata{},
+	)
 	assert.Error(t, err)
 	assert.ErrorContains(t, err, "tag is not a valid SemVer")
 }
@@ -99,7 +106,7 @@ func TestRejectRelease(t *testing.T) {
 func TestGetReleaseByTag(t *testing.T) {
 	setupReleaseTest(t)
 
-	metadata := []models.Metadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}}
+	metadata := []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}}
 	originalRelease, err := models.CreateRelease(*configuration.New(), defaultTag, defaultCommit, defaultCreator, metadata)
 	assert.NoError(t, err)
 
@@ -119,6 +126,35 @@ func TestGetReleaseByTag(t *testing.T) {
 	assert.ErrorContains(t, err, "record not found")
 }
 
+func TestGetReleaseByTagWithQualityMilestones(t *testing.T) {
+	setupReleaseTest(t)
+
+	config := *configuration.New()
+
+	release := createFakeRelease(t)
+	qmd := createFakeQualityMilestoneDefinition(t)
+	metadata := []models.QualityMilestoneMetadata{
+		{Key: "Abc", Value: "abc"},
+		{Key: "Def", Value: "def"},
+		{Key: "Ghi", Value: "ghi"},
+	}
+
+	_, err := models.ApproveQualityMilestone(config, release.Tag, qmd.Name, "roxbot@redhat.com", metadata)
+	assert.NoError(t, err)
+
+	releases, err := models.ListAllReleasesAtQualityMilestone(qmd.Name, true, false)
+	assert.NoError(t, err)
+	assert.Len(t, releases, 1)
+	assert.Equal(t, releases[0].Tag, release.Tag)
+
+	actualRelease, err := models.GetRelease(defaultTag, true, false)
+	assert.NoError(t, err)
+	assert.Equal(t, actualRelease.Tag, release.Tag)
+	assert.Equal(t, len(actualRelease.Metadata), 0)
+
+	assert.Equal(t, 1, len(actualRelease.QualityMilestones))
+}
+
 func TestListAllReleases(t *testing.T) {
 	setupReleaseTest(t)
 
@@ -127,12 +163,12 @@ func TestListAllReleases(t *testing.T) {
 			Tag:      "1.0.0",
 			Commit:   "b1d4c6264309de1da809dc85ed0825f817c58d8d",
 			Creator:  "roxbot@redhat.com",
-			Metadata: []models.Metadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
+			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
 		}, {
 			Tag:      "1.0.1",
 			Commit:   "c289b8587a56462d7d64682053171ab69f5c5202",
 			Creator:  "roxbot@redhat.com",
-			Metadata: []models.Metadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
+			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
 		},
 	}
 
@@ -166,17 +202,17 @@ func TestListAllReleasesWithPrefix(t *testing.T) {
 			Tag:      "1.0.0",
 			Commit:   "b1d4c6264309de1da809dc85ed0825f817c58d8d",
 			Creator:  "roxbot@redhat.com",
-			Metadata: []models.Metadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
+			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
 		}, {
 			Tag:      "1.0.1",
 			Commit:   "c289b8587a56462d7d64682053171ab69f5c5202",
 			Creator:  "roxbot@redhat.com",
-			Metadata: []models.Metadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
+			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
 		}, {
 			Tag:      "2.0.0",
 			Commit:   "e4280c38e2bbb53cd60444e490ce0ea35f1b339c",
 			Creator:  "roxbot@redhat.com",
-			Metadata: []models.Metadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
+			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
 		},
 	}
 
@@ -209,13 +245,13 @@ func TestListAllReleasesAtQualityMilestone(t *testing.T) {
 
 	_, err := models.CreateRelease(
 		config, "2.0.0", "b1d4c6264309de1da809dc85ed0825f817c58d8d", "roxbot@redhat.com",
-		[]models.Metadata{},
+		[]models.ReleaseMetadata{},
 	)
 	assert.NoError(t, err)
 
 	release := createFakeRelease(t)
 	qmd := createFakeQualityMilestoneDefinition(t)
-	metadata := []models.Metadata{
+	metadata := []models.QualityMilestoneMetadata{
 		{Key: "Abc", Value: "abc"},
 		{Key: "Def", Value: "def"},
 		{Key: "Ghi", Value: "ghi"},
@@ -224,7 +260,7 @@ func TestListAllReleasesAtQualityMilestone(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Expect only one release, due to other one not approved for QualityMilestone
-	releases, err := models.ListAllReleasesAtQualityMilestone(qmd.Name, false, false)
+	releases, err := models.ListAllReleasesAtQualityMilestone(qmd.Name, true, false)
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
 	assert.Equal(t, releases[0].Tag, release.Tag)
@@ -236,20 +272,20 @@ func TestListAllReleasesAtQualityMilestoneWithPrefix(t *testing.T) {
 	config := *configuration.New()
 	qmd := createFakeQualityMilestoneDefinition(t)
 
-	fakeMetadata := []models.Metadata{
+	fakeMetadata := []models.QualityMilestoneMetadata{
 		{Key: "Abc", Value: "abc"},
 		{Key: "Def", Value: "def"},
 		{Key: "Ghi", Value: "ghi"},
 	}
 	prefixedRelease, err := models.CreateRelease(
 		config, "1.0.0", "b1d4c6264309de1da809dc85ed0825f817c58d8d", "roxbot@redhat.com",
-		[]models.Metadata{},
+		[]models.ReleaseMetadata{},
 	)
 	assert.NoError(t, err)
 
 	_, err = models.CreateRelease(
 		config, "2.0.0", "b1d4c6264309de1da809dc85ed0825f817c58d8d", "roxbot@redhat.com",
-		[]models.Metadata{},
+		[]models.ReleaseMetadata{},
 	)
 	assert.NoError(t, err)
 

@@ -19,6 +19,13 @@ func withPreloadedMetadata(db *gorm.DB, preloadMetadata bool) *gorm.DB {
 	return db
 }
 
+func withPreloadedQualityMilestones(db *gorm.DB, preloadQualityMilestones bool) *gorm.DB {
+	if preloadQualityMilestones {
+		return db.Preload("QualityMilestones")
+	}
+	return db
+}
+
 func withIncludedRejectedReleases(db *gorm.DB, includeRejected bool) *gorm.DB {
 	if includeRejected {
 		return db.Where("rejected = true")
@@ -53,9 +60,10 @@ func findLatestVersionFromListOfReleases(releases []Release) (string, error) {
 // MigrateAll runs default migrations for all referenced models.
 func MigrateAll() error {
 	err := storage.Migrate(
-		&Metadata{},
+		&QualityMilestoneMetadata{},
 		&QualityMilestoneDefinition{},
 		&QualityMilestone{},
+		&ReleaseMetadata{},
 		&Release{},
 	)
 	if err != nil {

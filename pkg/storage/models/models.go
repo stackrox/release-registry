@@ -11,17 +11,27 @@ type Release struct {
 	Tag               string
 	Commit            string
 	Creator           string
-	Metadata          []Metadata `gorm:"foreignKey:ResourceID"`
+	Metadata          []ReleaseMetadata
 	QualityMilestones []QualityMilestone
 	Rejected          bool
 }
 
-// Metadata is a key-value struct that can be attached to Releases or QualityMilestones.
-type Metadata struct {
+// ReleaseMetadata is a key-value struct that can be attached to Releases.
+type ReleaseMetadata struct {
 	gorm.Model
-	Key        string
-	Value      string
-	ResourceID uint
+	Key       string
+	Value     string
+	Release   Release
+	ReleaseID uint
+}
+
+// QualityMilestoneMetadata is a key-value struct that can be attached to QualityMilestones.
+type QualityMilestoneMetadata struct {
+	gorm.Model
+	Key                string
+	Value              string
+	QualityMilestone   QualityMilestone
+	QualityMilestoneID uint
 }
 
 // QualityMilestoneDefinition is the template for QualityMilestones within the release process.
@@ -35,7 +45,7 @@ type QualityMilestoneDefinition struct {
 type QualityMilestone struct {
 	gorm.Model
 	Approver                     string
-	Metadata                     []Metadata `gorm:"foreignKey:ResourceID"`
+	Metadata                     []QualityMilestoneMetadata
 	QualityMilestoneDefinition   QualityMilestoneDefinition
 	Release                      Release
 	QualityMilestoneDefinitionID uint

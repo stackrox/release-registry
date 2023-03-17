@@ -10,7 +10,10 @@ import (
 
 // ValidateExpectedMetadataKeysAreProvided checks that all required metadata keys are provided
 // and no unexpected keys were passed.
-func ValidateExpectedMetadataKeysAreProvided(qmd *QualityMilestoneDefinition, metadata []Metadata) error {
+func ValidateExpectedMetadataKeysAreProvided(
+	qmd *QualityMilestoneDefinition,
+	metadata []QualityMilestoneMetadata,
+) error {
 	missingMetadataKeys := make(map[string]int)
 	unexpectedMetadataKeys := []string{}
 
@@ -46,7 +49,7 @@ func ValidateExpectedMetadataKeysAreProvided(qmd *QualityMilestoneDefinition, me
 func ApproveQualityMilestone(
 	config configuration.Config,
 	tag, milestoneName, approver string,
-	metadata []Metadata,
+	metadata []QualityMilestoneMetadata,
 ) (*QualityMilestone, error) {
 	if err := ValidateActorHasValidEmail(config, approver); err != nil {
 		return nil, err

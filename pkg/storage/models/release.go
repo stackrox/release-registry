@@ -15,7 +15,10 @@ import (
 var log = logging.CreateProductionLogger()
 
 // CreateRelease creates a new Release based on based information.
-func CreateRelease(config configuration.Config, tag, commit, creator string, metadata []Metadata) (*Release, error) {
+func CreateRelease(
+	config configuration.Config,
+	tag, commit, creator string, metadata []ReleaseMetadata,
+) (*Release, error) {
 	if _, err := semver.StrictNewVersion(tag); err != nil {
 		return nil, errors.New("tag is not a valid SemVer")
 	}
@@ -67,6 +70,7 @@ func GetRelease(tag string, preload, includeRejected bool) (*Release, error) {
 	release := &Release{}
 	tx := storage.DB.Where("tag = ?", tag)
 	tx = withPreloadedMetadata(tx, preload)
+	tx = withPreloadedQualityMilestones(tx, preload)
 	tx = withIncludedRejectedReleases(tx, includeRejected)
 
 	result := tx.First(release)
@@ -97,6 +101,7 @@ func ListAllReleasesWithPrefix(prefix string, preload, includeRejected bool) ([]
 	releases := []Release{}
 	tx := storage.DB.Where("tag LIKE ?", fmt.Sprintf("%s%%", prefix))
 	tx = withPreloadedMetadata(tx, preload)
+	tx = withPreloadedQualityMilestones(tx, preload)
 	tx = withIncludedRejectedReleases(tx, includeRejected)
 
 	result := tx.Find(&releases)
@@ -113,6 +118,7 @@ func ListAllReleasesAtQualityMilestone(qualityMilestoneName string, preload, inc
 	tx := storage.DB.Where("quality_milestone_definitions.name = ?", qualityMilestoneName)
 	tx = joinReleasesWithQualityMilestoneDefinitions(tx)
 	tx = withPreloadedMetadata(tx, preload)
+	tx = withPreloadedQualityMilestones(tx, preload)
 	tx = withIncludedRejectedReleases(tx, includeRejected)
 
 	result := tx.Find(&releases)
@@ -135,6 +141,7 @@ func ListAllReleasesWithPrefixAtQualityMilestone(
 	tx = joinReleasesWithQualityMilestoneDefinitions(tx)
 	tx.Where("releases.tag LIKE ?", fmt.Sprintf("%s%%", prefix))
 	tx = withPreloadedMetadata(tx, preload)
+	tx = withPreloadedQualityMilestones(tx, preload)
 	tx = withIncludedRejectedReleases(tx, includeRejected)
 
 	result := tx.Find(&releases)

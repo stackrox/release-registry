@@ -29,7 +29,7 @@ func TestValidateExpectedMetadataKeysAreProvided(t *testing.T) {
 	}
 
 	// All keys provided
-	allKeysProvided := []models.Metadata{
+	allKeysProvided := []models.QualityMilestoneMetadata{
 		{Key: "a", Value: "a"},
 		{Key: "b", Value: "b"},
 		{Key: "c", Value: "c"},
@@ -38,7 +38,7 @@ func TestValidateExpectedMetadataKeysAreProvided(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Key missing
-	oneKeyMissing := []models.Metadata{
+	oneKeyMissing := []models.QualityMilestoneMetadata{
 		{Key: "a", Value: "a"},
 		{Key: "b", Value: "b"},
 	}
@@ -47,7 +47,7 @@ func TestValidateExpectedMetadataKeysAreProvided(t *testing.T) {
 	assert.ErrorContains(t, err, "not all required metadata keys were provided, missing: [c], unexpected: []")
 
 	// Unexpected key
-	unexpectedKey := []models.Metadata{
+	unexpectedKey := []models.QualityMilestoneMetadata{
 		{Key: "a", Value: "a"},
 		{Key: "b", Value: "b"},
 		{Key: "c", Value: "c"},
@@ -58,7 +58,7 @@ func TestValidateExpectedMetadataKeysAreProvided(t *testing.T) {
 	assert.ErrorContains(t, err, "not all required metadata keys were provided, missing: [], unexpected: [d]")
 
 	// Key duplicated
-	duplicatedKey := []models.Metadata{
+	duplicatedKey := []models.QualityMilestoneMetadata{
 		{Key: "a", Value: "a"},
 		{Key: "b", Value: "b"},
 		{Key: "c", Value: "c"},

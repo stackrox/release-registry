@@ -16,7 +16,8 @@ func setupQualityMilestoneTest(t *testing.T) {
 	assert.NoError(t, err)
 	err = tests.Migrate(
 		&models.Release{},
-		&models.Metadata{},
+		&models.ReleaseMetadata{},
+		&models.QualityMilestoneMetadata{},
 		&models.QualityMilestoneDefinition{},
 		&models.QualityMilestone{},
 	)
@@ -33,7 +34,7 @@ func TestApproveQualityMilestone(t *testing.T) {
 		release.Tag,
 		qmd.Name,
 		"roxbot@redhat.com",
-		[]models.Metadata{
+		[]models.QualityMilestoneMetadata{
 			{Key: "Abc", Value: "abc"},
 			{Key: "Def", Value: "def"},
 			{Key: "Ghi", Value: "ghi"},
@@ -58,7 +59,7 @@ func TestApproveRejectedQualityMilestoneReturnsError(t *testing.T) {
 		release.Tag,
 		qmd.Name,
 		"roxbot@redhat.com",
-		[]models.Metadata{
+		[]models.QualityMilestoneMetadata{
 			{Key: "Abc", Value: "abc"},
 			{Key: "Def", Value: "def"},
 			{Key: "Ghi", Value: "ghi"},
