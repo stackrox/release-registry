@@ -1,3 +1,5 @@
 database:
   type: sqlite
   path: "data/database.sqlite"
+server:
+  port: 8443

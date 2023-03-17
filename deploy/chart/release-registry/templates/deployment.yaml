@@ -37,16 +37,20 @@ spec:
             - name: http
               containerPort: 8443
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /healthz/liveness
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /healthz/readiness
-              port: http
+          # livenessProbe:
+          #   httpGet:
+          #     path: /healthz/liveness
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /healthz/readiness
+          #     port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+          - name: config
+            mountPath: "/example"
+            readOnly: true
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -59,3 +63,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "release-registry.fullname" . }}-configuration

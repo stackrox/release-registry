@@ -4,7 +4,12 @@ on:
   push:
     branches:
       - main
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
   pull_request:
+    types:
+      - opened
+      - synchronize
 
 jobs:
   lint:
@@ -25,8 +30,29 @@ jobs:
         run: |
           make install-linters lint
 
+  run-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-type: [ unit, integration ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.19'
+
+      - name: Run ${{ matrix.test-type }} tests
+        run: |
+          make tests-${{ matrix.test-type }}
+
   build-and-push:
-    needs: [lint]
+    needs: [lint, run-tests]
     runs-on: ubuntu-latest
 
     steps:

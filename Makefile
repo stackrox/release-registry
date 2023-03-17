@@ -5,12 +5,13 @@ tag: ## Describes current tag
 
 .PHONY: init-dev-environment
 init-dev-environment: ## Initializes local development environment after first clone
-	./tools/githooks/install-hooks.sh tools/githooks/pre-commit
+	@./scripts/install-buf.sh
 
 .PHONY: install-linters
 install-linters: ## Install linters and setup environment
 	@mkdir -p outputs
 	@./scripts/ci/install-linters.sh
+	@./scripts/install-buf.sh
 
 .PHONY: format
 format: ## Format code
@@ -18,7 +19,7 @@ format: ## Format code
 
 .PHONY: lint
 lint: ## Lint code
-	@./scripts/ci/go-lint.sh
+	@./scripts/ci/lint.sh
 
 .PHONY: server-binary
 server-binary: ## Builds server binary
@@ -28,8 +29,22 @@ server-binary: ## Builds server binary
 server-image: ## Builds server image
 	@docker build . -f image/Dockerfile -t quay.io/rhacs-eng/release-registry:${TAG}
 
+.PHONY: server-image-push
 server-image-push: ## Pushes server image to registry
 	@docker push quay.io/rhacs-eng/release-registry:${TAG}
+
+.PHONY: server-helm-deploy
+server-helm-deploy: ## Deploys the server with Helm
+	envsubst
+	@helm upgrade release-registry --install deploy/chart/release-registry --set image.tag=${TAG}
+
+.PHONY: tests-unit
+tests-unit: ## Runs all unit tests without cache
+	@go test ./pkg/... -count=1
+
+.PHONY: tests-integration
+tests-integration: ## Runs all integration tests without cache
+	@go test -v ./tests/storage/... -count=1
 
 .PHONE: help
 help: ## Display this help
