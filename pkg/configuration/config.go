@@ -17,6 +17,7 @@ var (
 
 // Config is the super structure to hold the database configuration.
 type Config struct {
+	Tenant   TenantConfig   `mapstructure:"tenant"`
 	Database DatabaseConfig `mapstructure:"database"`
 	Server   ServerConfig   `mapstructure:"server"`
 }
@@ -37,11 +38,17 @@ type ServerConfig struct {
 	Port int `mapstructure:"port"`
 }
 
+// TenantConfig holds configuration specific to the tenant.
+type TenantConfig struct {
+	EmailDomain string `mapstructure:"emailDomain"`
+}
+
 func setupConfigLocation() {
 	viper.SetConfigName("config.yaml")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("example")
 	viper.AddConfigPath("../../example")
+	viper.AddConfigPath("../../../example")
 	viper.AddConfigPath("/etc")
 	viper.AddConfigPath("/config")
 }

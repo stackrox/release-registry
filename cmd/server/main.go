@@ -9,6 +9,7 @@ import (
 	"github.com/stackrox/release-registry/pkg/logging"
 	"github.com/stackrox/release-registry/pkg/service"
 	"github.com/stackrox/release-registry/pkg/storage"
+	"github.com/stackrox/release-registry/pkg/storage/models"
 )
 
 //nolint:gochecknoglobals
@@ -22,7 +23,7 @@ func main() {
 		log.Fatalw("received an error on database init", "error", err)
 	}
 
-	err = storage.MigrateAll()
+	err = models.MigrateAll()
 	if err != nil {
 		log.Fatalw("received an error on migration", "error", err)
 	}

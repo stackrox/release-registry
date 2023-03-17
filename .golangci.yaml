@@ -113,7 +113,7 @@ linters:
     - gocyclo
     - godot
     - godox
-    - goerr113
+    # - goerr113
     - gofmt
     # - gofumpt
     - goheader
@@ -145,7 +145,7 @@ linters:
     - nolintlint
     - nonamedreturns
     - nosprintfhostport
-    - paralleltest
+    # - paralleltest
     - prealloc
     - predeclared
     - promlinter
@@ -165,7 +165,7 @@ linters:
     - unparam
     - unused
     - usestdlibvars
-    - varnamelen
+    # - varnamelen
     - whitespace
     - wrapcheck
     - wsl

@@ -4,6 +4,7 @@ package tests
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/storage"
 )
@@ -21,4 +22,11 @@ func SetupDB() error {
 	}
 
 	return nil
+}
+
+// Migrate is a utility function to create the schema based on the given models.
+func Migrate(models ...interface{}) error {
+	err := storage.Migrate(models...)
+
+	return errors.Wrap(err, "could not migrate all models")
 }

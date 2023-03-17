@@ -159,9 +159,7 @@ func grpcLocalCredentials(certFile string) (grpc.DialOption, error) {
 	// serving the same exact certificate.
 	rootCAs := x509.NewCertPool()
 	if !rootCAs.AppendCertsFromPEM(pem) {
-		norootCaPassedErr := errors.New("no root CA certs parsed from file")
-
-		return nil, fmt.Errorf("%w: %s", norootCaPassedErr, certFile)
+		return nil, fmt.Errorf("no root CA certs parsed from file %s", certFile)
 	}
 
 	return grpc.WithTransportCredentials(

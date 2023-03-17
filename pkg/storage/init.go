@@ -9,7 +9,6 @@ import (
 
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/logging"
-	"github.com/stackrox/release-registry/pkg/storage/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -53,28 +52,6 @@ func InitDB(config *configuration.Config) error {
 func Migrate(models ...interface{}) error {
 	if err := DB.AutoMigrate(models...); err != nil {
 		return fmt.Errorf("could not run migrations: %w", err)
-	}
-
-	return nil
-}
-
-// MigrateAll runs default migrations for all referenced models.
-func MigrateAll() error {
-	err := Migrate(
-		&models.QualityMilestoneDefinition{},
-		&models.Metadata{},
-	)
-	if err != nil {
-		return err
-	}
-
-	// Apparently these need to run separately to avoid weird errors in Postgres
-	err = Migrate(
-		&models.QualityMilestone{},
-		&models.Release{},
-	)
-	if err != nil {
-		return err
 	}
 
 	return nil
