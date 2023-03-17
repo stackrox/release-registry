@@ -28,7 +28,6 @@ func CreateRelease(config configuration.Config, tag, commit, creator string, met
 		return nil, err
 	}
 
-	// TODO: extract creator from OIDC / JWT token
 	release := &Release{
 		Tag:      tag,
 		Commit:   commit,

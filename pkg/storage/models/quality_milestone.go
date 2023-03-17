@@ -66,7 +66,6 @@ func ApproveQualityMilestone(
 		return nil, errors.Wrap(err, "could not find release or already rejected")
 	}
 
-	// TODO: extract approver from OICD / JWT token
 	qualityMilestone := &QualityMilestone{
 		Approver:                   approver,
 		Release:                    *release,
