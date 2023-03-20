@@ -13,6 +13,13 @@ const defaultTag = "3.74.0"
 const defaultCommit = "b1d4c6264309de1da809dc85ed0825f817c58d8d"
 const defaultCreator = "roxbot@redhat.com"
 
+//nolint:gochecknoglobals
+var defaultQualityMilestoneMetadata = []models.QualityMilestoneMetadata{
+	{Key: "Abc", Value: "abc"},
+	{Key: "Def", Value: "def"},
+	{Key: "Ghi", Value: "ghi"},
+}
+
 func setupReleaseTest(t *testing.T) {
 	t.Helper()
 
@@ -79,7 +86,7 @@ func createMultipleFakeReleases(t *testing.T) []models.Release {
 	return expectedReleaseDatabaseObjects
 }
 
-func assertReleasesAreEqual(t *testing.T, expected, actual models.Release, checkPreload bool) {
+func assertReleasesAreEqual(t *testing.T, expected, actual *models.Release, checkPreload bool) {
 	t.Helper()
 	assert.Equal(t, expected.Commit, actual.Commit)
 	assert.Equal(t, expected.Tag, actual.Tag)
@@ -87,10 +94,10 @@ func assertReleasesAreEqual(t *testing.T, expected, actual models.Release, check
 	assert.Equal(t, expected.CreatedAt.UnixNano(), actual.CreatedAt.UnixNano())
 
 	if checkPreload {
-		assert.Equal(t, expected.Metadata[0].Key, actual.Metadata[0].Key)
-		assert.Equal(t, expected.Metadata[0].Value, actual.Metadata[0].Value)
-		assert.Equal(t, expected.Metadata[1].Key, actual.Metadata[1].Key)
-		assert.Equal(t, expected.Metadata[1].Value, actual.Metadata[1].Value)
+		for i := range expected.Metadata {
+			assert.Equal(t, expected.Metadata[i].Key, actual.Metadata[i].Key)
+			assert.Equal(t, expected.Metadata[i].Value, actual.Metadata[i].Value)
+		}
 	} else {
 		assert.Equal(t, []models.ReleaseMetadata(nil), actual.Metadata)
 	}
@@ -151,12 +158,12 @@ func TestGetReleaseByTag(t *testing.T) {
 	// Get a release without preloading metadata
 	retrievedRelease, err := models.GetRelease(defaultTag, false, false)
 	assert.NoError(t, err)
-	assertReleasesAreEqual(t, *originalRelease, *retrievedRelease, false)
+	assertReleasesAreEqual(t, originalRelease, retrievedRelease, false)
 
 	// Get a release with preloading metadata
 	retrievedRelease, err = models.GetRelease(defaultTag, true, false)
 	assert.NoError(t, err)
-	assertReleasesAreEqual(t, *originalRelease, *retrievedRelease, true)
+	assertReleasesAreEqual(t, originalRelease, retrievedRelease, true)
 
 	// Get an unknown release returns an error
 	_, err = models.GetRelease("unknown tag", false, false)
@@ -183,7 +190,7 @@ func TestGetReleaseByTagWithQualityMilestones(t *testing.T) {
 	releases, err := models.ListAllReleasesAtQualityMilestone(qmd.Name, true, false)
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
-	assert.Equal(t, releases[0].Tag, release.Tag)
+	assertReleasesAreEqual(t, &releases[0], &release, true)
 
 	actualRelease, err := models.GetRelease(defaultTag, true, false)
 	assert.NoError(t, err)
@@ -203,8 +210,8 @@ func TestListAllReleases(t *testing.T) {
 
 	assert.Len(t, actualReleases, 3)
 
-	for i, expectedRelease := range expectedReleases {
-		assertReleasesAreEqual(t, expectedRelease, actualReleases[i], true)
+	for i := range expectedReleases {
+		assertReleasesAreEqual(t, &expectedReleases[i], &actualReleases[i], true)
 	}
 }
 
@@ -218,8 +225,8 @@ func TestListAllReleasesWithPrefix(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Len(t, actualReleases, 2)
-	assertReleasesAreEqual(t, expectedReleaseDatabaseObjects[0], actualReleases[0], true)
-	assertReleasesAreEqual(t, expectedReleaseDatabaseObjects[1], actualReleases[1], true)
+	assertReleasesAreEqual(t, &expectedReleaseDatabaseObjects[0], &actualReleases[0], true)
+	assertReleasesAreEqual(t, &expectedReleaseDatabaseObjects[1], &actualReleases[1], true)
 }
 
 func TestListAllReleasesAtQualityMilestone(t *testing.T) {
@@ -256,11 +263,6 @@ func TestListAllReleasesAtQualityMilestoneWithPrefix(t *testing.T) {
 	config := *configuration.New()
 	qmd := createFakeQualityMilestoneDefinition(t)
 
-	fakeMetadata := []models.QualityMilestoneMetadata{
-		{Key: "Abc", Value: "abc"},
-		{Key: "Def", Value: "def"},
-		{Key: "Ghi", Value: "ghi"},
-	}
 	prefixedRelease, err := models.CreateRelease(
 		config, "1.0.0", "b1d4c6264309de1da809dc85ed0825f817c58d8d", "roxbot@redhat.com",
 		[]models.ReleaseMetadata{},
@@ -273,9 +275,15 @@ func TestListAllReleasesAtQualityMilestoneWithPrefix(t *testing.T) {
 	)
 	assert.NoError(t, err)
 
-	_, err = models.ApproveQualityMilestone(config, "1.0.0", qmd.Name, "roxbot@redhat.com", fakeMetadata)
+	_, err = models.ApproveQualityMilestone(
+		config, "1.0.0", qmd.Name,
+		"roxbot@redhat.com", defaultQualityMilestoneMetadata,
+	)
 	assert.NoError(t, err)
-	_, err = models.ApproveQualityMilestone(config, "2.0.0", qmd.Name, "roxbot@redhat.com", fakeMetadata)
+	_, err = models.ApproveQualityMilestone(
+		config, "2.0.0", qmd.Name,
+		"roxbot@redhat.com", defaultQualityMilestoneMetadata,
+	)
 	assert.NoError(t, err)
 
 	// Expect only 1 release due to 2.0.0 not having the correct prefix
@@ -292,13 +300,67 @@ func TestFindLatestRelease(t *testing.T) {
 
 	latest, err := models.FindLatestRelease(false, false)
 	assert.NoError(t, err)
-	assertReleasesAreEqual(t, expectedReleases[2], *latest, false)
-
-	// TODO: what if no releases ?
+	assertReleasesAreEqual(t, &expectedReleases[2], latest, false)
 }
 
-func TestFindLatestReleaseWithPrefix(t *testing.T) {}
+func TestFindLatestReleasesNoReleases(t *testing.T) {
+	setupReleaseTest(t)
 
-func TestFindLatestReleaseAtQualityMilestone(t *testing.T) {}
+	_, err := models.FindLatestRelease(false, false)
+	assert.Error(t, err)
+	assert.ErrorContains(t, err, "no releases found")
+}
 
-func TestFindLatestRelaseWithPrefixAtQualityMilestone(t *testing.T) {}
+func TestFindLatestReleaseWithPrefix(t *testing.T) {
+	setupReleaseTest(t)
+
+	expectedReleases := createMultipleFakeReleases(t)
+
+	latest, err := models.FindLatestReleaseWithPrefix("1.0", true, false)
+	assert.NoError(t, err)
+	assertReleasesAreEqual(t, &expectedReleases[1], latest, true)
+}
+
+func TestFindLatestReleaseAtQualityMilestone(t *testing.T) {
+	setupReleaseTest(t)
+
+	expectedReleases := createMultipleFakeReleases(t)
+	qmd := createFakeQualityMilestoneDefinition(t)
+
+	_, err := models.ApproveQualityMilestone(
+		*configuration.New(),
+		expectedReleases[0].Tag, qmd.Name,
+		"roxbot@redhat.com", defaultQualityMilestoneMetadata,
+	)
+	assert.NoError(t, err)
+
+	latest, err := models.FindLatestReleaseAtQualityMilestone("QM1", true, false)
+	assert.NoError(t, err)
+	assertReleasesAreEqual(t, &expectedReleases[0], latest, true)
+}
+
+func TestFindLatestRelaseWithPrefixAtQualityMilestone(t *testing.T) {
+	setupReleaseTest(t)
+
+	expectedReleases := createMultipleFakeReleases(t)
+	qmd := createFakeQualityMilestoneDefinition(t)
+
+	// Approve both 1.x releases, expect 1.0.1 to be latest
+	_, err := models.ApproveQualityMilestone(
+		*configuration.New(),
+		expectedReleases[0].Tag, qmd.Name,
+		"roxbot@redhat.com", defaultQualityMilestoneMetadata,
+	)
+	assert.NoError(t, err)
+
+	_, err = models.ApproveQualityMilestone(
+		*configuration.New(),
+		expectedReleases[1].Tag, qmd.Name,
+		"roxbot@redhat.com", defaultQualityMilestoneMetadata,
+	)
+	assert.NoError(t, err)
+
+	latest, err := models.FindLatestRelaseWithPrefixAtQualityMilestone("1.0", "QM1", true, false)
+	assert.NoError(t, err)
+	assertReleasesAreEqual(t, &expectedReleases[1], latest, true)
+}

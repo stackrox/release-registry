@@ -137,9 +137,9 @@ func ListAllReleasesWithPrefixAtQualityMilestone(
 ) ([]Release, error) {
 	releases := []Release{}
 
-	tx := storage.DB.Where("quality_milestone_definitions.name = ?", qualityMilestoneName)
-	tx = joinReleasesWithQualityMilestoneDefinitions(tx)
-	tx.Where("releases.tag LIKE ?", fmt.Sprintf("%s%%", prefix))
+	tx := joinReleasesWithQualityMilestoneDefinitions(storage.DB)
+	tx = tx.Where("quality_milestone_definitions.name = ?", qualityMilestoneName)
+	tx = tx.Where("releases.tag LIKE ?", fmt.Sprintf("%s%%", prefix))
 	tx = withPreloadedMetadata(tx, preload)
 	tx = withPreloadedQualityMilestones(tx, preload)
 	tx = withIncludedRejectedReleases(tx, includeRejected)

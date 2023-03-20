@@ -44,7 +44,20 @@ func joinReleasesWithQualityMilestoneDefinitions(tx *gorm.DB) *gorm.DB {
 	)
 }
 
+func joinQualityMilestonesWithReleasesAndQualityMilestoneDefinitions(tx *gorm.DB) *gorm.DB {
+	return tx.Joins(
+		"JOIN releases ON quality_milestones.release_id = releases.id",
+	).Joins(
+		//nolint:lll
+		"JOIN quality_milestone_definitions ON quality_milestones.quality_milestone_definition_id = quality_milestone_definitions.id",
+	)
+}
+
 func findLatestVersionFromListOfReleases(releases []Release) (string, error) {
+	if len(releases) == 0 {
+		return "", errors.New("no releases found")
+	}
+
 	versions := make([]string, len(releases))
 	for i, r := range releases {
 		versions[i] = r.Tag

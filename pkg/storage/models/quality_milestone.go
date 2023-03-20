@@ -76,7 +76,10 @@ func ApproveQualityMilestone(
 		QualityMilestoneDefinition: *qmd,
 	}
 
-	result := storage.DB.Where(qualityMilestone).FirstOrCreate(qualityMilestone)
+	tx := joinQualityMilestonesWithReleasesAndQualityMilestoneDefinitions(storage.DB)
+	tx = tx.Where("releases.tag = ?", release.Tag).Where("quality_milestone_definitions.name = ?", qmd.Name)
+
+	result := tx.FirstOrCreate(qualityMilestone)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -84,8 +87,8 @@ func ApproveQualityMilestone(
 	log.Infow(
 		"release approved for quality milestone",
 		"approver", qualityMilestone.Approver,
-		"tag", release.Tag,
-		"milestone", qmd.Name,
+		"tag", qualityMilestone.Release.Tag,
+		"milestone", qualityMilestone.QualityMilestoneDefinition.Name,
 	)
 
 	return qualityMilestone, nil
