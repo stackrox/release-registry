@@ -111,13 +111,29 @@ func TestCreateRelease(t *testing.T) {
 	assert.Equal(t, release.Commit, defaultCommit)
 	assert.Equal(t, release.Creator, defaultCreator)
 	assert.Equal(t, release.Metadata, []models.ReleaseMetadata{})
+}
+
+func TestCreateReleaseInvalidSemVer(t *testing.T) {
+	setupReleaseTest(t)
 
 	_, err := models.CreateRelease(
 		*configuration.New(),
 		"1.2.3.4.5.6", defaultCommit, defaultCreator, []models.ReleaseMetadata{},
 	)
 	assert.Error(t, err)
-	assert.ErrorContains(t, err, "tag is not a valid SemVer")
+	assert.ErrorContains(t, err, "tag is not a valid version")
+}
+
+func TestCreateReleaseNightlyVersion(t *testing.T) {
+	setupReleaseTest(t)
+
+	nightlyTag := "3.74.x-nightly-20230320"
+	release, err := models.CreateRelease(
+		*configuration.New(),
+		nightlyTag, defaultCommit, defaultCreator, []models.ReleaseMetadata{},
+	)
+	assert.NoError(t, err)
+	assert.Equal(t, nightlyTag, release.Tag)
 }
 
 func TestRejectRelease(t *testing.T) {
@@ -309,6 +325,37 @@ func TestFindLatestReleasesNoReleases(t *testing.T) {
 	_, err := models.FindLatestRelease(false, false)
 	assert.Error(t, err)
 	assert.ErrorContains(t, err, "no releases found")
+}
+
+func TestFindLatestReleasesNightlies(t *testing.T) {
+	setupReleaseTest(t)
+
+	config := *configuration.New()
+	lastNightlyTag := "3.74.x-nightly-20230321"
+	_, err := models.CreateRelease(
+		config,
+		lastNightlyTag,
+		defaultCommit, defaultCreator, []models.ReleaseMetadata{},
+	)
+	assert.NoError(t, err)
+
+	_, err = models.CreateRelease(
+		config,
+		"3.74.x-nightly-20230319",
+		defaultCommit, defaultCreator, []models.ReleaseMetadata{},
+	)
+	assert.NoError(t, err)
+
+	_, err = models.CreateRelease(
+		config,
+		"3.74.x-nightly-20230320",
+		defaultCommit, defaultCreator, []models.ReleaseMetadata{},
+	)
+	assert.NoError(t, err)
+
+	latest, err := models.FindLatestRelease(false, false)
+	assert.NoError(t, err)
+	assert.Equal(t, lastNightlyTag, latest.Tag)
 }
 
 func TestFindLatestReleaseWithPrefix(t *testing.T) {

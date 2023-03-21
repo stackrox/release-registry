@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/storage"
-	"github.com/stackrox/release-registry/pkg/utils/sort"
+	"github.com/stackrox/release-registry/pkg/utils/version"
 	"gorm.io/gorm"
 )
 
@@ -63,7 +63,7 @@ func findLatestVersionFromListOfReleases(releases []Release) (string, error) {
 		versions[i] = r.Tag
 	}
 
-	latest, err := sort.LatestVersion(versions)
+	latest, err := version.LatestVersion(versions)
 	if err != nil {
 		return "", errors.Wrap(err, "could not identify latest version")
 	}

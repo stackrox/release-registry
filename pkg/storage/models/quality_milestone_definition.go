@@ -11,8 +11,16 @@ func isMetadataKeyValid(key string) bool {
 	return validate.IsValidString(`^([A-Z][a-z]*)+$`, key)
 }
 
+func isQualityMilestoneDefinitionNameValid(name string) bool {
+	return validate.IsValidString(`^[a-zA-Z0-9 ]+$`, name)
+}
+
 // CreateQualityMilestoneDefinition a new QualityMilestoneDefinition.
 func CreateQualityMilestoneDefinition(name string, expectedMetadataKeys []string) (*QualityMilestoneDefinition, error) {
+	if !isQualityMilestoneDefinitionNameValid(name) {
+		return nil, fmt.Errorf("%s is not a valid QualityMilestoneDefinition name", name)
+	}
+
 	for _, key := range expectedMetadataKeys {
 		if !isMetadataKeyValid(key) {
 			return nil, fmt.Errorf("%s is not a valid metadata key", key)
@@ -23,7 +31,7 @@ func CreateQualityMilestoneDefinition(name string, expectedMetadataKeys []string
 		Name:                 name,
 		ExpectedMetadataKeys: expectedMetadataKeys,
 	}
-	result := storage.DB.Where(qmd).FirstOrCreate(qmd)
+	result := storage.DB.Where("name = ?", name).FirstOrCreate(qmd)
 
 	if result.Error != nil {
 		return nil, result.Error

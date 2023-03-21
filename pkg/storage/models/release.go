@@ -3,12 +3,12 @@ package models
 import (
 	"fmt"
 
-	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/logging"
 	"github.com/stackrox/release-registry/pkg/storage"
 	"github.com/stackrox/release-registry/pkg/utils/validate"
+	"github.com/stackrox/release-registry/pkg/utils/version"
 )
 
 //nolint:gochecknoglobals
@@ -19,8 +19,8 @@ func CreateRelease(
 	config configuration.Config,
 	tag, commit, creator string, metadata []ReleaseMetadata,
 ) (*Release, error) {
-	if _, err := semver.StrictNewVersion(tag); err != nil {
-		return nil, errors.New("tag is not a valid SemVer")
+	if err := version.Validate(tag); err != nil {
+		return nil, errors.Wrap(err, "tag is not a valid version")
 	}
 
 	if !validate.IsValidString(`^[0-9a-f]{40}`, commit) {
