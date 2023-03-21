@@ -16,7 +16,7 @@ var log = logging.CreateProductionLogger()
 
 // CreateRelease creates a new Release based on based information.
 func CreateRelease(
-	config configuration.Config,
+	config *configuration.Config,
 	tag, commit, creator string, metadata []ReleaseMetadata,
 ) (*Release, error) {
 	if err := version.Validate(tag); err != nil {

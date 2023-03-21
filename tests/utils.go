@@ -14,7 +14,6 @@ import (
 func SetupDB() error {
 	config := configuration.New()
 	config.Database.Type = "sqlite"
-	// config.Database.Path = "/tmp/db.sqlite"
 	config.Database.Path = ":memory:"
 
 	err := storage.InitDB(config)

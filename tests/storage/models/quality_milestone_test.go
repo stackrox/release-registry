@@ -35,7 +35,7 @@ func TestApproveQualityMilestone(t *testing.T) {
 		{Key: "Ghi", Value: "ghi"},
 	}
 	qualityMilestone, err := models.ApproveQualityMilestone(
-		*configuration.New(),
+		configuration.New(),
 		release.Tag,
 		qmd.Name,
 		"roxbot@redhat.com",
@@ -50,7 +50,7 @@ func TestApproveUnknownReleaseReturnsError(t *testing.T) {
 	setupQualityMilestoneTest(t)
 
 	_, err := models.ApproveQualityMilestone(
-		*configuration.New(),
+		configuration.New(),
 		"unknown tag", "does not matter", "roxbot@redhat.com",
 		[]models.QualityMilestoneMetadata{},
 	)
@@ -64,7 +64,7 @@ func TestApproveUnknownQualityMilestoneDefinitionReturnsError(t *testing.T) {
 	release := createFakeRelease(t)
 
 	_, err := models.ApproveQualityMilestone(
-		*configuration.New(),
+		configuration.New(),
 		release.Tag,
 		"unknown QualityMilestoneDefinition name",
 		"doesnotmatter@redhat.com",
@@ -84,7 +84,7 @@ func TestApprovingRejectedQualityMilestoneReturnsError(t *testing.T) {
 	qmd := createFakeQualityMilestoneDefinition(t)
 
 	_, err = models.ApproveQualityMilestone(
-		*configuration.New(),
+		configuration.New(),
 		release.Tag,
 		qmd.Name,
 		"roxbot@redhat.com",

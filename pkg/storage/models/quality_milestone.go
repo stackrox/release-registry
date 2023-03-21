@@ -47,7 +47,7 @@ func ValidateExpectedMetadataKeysAreProvided(
 
 // ApproveQualityMilestone approves a given Release for a given QualityMilestone.
 func ApproveQualityMilestone(
-	config configuration.Config,
+	config *configuration.Config,
 	tag, milestoneName, approver string,
 	metadata []QualityMilestoneMetadata,
 ) (*QualityMilestone, error) {

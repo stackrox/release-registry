@@ -97,7 +97,7 @@ func MigrateAll() error {
 }
 
 // ValidateActorHasValidEmail checks if the approver has the expected email domain.
-func ValidateActorHasValidEmail(config configuration.Config, approver string) error {
+func ValidateActorHasValidEmail(config *configuration.Config, approver string) error {
 	expectedEmailDomain := config.Tenant.EmailDomain
 	if !strings.HasSuffix(approver, expectedEmailDomain) {
 		return fmt.Errorf("approver %s has invalid email domain, expected %s", approver, expectedEmailDomain)

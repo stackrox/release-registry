@@ -39,7 +39,7 @@ func createFakeRelease(t *testing.T) models.Release {
 	t.Helper()
 
 	release, err := models.CreateRelease(
-		*configuration.New(),
+		configuration.New(),
 		defaultTag, defaultCommit, defaultCreator,
 		[]models.ReleaseMetadata{},
 	)
@@ -74,7 +74,7 @@ func createMultipleFakeReleases(t *testing.T) []models.Release {
 
 	for _, release := range expectedReleases {
 		releaseDBO, err := models.CreateRelease(
-			*configuration.New(),
+			configuration.New(),
 			release.Tag, release.Commit,
 			release.Creator, release.Metadata,
 		)
@@ -117,7 +117,7 @@ func TestCreateReleaseInvalidSemVer(t *testing.T) {
 	setupReleaseTest(t)
 
 	_, err := models.CreateRelease(
-		*configuration.New(),
+		configuration.New(),
 		"1.2.3.4.5.6", defaultCommit, defaultCreator, []models.ReleaseMetadata{},
 	)
 	assert.Error(t, err)
@@ -129,7 +129,7 @@ func TestCreateReleaseNightlyVersion(t *testing.T) {
 
 	nightlyTag := "3.74.x-nightly-20230320"
 	release, err := models.CreateRelease(
-		*configuration.New(),
+		configuration.New(),
 		nightlyTag, defaultCommit, defaultCreator, []models.ReleaseMetadata{},
 	)
 	assert.NoError(t, err)
@@ -168,7 +168,7 @@ func TestGetReleaseByTag(t *testing.T) {
 	setupReleaseTest(t)
 
 	metadata := []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}}
-	originalRelease, err := models.CreateRelease(*configuration.New(), defaultTag, defaultCommit, defaultCreator, metadata)
+	originalRelease, err := models.CreateRelease(configuration.New(), defaultTag, defaultCommit, defaultCreator, metadata)
 	assert.NoError(t, err)
 
 	// Get a release without preloading metadata
@@ -190,7 +190,7 @@ func TestGetReleaseByTag(t *testing.T) {
 func TestGetReleaseByTagWithQualityMilestones(t *testing.T) {
 	setupReleaseTest(t)
 
-	config := *configuration.New()
+	config := configuration.New()
 
 	release := createFakeRelease(t)
 	qmd := createFakeQualityMilestoneDefinition(t)
@@ -248,7 +248,7 @@ func TestListAllReleasesWithPrefix(t *testing.T) {
 func TestListAllReleasesAtQualityMilestone(t *testing.T) {
 	setupReleaseTest(t)
 
-	config := *configuration.New()
+	config := configuration.New()
 
 	_, err := models.CreateRelease(
 		config, "2.0.0", "b1d4c6264309de1da809dc85ed0825f817c58d8d", "roxbot@redhat.com",
@@ -276,7 +276,7 @@ func TestListAllReleasesAtQualityMilestone(t *testing.T) {
 func TestListAllReleasesAtQualityMilestoneWithPrefix(t *testing.T) {
 	setupReleaseTest(t)
 
-	config := *configuration.New()
+	config := configuration.New()
 	qmd := createFakeQualityMilestoneDefinition(t)
 
 	prefixedRelease, err := models.CreateRelease(
@@ -330,7 +330,7 @@ func TestFindLatestReleasesNoReleases(t *testing.T) {
 func TestFindLatestReleasesNightlies(t *testing.T) {
 	setupReleaseTest(t)
 
-	config := *configuration.New()
+	config := configuration.New()
 	lastNightlyTag := "3.74.x-nightly-20230321"
 	_, err := models.CreateRelease(
 		config,
@@ -375,7 +375,7 @@ func TestFindLatestReleaseAtQualityMilestone(t *testing.T) {
 	qmd := createFakeQualityMilestoneDefinition(t)
 
 	_, err := models.ApproveQualityMilestone(
-		*configuration.New(),
+		configuration.New(),
 		expectedReleases[0].Tag, qmd.Name,
 		"roxbot@redhat.com", defaultQualityMilestoneMetadata,
 	)
@@ -394,14 +394,14 @@ func TestFindLatestRelaseWithPrefixAtQualityMilestone(t *testing.T) {
 
 	// Approve both 1.x releases, expect 1.0.1 to be latest
 	_, err := models.ApproveQualityMilestone(
-		*configuration.New(),
+		configuration.New(),
 		expectedReleases[0].Tag, qmd.Name,
 		"roxbot@redhat.com", defaultQualityMilestoneMetadata,
 	)
 	assert.NoError(t, err)
 
 	_, err = models.ApproveQualityMilestone(
-		*configuration.New(),
+		configuration.New(),
 		expectedReleases[1].Tag, qmd.Name,
 		"roxbot@redhat.com", defaultQualityMilestoneMetadata,
 	)
