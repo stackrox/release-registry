@@ -152,13 +152,23 @@ func TestRejectRelease(t *testing.T) {
 	hiddenRelease, err := models.GetRelease(release.Tag, false, true)
 	assert.NoError(t, err)
 	assert.Equal(t, release.Tag, hiddenRelease.Tag)
+}
 
-	// Reject unknown release results in error
-	_, err = models.RejectRelease("unknown tag", false)
+func TestRejectUnknownReleaseError(t *testing.T) {
+	setupReleaseTest(t)
+
+	_, err := models.RejectRelease("unknown tag", false)
 	assert.Error(t, err)
 	assert.ErrorContains(t, err, "record not found")
+}
 
-	// Reject rejected release results in error
+func TestRejectRejectedReleaseError(t *testing.T) {
+	setupReleaseTest(t)
+
+	release := createFakeRelease(t)
+	_, err := models.RejectRelease(release.Tag, false)
+	assert.NoError(t, err)
+
 	_, err = models.RejectRelease(release.Tag, false)
 	assert.Error(t, err)
 	assert.ErrorContains(t, err, "release not found or already rejected")
@@ -216,18 +226,27 @@ func TestGetReleaseByTagWithQualityMilestones(t *testing.T) {
 	assert.Equal(t, 1, len(actualRelease.QualityMilestones))
 }
 
-func TestListAllReleases(t *testing.T) {
+func TestListAllReleasesWithWithoutRejected(t *testing.T) {
 	setupReleaseTest(t)
 
 	expectedReleases := createMultipleFakeReleases(t)
-
-	actualReleases, err := models.ListAllReleases(true, false)
+	_, err := models.RejectRelease(expectedReleases[0].Tag, false)
 	assert.NoError(t, err)
 
-	assert.Len(t, actualReleases, 3)
+	releasesWithoutRejected, err := models.ListAllReleases(true, false)
+	assert.NoError(t, err)
+	assert.Len(t, releasesWithoutRejected, 2)
+
+	// expectedReleases[0] is rejected, don't compare that one.
+	assertReleasesAreEqual(t, &expectedReleases[1], &releasesWithoutRejected[0], true)
+	assertReleasesAreEqual(t, &expectedReleases[2], &releasesWithoutRejected[1], true)
+
+	releasesWithRejected, err := models.ListAllReleases(true, true)
+	assert.NoError(t, err)
+	assert.Len(t, releasesWithRejected, 3)
 
 	for i := range expectedReleases {
-		assertReleasesAreEqual(t, &expectedReleases[i], &actualReleases[i], true)
+		assertReleasesAreEqual(t, &expectedReleases[i], &releasesWithRejected[i], true)
 	}
 }
 
