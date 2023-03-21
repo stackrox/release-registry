@@ -28,11 +28,11 @@ func withPreloadedQualityMilestones(db *gorm.DB, preloadQualityMilestones bool) 
 }
 
 func withIncludedRejectedReleases(db *gorm.DB, includeRejected bool) *gorm.DB {
-	if includeRejected {
-		return db.Where("rejected = true")
+	if !includeRejected {
+		return db.Where("rejected = false")
 	}
 
-	return db.Where("rejected = false")
+	return db
 }
 
 func joinReleasesWithQualityMilestoneDefinitions(tx *gorm.DB) *gorm.DB {
