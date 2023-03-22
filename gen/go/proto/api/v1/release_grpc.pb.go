@@ -29,7 +29,7 @@ type ReleaseServiceClient interface {
 	// Reject marks a Release identified by its tag as rejected.
 	Reject(ctx context.Context, in *ReleaseServiceRejectRequest, opts ...grpc.CallOption) (*ReleaseServiceRejectResponse, error)
 	// FindLatest returns the latest release for a given query.
-	FindLatest(ctx context.Context, in *ReleaseServiceFindRequest, opts ...grpc.CallOption) (*ReleaseServiceFindResponse, error)
+	FindLatest(ctx context.Context, in *ReleaseServiceFindLatestRequest, opts ...grpc.CallOption) (*ReleaseServiceFindLatestResponse, error)
 }
 
 type releaseServiceClient struct {
@@ -85,8 +85,8 @@ func (c *releaseServiceClient) Reject(ctx context.Context, in *ReleaseServiceRej
 	return out, nil
 }
 
-func (c *releaseServiceClient) FindLatest(ctx context.Context, in *ReleaseServiceFindRequest, opts ...grpc.CallOption) (*ReleaseServiceFindResponse, error) {
-	out := new(ReleaseServiceFindResponse)
+func (c *releaseServiceClient) FindLatest(ctx context.Context, in *ReleaseServiceFindLatestRequest, opts ...grpc.CallOption) (*ReleaseServiceFindLatestResponse, error) {
+	out := new(ReleaseServiceFindLatestResponse)
 	err := c.cc.Invoke(ctx, "/proto.api.v1.ReleaseService/FindLatest", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -109,7 +109,7 @@ type ReleaseServiceServer interface {
 	// Reject marks a Release identified by its tag as rejected.
 	Reject(context.Context, *ReleaseServiceRejectRequest) (*ReleaseServiceRejectResponse, error)
 	// FindLatest returns the latest release for a given query.
-	FindLatest(context.Context, *ReleaseServiceFindRequest) (*ReleaseServiceFindResponse, error)
+	FindLatest(context.Context, *ReleaseServiceFindLatestRequest) (*ReleaseServiceFindLatestResponse, error)
 	mustEmbedUnimplementedReleaseServiceServer()
 }
 
@@ -132,7 +132,7 @@ func (UnimplementedReleaseServiceServer) Approve(context.Context, *ReleaseServic
 func (UnimplementedReleaseServiceServer) Reject(context.Context, *ReleaseServiceRejectRequest) (*ReleaseServiceRejectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Reject not implemented")
 }
-func (UnimplementedReleaseServiceServer) FindLatest(context.Context, *ReleaseServiceFindRequest) (*ReleaseServiceFindResponse, error) {
+func (UnimplementedReleaseServiceServer) FindLatest(context.Context, *ReleaseServiceFindLatestRequest) (*ReleaseServiceFindLatestResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindLatest not implemented")
 }
 func (UnimplementedReleaseServiceServer) mustEmbedUnimplementedReleaseServiceServer() {}
@@ -239,7 +239,7 @@ func _ReleaseService_Reject_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _ReleaseService_FindLatest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReleaseServiceFindRequest)
+	in := new(ReleaseServiceFindLatestRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -251,7 +251,7 @@ func _ReleaseService_FindLatest_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/proto.api.v1.ReleaseService/FindLatest",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReleaseServiceServer).FindLatest(ctx, req.(*ReleaseServiceFindRequest))
+		return srv.(ReleaseServiceServer).FindLatest(ctx, req.(*ReleaseServiceFindLatestRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

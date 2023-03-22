@@ -312,7 +312,7 @@ var (
 )
 
 func request_ReleaseService_FindLatest_0(ctx context.Context, marshaler runtime.Marshaler, client ReleaseServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ReleaseServiceFindRequest
+	var protoReq ReleaseServiceFindLatestRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -328,7 +328,7 @@ func request_ReleaseService_FindLatest_0(ctx context.Context, marshaler runtime.
 }
 
 func local_request_ReleaseService_FindLatest_0(ctx context.Context, marshaler runtime.Marshaler, server ReleaseServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ReleaseServiceFindRequest
+	var protoReq ReleaseServiceFindLatestRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {

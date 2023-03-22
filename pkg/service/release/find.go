@@ -10,8 +10,8 @@ import (
 
 //nolint:cyclop
 func (s *server) FindLatest(
-	ctx context.Context, findRelease *v1.ReleaseServiceFindRequest,
-) (*v1.ReleaseServiceFindResponse, error) {
+	ctx context.Context, findRelease *v1.ReleaseServiceFindLatestRequest,
+) (*v1.ReleaseServiceFindLatestResponse, error) {
 	var (
 		release *models.Release
 		err     error
@@ -53,13 +53,13 @@ func (s *server) FindLatest(
 		return nil, errors.Wrap(err, message)
 	}
 
-	releaseResponse := newFindReleaseResponseFromRelease(release)
+	releaseResponse := newFindLatestReleaseResponseFromRelease(release)
 
 	return releaseResponse, nil
 }
 
-func newFindReleaseResponseFromRelease(release *models.Release) *v1.ReleaseServiceFindResponse {
-	return &v1.ReleaseServiceFindResponse{
+func newFindLatestReleaseResponseFromRelease(release *models.Release) *v1.ReleaseServiceFindLatestResponse {
+	return &v1.ReleaseServiceFindLatestResponse{
 		Meta:              newMetaFromRelease(release),
 		Tag:               release.Tag,
 		Commit:            release.Commit,

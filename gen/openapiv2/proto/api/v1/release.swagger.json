@@ -24,7 +24,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ReleaseServiceFindResponse"
+              "$ref": "#/definitions/v1ReleaseServiceFindLatestResponse"
             }
           },
           "default": {
@@ -439,7 +439,7 @@
         }
       }
     },
-    "v1ReleaseServiceFindResponse": {
+    "v1ReleaseServiceFindLatestResponse": {
       "type": "object",
       "properties": {
         "meta": {

@@ -83,14 +83,14 @@ message ReleaseServiceRejectResponse {
   bool rejected = 6;
 }
 
-message ReleaseServiceFindRequest {
+message ReleaseServiceFindLatestRequest {
   optional string prefix = 1;
   optional string quality_milestone_name = 2;
   bool preload = 3;
   bool include_rejected = 4;
 }
 
-message ReleaseServiceFindResponse {
+message ReleaseServiceFindLatestResponse {
   shared.v1.Meta meta = 1;
   string tag = 2;
   string commit = 3;
@@ -136,7 +136,7 @@ service ReleaseService {
   }
 
   // FindLatest returns the latest release for a given query.
-  rpc FindLatest(ReleaseServiceFindRequest) returns (ReleaseServiceFindResponse) {
+  rpc FindLatest(ReleaseServiceFindLatestRequest) returns (ReleaseServiceFindLatestResponse) {
     option (google.api.http) = {get: "/v1/find"};
   }
 }
