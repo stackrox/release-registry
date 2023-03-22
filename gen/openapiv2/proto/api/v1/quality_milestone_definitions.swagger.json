@@ -1,0 +1,210 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "proto/api/v1/quality_milestone_definitions.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "QualityMilestoneDefinitionService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/qualitymilestonedefinition": {
+      "get": {
+        "summary": "List returns all known QualityMilestoneDefinitions.",
+        "operationId": "QualityMilestoneDefinitionService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1QualityMilestoneDefinitionServiceListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "QualityMilestoneDefinitionService"
+        ]
+      },
+      "post": {
+        "summary": "Create creates a new QualityMilestoneDefinition.",
+        "operationId": "QualityMilestoneDefinitionService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1QualityMilestoneDefinitionServiceCreateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1QualityMilestoneDefinitionServiceCreateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "QualityMilestoneDefinitionService"
+        ]
+      }
+    },
+    "/v1/qualitymilestonedefinition/{name}": {
+      "get": {
+        "summary": "Get returns a QualityMilestoneDefinition for a given name.",
+        "operationId": "QualityMilestoneDefinitionService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1QualityMilestoneDefinitionServiceGetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "QualityMilestoneDefinitionService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Meta": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "v1QualityMilestoneDefinitionServiceCreateRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "expectedMetadataKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "v1QualityMilestoneDefinitionServiceCreateResponse": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "$ref": "#/definitions/v1Meta"
+        },
+        "name": {
+          "type": "string"
+        },
+        "expectedMetadataKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "v1QualityMilestoneDefinitionServiceGetResponse": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "$ref": "#/definitions/v1Meta"
+        },
+        "name": {
+          "type": "string"
+        },
+        "expectedMetadataKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "v1QualityMilestoneDefinitionServiceListResponse": {
+      "type": "object",
+      "properties": {
+        "qualityMilestoneDefinition": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1QualityMilestoneDefinitionServiceGetResponse"
+          }
+        }
+      }
+    }
+  }
+}

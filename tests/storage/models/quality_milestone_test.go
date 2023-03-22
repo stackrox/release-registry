@@ -44,6 +44,11 @@ func TestApproveQualityMilestone(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, release.Tag, qualityMilestone.Release.Tag)
 	assert.Equal(t, qmd.Name, qualityMilestone.QualityMilestoneDefinition.Name)
+
+	approvedRelease, err := models.GetRelease(qualityMilestone.Release.Tag, true, false)
+	assert.NoError(t, err)
+	assertReleasesAreEqual(t, &qualityMilestone.Release, approvedRelease, true)
+	assert.Equal(t, qmd.Name, approvedRelease.QualityMilestones[0].QualityMilestoneDefinition.Name)
 }
 
 func TestApproveUnknownReleaseReturnsError(t *testing.T) {

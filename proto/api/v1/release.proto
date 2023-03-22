@@ -1,0 +1,142 @@
+syntax = "proto3";
+package proto.api.v1;
+
+import "google/api/annotations.proto";
+import "proto/api/v1/quality_milestone.proto";
+import "proto/shared/v1/meta.proto";
+
+option go_package = "github.com/stackrox/release-registry/gen/go/proto/api/v1";
+
+message ReleaseMetadata {
+  string key = 1;
+  string value = 2;
+}
+
+message ReleaseServiceCreateRequest {
+  string tag = 1;
+  string commit = 2;
+  string creator = 3;
+  repeated ReleaseMetadata metadata = 4;
+}
+
+message ReleaseServiceCreateResponse {
+  shared.v1.Meta meta = 1;
+  string tag = 2;
+  string commit = 3;
+  string creator = 4;
+  repeated ReleaseMetadata metadata = 5;
+}
+
+message ReleaseServiceListRequest {
+  optional string prefix = 1;
+  optional string quality_milestone_name = 2;
+  bool preload = 3;
+  bool include_rejected = 4;
+}
+
+message ReleaseServiceListResponse {
+  repeated ReleaseServiceGetResponse releases = 1;
+}
+
+message ReleaseServiceGetRequest {
+  string tag = 1;
+  bool preload = 2;
+  bool include_rejected = 3;
+}
+
+message ReleaseServiceGetResponse {
+  shared.v1.Meta meta = 1;
+  string tag = 2;
+  string commit = 3;
+  string creator = 4;
+  repeated ReleaseMetadata metadata = 5;
+  repeated api.v1.QualityMilestone quality_milestones = 6;
+  bool rejected = 7;
+}
+
+message ReleaseServiceApproveRequest {
+  string tag = 1;
+  string quality_milestone_definition_name = 2;
+  string approver = 3;
+  repeated api.v1.QualityMilestoneMetadata metadata = 4;
+}
+
+message ReleaseServiceApproveResponse {
+  shared.v1.Meta meta = 1;
+  string tag = 2;
+  string quality_milestone_definition_name = 3;
+  string approver = 4;
+  repeated api.v1.QualityMilestoneMetadata metadata = 5;
+}
+
+message ReleaseServiceRejectRequest {
+  string tag = 1;
+  bool preload = 2;
+}
+
+message ReleaseServiceRejectResponse {
+  shared.v1.Meta meta = 1;
+  string tag = 2;
+  string commit = 3;
+  string creator = 4;
+  repeated ReleaseMetadata metadata = 5;
+  bool rejected = 6;
+}
+
+message ReleaseServiceFindRequest {
+  optional string prefix = 1;
+  optional string quality_milestone_name = 2;
+  bool preload = 3;
+  bool include_rejected = 4;
+}
+
+message ReleaseServiceFindResponse {
+  shared.v1.Meta meta = 1;
+  string tag = 2;
+  string commit = 3;
+  string creator = 4;
+  repeated ReleaseMetadata metadata = 5;
+  repeated api.v1.QualityMilestone quality_milestones = 6;
+  bool rejected = 7;
+}
+
+service ReleaseService {
+  // Create creates a new Release.
+  rpc Create(ReleaseServiceCreateRequest) returns (ReleaseServiceCreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/release",
+      body: "*"
+    };
+  }
+
+  // List returns all tracked Releases.
+  rpc List(ReleaseServiceListRequest) returns (ReleaseServiceListResponse) {
+    option (google.api.http) = {get: "/v1/release"};
+  }
+
+  // Get returns a Release identified by its tag.
+  rpc Get(ReleaseServiceGetRequest) returns (ReleaseServiceGetResponse) {
+    option (google.api.http) = {get: "/v1/release/{tag}"};
+  }
+
+  // Approve approves a Release identified by its tag for a QualityMilestone.
+  rpc Approve(ReleaseServiceApproveRequest) returns (ReleaseServiceApproveResponse) {
+    option (google.api.http) = {
+      post: "/v1/release/{tag}/approve",
+      body: "*"
+    };
+  }
+
+  // Reject marks a Release identified by its tag as rejected.
+  rpc Reject(ReleaseServiceRejectRequest) returns (ReleaseServiceRejectResponse) {
+    option (google.api.http) = {
+      post: "/v1/release/{tag}/reject",
+      body: "*"
+    };
+  }
+
+  // FindLatest returns the latest release for a given query.
+  rpc FindLatest(ReleaseServiceFindRequest) returns (ReleaseServiceFindResponse) {
+    option (google.api.http) = {get: "/v1/find"};
+  }
+}

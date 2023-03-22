@@ -15,7 +15,8 @@ import (
 	v1 "github.com/stackrox/release-registry/gen/go/proto/api/v1"
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/logging"
-	helloworld "github.com/stackrox/release-registry/pkg/service/hello-world"
+	"github.com/stackrox/release-registry/pkg/service/qualitymilestonedefinition"
+	"github.com/stackrox/release-registry/pkg/service/release"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
@@ -42,13 +43,18 @@ func New(config *configuration.Config) server {
 
 func (s *server) registerServiceServers() {
 	// TODO: loop here over all APIs once more are defined
-	v1.RegisterHelloWorldServiceServer(s, helloworld.NewHelloWorldServer())
+	v1.RegisterQualityMilestoneDefinitionServiceServer(s, qualitymilestonedefinition.NewQualityMilestoneDefinitionServer(s.Config))
+	v1.RegisterReleaseServiceServer(s, release.NewReleaseServer(s.Config))
 }
 
 func registerServiceHandlers(mux *runtime.ServeMux, conn *grpc.ClientConn) error {
 	// TODO: make loop over all APIs once more are defined
-	if err := v1.RegisterHelloWorldServiceHandler(context.Background(), mux, conn); err != nil {
-		return errors.Wrap(err, "could not register hello world service handler")
+	if err := v1.RegisterQualityMilestoneDefinitionServiceHandler(context.Background(), mux, conn); err != nil {
+		return errors.Wrap(err, "could not register QualityMilestoneDefinition service handler")
+	}
+
+	if err := v1.RegisterReleaseServiceHandler(context.Background(), mux, conn); err != nil {
+		return errors.Wrap(err, "could not register Release service handler")
 	}
 
 	return nil
@@ -76,7 +82,7 @@ func (s *server) initMux() *http.ServeMux {
 	go func() {
 		err := http.ListenAndServeTLS(
 			listenAddress,
-			"example/server.crt", "example/server.key",
+			s.Config.Server.Cert, s.Config.Server.Key,
 			h2c.NewHandler(muxHandler, &http2.Server{}),
 		)
 		if err != nil {
@@ -88,7 +94,7 @@ func (s *server) initMux() *http.ServeMux {
 }
 
 func (s *server) initGateway() (*runtime.ServeMux, error) {
-	certOpt, err := grpcLocalCredentials("example/server.crt")
+	certOpt, err := grpcLocalCredentials(s.Config.Server.Cert)
 	if err != nil {
 		return nil, err
 	}

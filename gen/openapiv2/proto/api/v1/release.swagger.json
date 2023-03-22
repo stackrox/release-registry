@@ -1,0 +1,544 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "proto/api/v1/release.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "ReleaseService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/find": {
+      "get": {
+        "summary": "FindLatest returns the latest release for a given query.",
+        "operationId": "ReleaseService_FindLatest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ReleaseServiceFindResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "prefix",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "qualityMilestoneName",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "preload",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "includeRejected",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "ReleaseService"
+        ]
+      }
+    },
+    "/v1/release": {
+      "get": {
+        "summary": "List returns all tracked Releases.",
+        "operationId": "ReleaseService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ReleaseServiceListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "prefix",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "qualityMilestoneName",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "preload",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "includeRejected",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "ReleaseService"
+        ]
+      },
+      "post": {
+        "summary": "Create creates a new Release.",
+        "operationId": "ReleaseService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ReleaseServiceCreateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1ReleaseServiceCreateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ReleaseService"
+        ]
+      }
+    },
+    "/v1/release/{tag}": {
+      "get": {
+        "summary": "Get returns a Release identified by its tag.",
+        "operationId": "ReleaseService_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ReleaseServiceGetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "tag",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "preload",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "includeRejected",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "ReleaseService"
+        ]
+      }
+    },
+    "/v1/release/{tag}/approve": {
+      "post": {
+        "summary": "Approve approves a Release identified by its tag for a QualityMilestone.",
+        "operationId": "ReleaseService_Approve",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ReleaseServiceApproveResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "tag",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "qualityMilestoneDefinitionName": {
+                  "type": "string"
+                },
+                "approver": {
+                  "type": "string"
+                },
+                "metadata": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/v1QualityMilestoneMetadata"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "ReleaseService"
+        ]
+      }
+    },
+    "/v1/release/{tag}/reject": {
+      "post": {
+        "summary": "Reject marks a Release identified by its tag as rejected.",
+        "operationId": "ReleaseService_Reject",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ReleaseServiceRejectResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "tag",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "preload": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "ReleaseService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Meta": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "v1QualityMilestone": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "$ref": "#/definitions/v1Meta"
+        },
+        "name": {
+          "type": "string"
+        },
+        "approver": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1QualityMilestoneMetadata"
+          }
+        }
+      }
+    },
+    "v1QualityMilestoneMetadata": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ReleaseMetadata": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ReleaseServiceApproveResponse": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "$ref": "#/definitions/v1Meta"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "qualityMilestoneDefinitionName": {
+          "type": "string"
+        },
+        "approver": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1QualityMilestoneMetadata"
+          }
+        }
+      }
+    },
+    "v1ReleaseServiceCreateRequest": {
+      "type": "object",
+      "properties": {
+        "tag": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string"
+        },
+        "creator": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ReleaseMetadata"
+          }
+        }
+      }
+    },
+    "v1ReleaseServiceCreateResponse": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "$ref": "#/definitions/v1Meta"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string"
+        },
+        "creator": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ReleaseMetadata"
+          }
+        }
+      }
+    },
+    "v1ReleaseServiceFindResponse": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "$ref": "#/definitions/v1Meta"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string"
+        },
+        "creator": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ReleaseMetadata"
+          }
+        },
+        "qualityMilestones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1QualityMilestone"
+          }
+        },
+        "rejected": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1ReleaseServiceGetResponse": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "$ref": "#/definitions/v1Meta"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string"
+        },
+        "creator": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ReleaseMetadata"
+          }
+        },
+        "qualityMilestones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1QualityMilestone"
+          }
+        },
+        "rejected": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1ReleaseServiceListResponse": {
+      "type": "object",
+      "properties": {
+        "releases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ReleaseServiceGetResponse"
+          }
+        }
+      }
+    },
+    "v1ReleaseServiceRejectResponse": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "$ref": "#/definitions/v1Meta"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string"
+        },
+        "creator": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ReleaseMetadata"
+          }
+        },
+        "rejected": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

@@ -71,6 +71,7 @@ func GetRelease(tag string, preload, includeRejected bool) (*Release, error) {
 	tx := storage.DB.Where("tag = ?", tag)
 	tx = withPreloadedMetadata(tx, preload)
 	tx = withPreloadedQualityMilestones(tx, preload)
+	tx = withPreloadedQualityMilestoneDefinitions(tx, preload)
 	tx = withIncludedRejectedReleases(tx, includeRejected)
 
 	result := tx.First(release)
@@ -86,6 +87,8 @@ func ListAllReleases(preload bool, includeRejected bool) ([]Release, error) {
 	releases := []Release{}
 	tx := storage.DB
 	tx = withPreloadedMetadata(tx, preload)
+	tx = withPreloadedQualityMilestones(tx, preload)
+	tx = withPreloadedQualityMilestoneDefinitions(tx, preload)
 	tx = withIncludedRejectedReleases(tx, includeRejected)
 
 	result := tx.Find(&releases)
@@ -102,6 +105,7 @@ func ListAllReleasesWithPrefix(prefix string, preload, includeRejected bool) ([]
 	tx := storage.DB.Where("tag LIKE ?", fmt.Sprintf("%s%%", prefix))
 	tx = withPreloadedMetadata(tx, preload)
 	tx = withPreloadedQualityMilestones(tx, preload)
+	tx = withPreloadedQualityMilestoneDefinitions(tx, preload)
 	tx = withIncludedRejectedReleases(tx, includeRejected)
 
 	result := tx.Find(&releases)
@@ -119,6 +123,7 @@ func ListAllReleasesAtQualityMilestone(qualityMilestoneName string, preload, inc
 	tx = joinReleasesWithQualityMilestoneDefinitions(tx)
 	tx = withPreloadedMetadata(tx, preload)
 	tx = withPreloadedQualityMilestones(tx, preload)
+	tx = withPreloadedQualityMilestoneDefinitions(tx, preload)
 	tx = withIncludedRejectedReleases(tx, includeRejected)
 
 	result := tx.Find(&releases)
@@ -142,6 +147,7 @@ func ListAllReleasesWithPrefixAtQualityMilestone(
 	tx = tx.Where("releases.tag LIKE ?", fmt.Sprintf("%s%%", prefix))
 	tx = withPreloadedMetadata(tx, preload)
 	tx = withPreloadedQualityMilestones(tx, preload)
+	tx = withPreloadedQualityMilestoneDefinitions(tx, preload)
 	tx = withIncludedRejectedReleases(tx, includeRejected)
 
 	result := tx.Find(&releases)

@@ -1,0 +1,18 @@
+syntax = "proto3";
+package proto.api.v1;
+
+import "proto/shared/v1/meta.proto";
+
+option go_package = "github.com/stackrox/release-registry/gen/go/proto/api/v1";
+
+message QualityMilestoneMetadata {
+  string key = 1;
+  string value = 2;
+}
+
+message QualityMilestone {
+  shared.v1.Meta meta = 1;
+  string name = 2;
+  string approver = 3;
+  repeated QualityMilestoneMetadata metadata = 4;
+}

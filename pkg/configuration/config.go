@@ -35,7 +35,9 @@ type DatabaseConfig struct {
 
 // ServerConfig holds the configuration for the server.
 type ServerConfig struct {
-	Port int `mapstructure:"port"`
+	Cert string `mapstructure:"cert"`
+	Key  string `mapstructure:"key"`
+	Port int    `mapstructure:"port"`
 }
 
 // TenantConfig holds configuration specific to the tenant.

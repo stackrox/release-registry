@@ -27,6 +27,14 @@ func withPreloadedQualityMilestones(db *gorm.DB, preloadQualityMilestones bool) 
 	return db
 }
 
+func withPreloadedQualityMilestoneDefinitions(db *gorm.DB, preloadQualityMilestoneDefinitions bool) *gorm.DB {
+	if preloadQualityMilestoneDefinitions {
+		return db.Preload("QualityMilestones.QualityMilestoneDefinition")
+	}
+
+	return db
+}
+
 func withIncludedRejectedReleases(db *gorm.DB, includeRejected bool) *gorm.DB {
 	if !includeRejected {
 		return db.Where("rejected = false")
