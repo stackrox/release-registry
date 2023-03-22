@@ -17,4 +17,6 @@ FROM scratch as app
 
 COPY --from=builder /go/src/github.com/stackrox/release-registry/build/release-registry /release-registry
 
+COPY --from=builder /go/src/github.com/stackrox/release-registry/gen/openapiv2/proto gen/openapiv2/proto
+
 ENTRYPOINT [ "/release-registry" ]
