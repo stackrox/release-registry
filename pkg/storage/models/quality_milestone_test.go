@@ -9,7 +9,7 @@ import (
 )
 
 func TestValidateActorHasValidEmail(t *testing.T) {
-	config := configuration.New()
+	config := configuration.New("../../../example")
 	config.Tenant.EmailDomain = "@redhat.com"
 
 	// Invalid email

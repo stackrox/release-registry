@@ -61,7 +61,7 @@ func SetupE2ETest(t *testing.T, databasePath string) {
 	t.Helper()
 
 	lis = bufconn.Listen(bufSize)
-	config := configuration.New()
+	config := configuration.New("../../../example")
 
 	tmpDatabasePath, err := copyDatabaseFixtureToTmp(databasePath, "e2e-test-")
 	assert.NoError(t, err)
@@ -106,5 +106,5 @@ func GetFixturesPath() (string, error) {
 		return "", errors.Wrap(err, "could not get working directory")
 	}
 
-	return fmt.Sprintf("%s/%s", cwd, "tests/e2e/fixtures"), nil
+	return fmt.Sprintf("%s/%s", cwd, "../fixtures"), nil
 }

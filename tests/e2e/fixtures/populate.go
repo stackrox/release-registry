@@ -17,7 +17,7 @@ const (
 )
 
 func setupDB(databasePath string) error {
-	config := configuration.New()
+	config := configuration.New("example")
 
 	config.Database = configuration.DatabaseConfig{
 		Type: "sqlite",

@@ -45,16 +45,15 @@ type TenantConfig struct {
 	EmailDomain string `mapstructure:"emailDomain"`
 }
 
-func setupConfigLocation() {
+func setupConfigLocation(additionalConfigDirs ...string) {
 	viper.SetConfigName("config.yaml")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath("example")
-	viper.AddConfigPath("../example")
-	viper.AddConfigPath("../../example")
-	viper.AddConfigPath("../../../example")
-	viper.AddConfigPath("../../../../example")
 	viper.AddConfigPath("/etc")
 	viper.AddConfigPath("/config")
+
+	for _, additionalConfigDir := range additionalConfigDirs {
+		viper.AddConfigPath(additionalConfigDir)
+	}
 }
 
 func enableEnvVarOverride() {
@@ -64,9 +63,9 @@ func enableEnvVarOverride() {
 }
 
 // New is used to generate a configuration instance to pass around the app.
-func New() *Config {
+func New(additionalConfigDirs ...string) *Config {
 	once.Do(func() {
-		setupConfigLocation()
+		setupConfigLocation(additionalConfigDirs...)
 		enableEnvVarOverride()
 
 		err := viper.ReadInConfig()

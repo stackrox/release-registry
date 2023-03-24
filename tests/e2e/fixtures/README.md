@@ -4,5 +4,5 @@ This folder contains scripts to generate fixtures and prepopulated SQLite databa
 To regenerate the fixtures, run:
 
 ```bash
-go run tests/e2e/fixtures/populate.go
+go run ./tests/e2e/fixtures
 ```
