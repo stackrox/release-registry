@@ -30,8 +30,8 @@ func (s *server) List(
 			listRelease.GetIncludeRejected(),
 		)
 	case listRelease.Prefix != nil && listRelease.QualityMilestoneName == nil:
-		releases, err = models.ListAllReleasesAtQualityMilestone(
-			listRelease.GetQualityMilestoneName(),
+		releases, err = models.ListAllReleasesWithPrefix(
+			listRelease.GetPrefix(),
 			listRelease.GetPreload(),
 			listRelease.GetIncludeRejected(),
 		)

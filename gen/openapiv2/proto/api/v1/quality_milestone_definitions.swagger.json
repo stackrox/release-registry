@@ -198,7 +198,7 @@
     "v1QualityMilestoneDefinitionServiceListResponse": {
       "type": "object",
       "properties": {
-        "qualityMilestoneDefinition": {
+        "qualityMilestoneDefinitions": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1QualityMilestoneDefinitionServiceGetResponse"

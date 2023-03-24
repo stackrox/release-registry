@@ -1,5 +1,5 @@
-// Package tests contains integration tests and utils.
-package tests
+// Package integration contains integration tests and utils.
+package integration
 
 import (
 	"fmt"

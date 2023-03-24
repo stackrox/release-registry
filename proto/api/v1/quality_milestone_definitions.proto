@@ -26,7 +26,7 @@ message QualityMilestoneDefinitionServiceGetResponse {
 message QualityMilestoneDefinitionServiceListRequest {}
 
 message QualityMilestoneDefinitionServiceListResponse {
-  repeated QualityMilestoneDefinitionServiceGetResponse quality_milestone_definition = 1;
+  repeated QualityMilestoneDefinitionServiceGetResponse quality_milestone_definitions = 1;
 }
 
 message QualityMilestoneDefinitionServiceGetRequest {

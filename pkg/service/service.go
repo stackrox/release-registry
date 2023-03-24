@@ -23,7 +23,8 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
-type server struct {
+// Server is a wrapped gRPC server with config and error channel.
+type Server struct {
 	*grpc.Server
 	Config *configuration.Config
 	ErrCh  chan error
@@ -33,22 +34,26 @@ type server struct {
 var log = logging.CreateProductionLogger()
 
 // New creates and returns a new server instance.
-func New(config *configuration.Config) server {
-	return server{
+func New(config *configuration.Config) Server {
+	s := Server{
 		grpc.NewServer(),
 		config,
 		make(chan error, 1),
 	}
+	s.registerServiceServers()
+
+	return s
 }
 
-func (s *server) registerServiceServers() {
-	// TODO: loop here over all APIs once more are defined
-	v1.RegisterQualityMilestoneDefinitionServiceServer(s, qualitymilestonedefinition.NewQualityMilestoneDefinitionServer(s.Config))
+func (s *Server) registerServiceServers() {
+	v1.RegisterQualityMilestoneDefinitionServiceServer(
+		s,
+		qualitymilestonedefinition.NewQualityMilestoneDefinitionServer(s.Config),
+	)
 	v1.RegisterReleaseServiceServer(s, release.NewReleaseServer(s.Config))
 }
 
 func registerServiceHandlers(mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	// TODO: make loop over all APIs once more are defined
 	if err := v1.RegisterQualityMilestoneDefinitionServiceHandler(context.Background(), mux, conn); err != nil {
 		return errors.Wrap(err, "could not register QualityMilestoneDefinition service handler")
 	}
@@ -60,7 +65,7 @@ func registerServiceHandlers(mux *runtime.ServeMux, conn *grpc.ClientConn) error
 	return nil
 }
 
-func (s *server) initMux() *http.ServeMux {
+func (s *Server) initMux() *http.ServeMux {
 	// listenAddress is the address that the server will listen on.
 	listenAddress := fmt.Sprintf("0.0.0.0:%d", s.Config.Server.Port)
 	mux := http.NewServeMux()
@@ -93,7 +98,7 @@ func (s *server) initMux() *http.ServeMux {
 	return mux
 }
 
-func (s *server) initGateway() (*runtime.ServeMux, error) {
+func (s *Server) initGateway() (*runtime.ServeMux, error) {
 	certOpt, err := grpcLocalCredentials(s.Config.Server.Cert)
 	if err != nil {
 		return nil, err
@@ -115,7 +120,6 @@ func (s *server) initGateway() (*runtime.ServeMux, error) {
 	}
 
 	gwMux := runtime.NewServeMux(
-
 		runtime.WithMarshalerOption("*", &runtime.JSONPb{}),
 	)
 
@@ -137,8 +141,7 @@ func newDocsHandler() http.Handler {
 }
 
 // Run runs a gRPC + HTTP server on a single port.
-func (s *server) Run() error {
-	s.registerServiceServers()
+func (s *Server) Run() error {
 	mux := s.initMux()
 
 	gwMux, err := s.initGateway()

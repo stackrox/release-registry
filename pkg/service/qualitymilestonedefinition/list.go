@@ -21,8 +21,8 @@ func (*server) List(
 
 	qmdListResponse := &v1.QualityMilestoneDefinitionServiceListResponse{}
 	for i := range knownQmds {
-		qmdListResponse.QualityMilestoneDefinition = append(
-			qmdListResponse.QualityMilestoneDefinition,
+		qmdListResponse.QualityMilestoneDefinitions = append(
+			qmdListResponse.QualityMilestoneDefinitions,
 			newGetResponseFromQualityMilestoneDefinition(&knownQmds[i]),
 		)
 	}

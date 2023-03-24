@@ -44,7 +44,7 @@ tests-unit: ## Runs all unit tests without cache
 
 .PHONY: tests-integration
 tests-integration: ## Runs all integration tests without cache
-	@go test -v ./tests/storage/... -count=1
+	@go test -v ./tests/integration/... -count=1
 
 .PHONE: help
 help: ## Display this help

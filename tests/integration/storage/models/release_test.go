@@ -5,7 +5,7 @@ import (
 
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/storage/models"
-	"github.com/stackrox/release-registry/tests"
+	"github.com/stackrox/release-registry/tests/integration"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,9 +23,9 @@ var defaultQualityMilestoneMetadata = []models.QualityMilestoneMetadata{
 func setupReleaseTest(t *testing.T) {
 	t.Helper()
 
-	err := tests.SetupDB()
+	err := integration.SetupDB()
 	assert.NoError(t, err)
-	err = tests.Migrate(
+	err = integration.Migrate(
 		&models.Release{},
 		&models.ReleaseMetadata{},
 		&models.QualityMilestoneMetadata{},

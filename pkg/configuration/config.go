@@ -49,8 +49,10 @@ func setupConfigLocation() {
 	viper.SetConfigName("config.yaml")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("example")
+	viper.AddConfigPath("../example")
 	viper.AddConfigPath("../../example")
 	viper.AddConfigPath("../../../example")
+	viper.AddConfigPath("../../../../example")
 	viper.AddConfigPath("/etc")
 	viper.AddConfigPath("/config")
 }
