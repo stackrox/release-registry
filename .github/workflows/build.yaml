@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        test-type: [ unit, integration ]
+        test-type: [ unit, integration, e2e ]
 
     steps:
       - name: Checkout
