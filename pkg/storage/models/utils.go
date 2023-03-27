@@ -1,11 +1,7 @@
 package models
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/pkg/errors"
-	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/storage"
 	"github.com/stackrox/release-registry/pkg/utils/version"
 	"gorm.io/gorm"
@@ -99,16 +95,6 @@ func MigrateAll() error {
 	)
 	if err != nil {
 		return errors.Wrap(err, "migration of models failed")
-	}
-
-	return nil
-}
-
-// ValidateActorHasValidEmail checks if the approver has the expected email domain.
-func ValidateActorHasValidEmail(config *configuration.Config, approver string) error {
-	expectedEmailDomain := config.Tenant.EmailDomain
-	if !strings.HasSuffix(approver, expectedEmailDomain) {
-		return fmt.Errorf("approver %s has invalid email domain, expected %s", approver, expectedEmailDomain)
 	}
 
 	return nil

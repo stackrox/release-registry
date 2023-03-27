@@ -105,7 +105,7 @@ func TestCreateReleaseInvalidSemVer(t *testing.T) {
 		"1.2.3.4.5.6", defaultCommit, defaultCreator, []models.ReleaseMetadata{},
 	)
 	assert.Error(t, err)
-	assert.ErrorContains(t, err, "tag is not a valid version")
+	assert.ErrorContains(t, err, "tag 1.2.3.4.5.6 is not a valid version")
 }
 
 func TestCreateReleaseNightlyVersion(t *testing.T) {
@@ -141,7 +141,7 @@ func TestRejectRelease(t *testing.T) {
 func TestRejectUnknownReleaseError(t *testing.T) {
 	setupReleaseTest(t)
 
-	_, err := models.RejectRelease("unknown tag", false)
+	_, err := models.RejectRelease("1.1.1", false)
 	assert.Error(t, err)
 	assert.ErrorContains(t, err, "record not found")
 }
@@ -177,7 +177,7 @@ func TestGetReleaseByTag(t *testing.T) {
 	utils.AssertReleasesAreEqual(t, originalRelease, retrievedRelease, true, true)
 
 	// Get an unknown release returns an error
-	_, err = models.GetRelease("unknown tag", false, false)
+	_, err = models.GetRelease("1.1.1", false, false)
 	assert.Error(t, err)
 	assert.ErrorContains(t, err, "record not found")
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/storage"
+	"github.com/stackrox/release-registry/pkg/utils/validate"
 )
 
 // ValidateExpectedMetadataKeysAreProvided checks that all required metadata keys are provided
@@ -51,8 +52,8 @@ func ApproveQualityMilestone(
 	tag, milestoneName, approver string,
 	metadata []QualityMilestoneMetadata,
 ) (*QualityMilestone, error) {
-	if err := ValidateActorHasValidEmail(config, approver); err != nil {
-		return nil, err
+	if err := validate.IsValidActorEmail(config, approver); err != nil {
+		return nil, errors.Wrap(err, "not a valid approver")
 	}
 
 	release, err := GetRelease(tag, false, false)
@@ -62,7 +63,7 @@ func ApproveQualityMilestone(
 
 	qmd, err := GetQualityMilestoneDefinition(milestoneName)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "could not find quality milestone definition")
 	}
 
 	if err = ValidateExpectedMetadataKeysAreProvided(qmd, metadata); err != nil {

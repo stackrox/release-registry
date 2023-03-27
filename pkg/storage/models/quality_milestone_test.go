@@ -3,24 +3,9 @@ package models_test
 import (
 	"testing"
 
-	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/storage/models"
 	"github.com/stretchr/testify/assert"
 )
-
-func TestValidateActorHasValidEmail(t *testing.T) {
-	config := configuration.New("../../../example")
-	config.Tenant.EmailDomain = "@redhat.com"
-
-	// Invalid email
-	err := models.ValidateActorHasValidEmail(config, "roxbot@stackrox.com")
-	assert.Error(t, err)
-	assert.ErrorContains(t, err, "approver roxbot@stackrox.com has invalid email domain, expected @redhat.com")
-
-	// Valid email
-	err = models.ValidateActorHasValidEmail(config, "roxbot@redhat.com")
-	assert.NoError(t, err)
-}
 
 func TestValidateExpectedMetadataKeysAreProvided(t *testing.T) {
 	qmd := &models.QualityMilestoneDefinition{

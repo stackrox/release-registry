@@ -57,11 +57,11 @@ func TestApproveUnknownReleaseReturnsError(t *testing.T) {
 
 	_, err := models.ApproveQualityMilestone(
 		configuration.New(),
-		"unknown tag", "does not matter", "roxbot@redhat.com",
+		"1.1.1", "does not matter", "roxbot@redhat.com",
 		[]models.QualityMilestoneMetadata{},
 	)
 	assert.Error(t, err)
-	assert.ErrorContains(t, err, "record not found")
+	assert.ErrorContains(t, err, "could not find release or already rejected: record not found")
 }
 
 func TestApproveUnknownQualityMilestoneDefinitionReturnsError(t *testing.T) {
@@ -77,7 +77,7 @@ func TestApproveUnknownQualityMilestoneDefinitionReturnsError(t *testing.T) {
 		[]models.QualityMilestoneMetadata{},
 	)
 	assert.Error(t, err)
-	assert.ErrorContains(t, err, "record not found")
+	assert.ErrorContains(t, err, "could not find quality milestone definition: record not found")
 }
 
 func TestApprovingRejectedQualityMilestoneReturnsError(t *testing.T) {
