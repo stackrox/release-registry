@@ -15,6 +15,7 @@ import (
 	v1 "github.com/stackrox/release-registry/gen/go/proto/api/v1"
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/logging"
+	"github.com/stackrox/release-registry/pkg/service/healthz"
 	"github.com/stackrox/release-registry/pkg/service/qualitymilestonedefinition"
 	"github.com/stackrox/release-registry/pkg/service/release"
 	"golang.org/x/net/http2"
@@ -149,6 +150,7 @@ func (s *Server) Run() error {
 		return err
 	}
 
+	mux.Handle("/healthz/", healthz.NewHandler())
 	mux.Handle("/docs/", newDocsHandler())
 	mux.Handle("/v1/", gwMux)
 
