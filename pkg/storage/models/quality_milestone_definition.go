@@ -44,6 +44,10 @@ func CreateQualityMilestoneDefinition(name string, expectedMetadataKeys []string
 
 // GetQualityMilestoneDefinition returns a QualityMilestoneDefinition for the given name.
 func GetQualityMilestoneDefinition(name string) (*QualityMilestoneDefinition, error) {
+	if !isValidQualityMilestoneDefinitionName(name) {
+		return nil, fmt.Errorf("%s is not a valid QualityMilestoneDefinition name", name)
+	}
+
 	qmd := &QualityMilestoneDefinition{}
 	result := storage.DB.Where("name = ?", name).First(qmd)
 
