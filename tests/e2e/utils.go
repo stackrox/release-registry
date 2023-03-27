@@ -100,7 +100,6 @@ func BufDialer(context.Context, string) (net.Conn, error) {
 
 // GetFixturesPath constructs the absolute path to the fixtures directory.
 func GetFixturesPath() (string, error) {
-	// TODO: this is not working properly from other dirs...
 	cwd, err := os.Getwd()
 	if err != nil {
 		return "", errors.Wrap(err, "could not get working directory")

@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	v1 "github.com/stackrox/release-registry/gen/go/proto/api/v1"
 	"github.com/stackrox/release-registry/pkg/storage/models"
+	"github.com/stackrox/release-registry/pkg/utils/conversions"
 )
 
 func (s *server) Get(
@@ -26,19 +27,7 @@ func (s *server) Get(
 		return nil, errors.Wrap(err, fmt.Sprintf("%s '%s'", message, tag))
 	}
 
-	releaseResponse := newGetReleaseResponseFromRelease(release)
+	releaseResponse := conversions.NewGetReleaseResponseFromRelease(release)
 
 	return releaseResponse, nil
-}
-
-func newGetReleaseResponseFromRelease(release *models.Release) *v1.ReleaseServiceGetResponse {
-	return &v1.ReleaseServiceGetResponse{
-		Meta:              newMetaFromRelease(release),
-		Tag:               release.Tag,
-		Commit:            release.Commit,
-		Creator:           release.Creator,
-		Metadata:          newReleaseMetadataFromRelease(release),
-		Rejected:          release.Rejected,
-		QualityMilestones: newV1QualityMilestoneFromRelease(release),
-	}
 }

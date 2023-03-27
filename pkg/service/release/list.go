@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	v1 "github.com/stackrox/release-registry/gen/go/proto/api/v1"
 	"github.com/stackrox/release-registry/pkg/storage/models"
+	"github.com/stackrox/release-registry/pkg/utils/conversions"
 )
 
 //nolint:cyclop
@@ -53,18 +54,7 @@ func (s *server) List(
 		return nil, errors.Wrap(err, message)
 	}
 
-	releaseResponse := newListReleaseResponseFromRelease(releases)
+	releaseResponse := conversions.NewListReleaseResponseFromReleases(releases)
 
 	return releaseResponse, nil
-}
-
-func newListReleaseResponseFromRelease(releases []models.Release) *v1.ReleaseServiceListResponse {
-	releaseResponses := &v1.ReleaseServiceListResponse{}
-
-	for i := range releases {
-		release := releases[i]
-		releaseResponses.Releases = append(releaseResponses.Releases, newGetReleaseResponseFromRelease(&release))
-	}
-
-	return releaseResponses
 }

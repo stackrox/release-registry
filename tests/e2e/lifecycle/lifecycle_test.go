@@ -7,17 +7,14 @@ import (
 	"time"
 
 	v1 "github.com/stackrox/release-registry/gen/go/proto/api/v1"
+	"github.com/stackrox/release-registry/pkg/storage/models"
+	"github.com/stackrox/release-registry/pkg/utils/conversions"
 	"github.com/stackrox/release-registry/tests/e2e"
+	"github.com/stackrox/release-registry/tests/utils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
-
-type Release struct {
-	tag      string
-	commit   string
-	creator  string
-	metadata []*v1.ReleaseMetadata
-}
 
 // Use case: Support on-call engineer as the reviewer of the nightly marks a tag as successful.
 // Steps:
@@ -32,11 +29,11 @@ func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
 	qualityMilestoneDefinitionName := "Nightly has passed"
 	user := "roxbot@redhat.com"
 
-	expectedRelease := Release{
-		tag:     "3.74.x-nightly-20230323",
-		commit:  "78057dba490233f41b4602f2b2e88775ab7fd4c9",
-		creator: "roxbot@redhat.com",
-		metadata: []*v1.ReleaseMetadata{
+	expectedRelease := &models.Release{
+		Tag:     "3.74.x-nightly-20230323",
+		Commit:  "78057dba490233f41b4602f2b2e88775ab7fd4c9",
+		Creator: "roxbot@redhat.com",
+		Metadata: []models.ReleaseMetadata{
 			{Key: "Link", Value: "https://github.com/stackrox/stackrox/releases/tag/3.74.x-nightly-20230323"},
 		},
 	}
@@ -52,7 +49,10 @@ func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
 
 	defer cancel()
 
-	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(e2e.BufDialer), grpc.WithInsecure())
+	conn, err := grpc.DialContext(ctx, "bufnet",
+		grpc.WithContextDialer(e2e.BufDialer),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
 	assert.NoError(t, err)
 
 	//nolint:errcheck
@@ -60,33 +60,25 @@ func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
 
 	// 1. Create a new Release
 	releaseClient := v1.NewReleaseServiceClient(conn)
-	actualRelease, err := releaseClient.Create(ctx, &v1.ReleaseServiceCreateRequest{
-		Tag:      expectedRelease.tag,
-		Commit:   expectedRelease.commit,
-		Creator:  expectedRelease.creator,
-		Metadata: expectedRelease.metadata,
-	})
+	createReleaseResponse, err := releaseClient.Create(
+		ctx, conversions.NewCreateReleaseRequestFromRelease(expectedRelease),
+	)
 	assert.NoError(t, err)
-	assert.Equal(t, expectedRelease.tag, actualRelease.GetTag())
-	assert.Equal(t, expectedRelease.commit, actualRelease.GetCommit())
-	assert.Equal(t, expectedRelease.creator, actualRelease.GetCreator())
-	assert.Equal(t, expectedRelease.metadata[0].Key, actualRelease.GetMetadata()[0].GetKey())
-	assert.Equal(t, expectedRelease.metadata[0].Value, actualRelease.GetMetadata()[0].GetValue())
+
+	actualCreatedRelease := conversions.NewReleaseFromCreateReleaseResponse(createReleaseResponse)
+	utils.AssertReleasesAreEqual(t, expectedRelease, actualCreatedRelease, false, true)
 
 	// 2. List all Releases with prefix
-	prefix := expectedRelease.tag[:4]
+	prefix := expectedRelease.Tag[:4]
 	releaseList, err := releaseClient.List(ctx, &v1.ReleaseServiceListRequest{
 		Prefix:  &prefix,
 		Preload: true,
 	})
 	assert.NoError(t, err)
 	assert.Len(t, releaseList.GetReleases(), 1)
-	actualReleaseFromList := releaseList.GetReleases()[0]
-	assert.Equal(t, expectedRelease.tag, actualReleaseFromList.GetTag())
-	assert.Equal(t, expectedRelease.commit, actualReleaseFromList.GetCommit())
-	assert.Equal(t, expectedRelease.creator, actualReleaseFromList.GetCreator())
-	assert.Equal(t, expectedRelease.metadata[0].Key, actualReleaseFromList.GetMetadata()[0].GetKey())
-	assert.Equal(t, expectedRelease.metadata[0].Value, actualReleaseFromList.GetMetadata()[0].GetValue())
+
+	actualListedRelease := conversions.NewReleaseFromGetReleaseResponse(releaseList.GetReleases()[0])
+	utils.AssertReleasesAreEqual(t, actualCreatedRelease, actualListedRelease, true, true)
 
 	// 3. List all QualityMilestoneDefinitions
 	expectedMetadataKeys := []string{"Image", "BuildURL"}
@@ -94,8 +86,6 @@ func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
 	qmdList, err := qmdClient.List(ctx, &v1.QualityMilestoneDefinitionServiceListRequest{})
 	assert.NoError(t, err)
 	assert.Len(t, qmdList.GetQualityMilestoneDefinitions(), 2)
-
-	// TODO: This should be an "any" test
 	assert.Equal(t, qualityMilestoneDefinitionName, qmdList.GetQualityMilestoneDefinitions()[0].GetName())
 	assert.Equal(t, expectedMetadataKeys, qmdList.GetQualityMilestoneDefinitions()[0].GetExpectedMetadataKeys())
 
@@ -105,7 +95,7 @@ func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
 		{Key: "BuildURL", Value: ""},
 	}
 	qm, err := releaseClient.Approve(ctx, &v1.ReleaseServiceApproveRequest{
-		Tag:                            expectedRelease.tag,
+		Tag:                            expectedRelease.Tag,
 		QualityMilestoneDefinitionName: qualityMilestoneDefinitionName,
 		Approver:                       user,
 		Metadata:                       qualityMilestoneMetadata,
@@ -117,7 +107,7 @@ func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
 	assert.Equal(t, qualityMilestoneMetadata[1].Key, qm.GetMetadata()[1].GetKey())
 	assert.Equal(t, qualityMilestoneMetadata[1].Value, qm.GetMetadata()[1].GetValue())
 	assert.Equal(t, qualityMilestoneDefinitionName, qm.GetQualityMilestoneDefinitionName())
-	assert.Equal(t, expectedRelease.tag, qm.GetTag())
+	assert.Equal(t, expectedRelease.Tag, qm.GetTag())
 
 	// 5. List all Releases with prefix at QualityMilestone
 	releaseListAtQualityMilestone, err := releaseClient.List(ctx, &v1.ReleaseServiceListRequest{
@@ -128,11 +118,14 @@ func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, releaseList.GetReleases(), 1)
 	actualReleaseFromListAtQualityMilestone := releaseListAtQualityMilestone.GetReleases()[0]
-	assert.Equal(t, expectedRelease.tag, actualReleaseFromListAtQualityMilestone.GetTag())
-	assert.Equal(t, expectedRelease.commit, actualReleaseFromListAtQualityMilestone.GetCommit())
-	assert.Equal(t, expectedRelease.creator, actualReleaseFromListAtQualityMilestone.GetCreator())
-	assert.Equal(t, expectedRelease.metadata[0].Key, actualReleaseFromListAtQualityMilestone.GetMetadata()[0].GetKey())
-	assert.Equal(t, expectedRelease.metadata[0].Value, actualReleaseFromListAtQualityMilestone.GetMetadata()[0].GetValue())
+
+	utils.AssertReleasesAreEqual(
+		t,
+		actualListedRelease,
+		conversions.NewReleaseFromGetReleaseResponse(actualReleaseFromListAtQualityMilestone),
+		true,
+		false,
+	)
 }
 
 // Use case: Cloud Service Upgrader finds the latest version.
@@ -141,6 +134,8 @@ func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
 // 2. FindLatest Release at QualityMilestone with prefix.
 // 3. Approve another QualityMilestone.
 // 4. Get Release including approved QualityMilestones.
+//
+//nolint:funlen
 func TestFindingLatestRelease(t *testing.T) {
 	qualityMilestoneDefinitionName := "Nightly has passed"
 	prefix := "3.74"
@@ -157,7 +152,10 @@ func TestFindingLatestRelease(t *testing.T) {
 
 	defer cancel()
 
-	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(e2e.BufDialer), grpc.WithInsecure())
+	conn, err := grpc.DialContext(ctx, "bufnet",
+		grpc.WithContextDialer(e2e.BufDialer),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
 	assert.NoError(t, err)
 
 	//nolint:errcheck
@@ -169,7 +167,6 @@ func TestFindingLatestRelease(t *testing.T) {
 		QualityMilestoneName: &qualityMilestoneDefinitionName,
 		Preload:              true,
 	})
-	// TODO: more validation here
 	assert.NoError(t, err)
 	assert.Len(t, releaseList.GetReleases(), 2)
 
@@ -179,9 +176,16 @@ func TestFindingLatestRelease(t *testing.T) {
 		QualityMilestoneName: &qualityMilestoneDefinitionName,
 		Preload:              true,
 	})
-	// TODO: more validation here
 	assert.NoError(t, err)
-	assert.Equal(t, "3.74.x-nightly-20230323", latestResponse.GetTag())
+	actualPrefixedRelease, err := models.GetRelease("3.74.x-nightly-20230323", true, false)
+	assert.NoError(t, err)
+	utils.AssertReleasesAreEqual(
+		t,
+		actualPrefixedRelease,
+		conversions.NewReleaseFromFindLatestReponse(latestResponse),
+		true,
+		true,
+	)
 
 	// 3. Approve another QualityMilestone
 	qm, err := releaseClient.Approve(ctx, &v1.ReleaseServiceApproveRequest{
@@ -192,16 +196,17 @@ func TestFindingLatestRelease(t *testing.T) {
 			{Key: "DeploymentURL", Value: "this is a url"},
 		},
 	})
-	// TODO: more validation here
 	assert.NoError(t, err)
 	assert.Equal(t, user, qm.GetApprover())
+	assert.Equal(t, "Canary successful", qm.GetQualityMilestoneDefinitionName())
 
 	// 4. Get Release including approved QualityMilestones
 	actualRelease, err := releaseClient.Get(ctx, &v1.ReleaseServiceGetRequest{
 		Tag:     "3.74.x-nightly-20230323",
 		Preload: true,
 	})
-	// TODO: more validation here
 	assert.NoError(t, err)
 	assert.Len(t, actualRelease.GetQualityMilestones(), 2)
+	assert.Equal(t, actualRelease.GetQualityMilestones()[0].GetName(), qualityMilestoneDefinitionName)
+	assert.Equal(t, actualRelease.GetQualityMilestones()[1].GetName(), "Canary successful")
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/storage/models"
 	"github.com/stackrox/release-registry/tests/integration"
+	"github.com/stackrox/release-registry/tests/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -47,7 +48,7 @@ func TestApproveQualityMilestone(t *testing.T) {
 
 	approvedRelease, err := models.GetRelease(qualityMilestone.Release.Tag, true, false)
 	assert.NoError(t, err)
-	assertReleasesAreEqual(t, &qualityMilestone.Release, approvedRelease, true)
+	utils.AssertReleasesAreEqual(t, &qualityMilestone.Release, approvedRelease, true, true)
 	assert.Equal(t, qmd.Name, approvedRelease.QualityMilestones[0].QualityMilestoneDefinition.Name)
 }
 

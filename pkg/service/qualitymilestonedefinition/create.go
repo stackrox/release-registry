@@ -6,9 +6,8 @@ import (
 
 	"github.com/pkg/errors"
 	v1 "github.com/stackrox/release-registry/gen/go/proto/api/v1"
-	v1Meta "github.com/stackrox/release-registry/gen/go/proto/shared/v1"
 	"github.com/stackrox/release-registry/pkg/storage/models"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"github.com/stackrox/release-registry/pkg/utils/conversions"
 )
 
 func (*server) Create(
@@ -24,21 +23,7 @@ func (*server) Create(
 		return nil, errors.Wrap(err, fmt.Sprintf("%s '%s'", message, name))
 	}
 
-	qmdResponse := newCreateResponseFromQualityMilestoneDefinition(qmd)
+	qmdResponse := conversions.NewCreateQualityMilestoneDefinitionResponseFromQualityMilestoneDefinition(qmd)
 
 	return qmdResponse, nil
-}
-
-func newCreateResponseFromQualityMilestoneDefinition(
-	qmd *models.QualityMilestoneDefinition,
-) *v1.QualityMilestoneDefinitionServiceCreateResponse {
-	return &v1.QualityMilestoneDefinitionServiceCreateResponse{
-		Meta: &v1Meta.Meta{
-			Id:        int64(qmd.ID),
-			CreatedAt: timestamppb.New(qmd.CreatedAt),
-			UpdatedAt: timestamppb.New(qmd.UpdatedAt),
-		},
-		Name:                 qmd.Name,
-		ExpectedMetadataKeys: qmd.ExpectedMetadataKeys,
-	}
 }

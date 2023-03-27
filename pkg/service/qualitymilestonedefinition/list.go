@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	v1 "github.com/stackrox/release-registry/gen/go/proto/api/v1"
 	"github.com/stackrox/release-registry/pkg/storage/models"
+	"github.com/stackrox/release-registry/pkg/utils/conversions"
 )
 
 func (*server) List(
@@ -23,7 +24,7 @@ func (*server) List(
 	for i := range knownQmds {
 		qmdListResponse.QualityMilestoneDefinitions = append(
 			qmdListResponse.QualityMilestoneDefinitions,
-			newGetResponseFromQualityMilestoneDefinition(&knownQmds[i]),
+			conversions.NewGetQualityMilestoneDefinitionResponseFromQualityMilestoneDefinition(&knownQmds[i]),
 		)
 	}
 

@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	v1 "github.com/stackrox/release-registry/gen/go/proto/api/v1"
 	"github.com/stackrox/release-registry/pkg/storage/models"
+	"github.com/stackrox/release-registry/pkg/utils/conversions"
 )
 
 //nolint:cyclop
@@ -53,19 +54,7 @@ func (s *server) FindLatest(
 		return nil, errors.Wrap(err, message)
 	}
 
-	releaseResponse := newFindLatestReleaseResponseFromRelease(release)
+	releaseResponse := conversions.NewFindLatestReleaseResponseFromRelease(release)
 
 	return releaseResponse, nil
-}
-
-func newFindLatestReleaseResponseFromRelease(release *models.Release) *v1.ReleaseServiceFindLatestResponse {
-	return &v1.ReleaseServiceFindLatestResponse{
-		Meta:              newMetaFromRelease(release),
-		Tag:               release.Tag,
-		Commit:            release.Commit,
-		Creator:           release.Creator,
-		Metadata:          newReleaseMetadataFromRelease(release),
-		Rejected:          release.Rejected,
-		QualityMilestones: newV1QualityMilestoneFromRelease(release),
-	}
 }
