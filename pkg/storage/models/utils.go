@@ -88,14 +88,5 @@ func MigrateAll() error {
 		return errors.Wrap(err, "migration of models failed")
 	}
 
-	// // Apparently these need to run separately to avoid weird errors in Postgres
-	err = storage.Migrate(
-		&QualityMilestone{},
-		&Release{},
-	)
-	if err != nil {
-		return errors.Wrap(err, "migration of models failed")
-	}
-
 	return nil
 }
