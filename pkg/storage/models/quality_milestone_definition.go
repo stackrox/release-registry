@@ -15,7 +15,7 @@ func isQualityMilestoneDefinitionNameValid(name string) bool {
 	return validate.IsValidString(`^[a-zA-Z0-9 ]+$`, name)
 }
 
-// CreateQualityMilestoneDefinition a new QualityMilestoneDefinition.
+// CreateQualityMilestoneDefinition creates a new QualityMilestoneDefinition.
 func CreateQualityMilestoneDefinition(name string, expectedMetadataKeys []string) (*QualityMilestoneDefinition, error) {
 	if !isQualityMilestoneDefinitionNameValid(name) {
 		return nil, fmt.Errorf("%s is not a valid QualityMilestoneDefinition name", name)
