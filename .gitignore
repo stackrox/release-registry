@@ -5,3 +5,5 @@ data/*.sqlite-journal
 
 build/
 outputs/
+
+__debug_bin

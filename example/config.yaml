@@ -3,3 +3,5 @@ database:
   path: "data/database.sqlite"
 server:
   port: 8443
+tenant:
+  emailDomain: redhat.com
