@@ -28,11 +28,3 @@ func AssertReleasesAreEqual(t *testing.T, expected, actual *models.Release, comp
 		}
 	}
 }
-
-// func AssertQualityMilestonesAreEqual(t *testing.T, expected, actual *models.QualityMilestone) {
-// 	t.Helper()
-
-// 	assert.Equal(t, expected.Approver, actual.Approver)
-// 	assert.Equal()
-// 	}
-// }

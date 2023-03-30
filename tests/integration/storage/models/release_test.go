@@ -273,7 +273,7 @@ func TestListAllReleasesAtQualityMilestone(t *testing.T) {
 	releases, err := models.ListAllReleasesAtQualityMilestone(qmd.Name, true, false)
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
-	assert.Equal(t, releases[0].Tag, release.Tag)
+	utils.AssertReleasesAreEqual(t, &release, &releases[0], true, false)
 }
 
 func TestListAllReleasesAtQualityMilestoneWithPrefix(t *testing.T) {
@@ -309,6 +309,7 @@ func TestListAllReleasesAtQualityMilestoneWithPrefix(t *testing.T) {
 	releases, err := models.ListAllReleasesWithPrefixAtQualityMilestone(prefixedRelease.Tag, qmd.Name, false, false)
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
+	utils.AssertReleasesAreEqual(t, prefixedRelease, &releases[0], true, false)
 	assert.Equal(t, releases[0].Tag, prefixedRelease.Tag)
 }
 
@@ -334,10 +335,9 @@ func TestFindLatestReleasesNightlies(t *testing.T) {
 	setupReleaseTest(t)
 
 	config := configuration.New()
-	lastNightlyTag := "3.74.x-nightly-20230321"
-	_, err := models.CreateRelease(
+	lastNightly, err := models.CreateRelease(
 		config,
-		lastNightlyTag,
+		"3.74.x-nightly-20230321",
 		defaultCommit, defaultCreator, []models.ReleaseMetadata{},
 	)
 	assert.NoError(t, err)
@@ -356,9 +356,9 @@ func TestFindLatestReleasesNightlies(t *testing.T) {
 	)
 	assert.NoError(t, err)
 
-	latest, err := models.FindLatestRelease(false, false)
+	latestRetrieved, err := models.FindLatestRelease(false, false)
 	assert.NoError(t, err)
-	assert.Equal(t, lastNightlyTag, latest.Tag)
+	utils.AssertReleasesAreEqual(t, lastNightly, latestRetrieved, true, true)
 }
 
 func TestFindLatestReleaseWithPrefix(t *testing.T) {
