@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "release-registry.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "release-registry.labels" . | nindent 4 }}
 spec:
@@ -13,17 +14,16 @@ spec:
       {{- include "release-registry.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configuration.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       labels:
         {{- include "release-registry.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        - name: {{ include "release-registry.fullname" . }}-pull-secret
       serviceAccountName: {{ include "release-registry.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
@@ -34,22 +34,24 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: 8443
+            - name: https
+              containerPort: {{ .Values.service.port }}
               protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /healthz/liveness
-          #     port: http
-          # readinessProbe:
-          #   httpGet:
-          #     path: /healthz/readiness
-          #     port: http
+          livenessProbe:
+            httpGet:
+              path: /healthz/liveness
+              port: https
+              scheme: HTTPS
+          readinessProbe:
+            httpGet:
+              path: /healthz/readiness
+              port: https
+              scheme: HTTPS
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
           - name: config
-            mountPath: "/example"
+            mountPath: "/config"
             readOnly: true
       {{- with .Values.nodeSelector }}
       nodeSelector:

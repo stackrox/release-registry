@@ -1,9 +1,15 @@
+# OS
 .DS_Store
 
+# Artifacts
+build/
+outputs/
+example/
 data/*.sqlite
 data/*.sqlite-journal
 
-build/
-outputs/
-
+# VS Code debugger
 __debug_bin
+
+# Helm
+configuration/

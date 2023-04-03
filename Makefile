@@ -1,7 +1,14 @@
 TAG:=$(shell git describe --tags)
 
+.PHONY: tag
 tag: ## Describes current tag
 	@echo ${TAG}
+
+.PHONY: pre-check
+pre-check:
+ifndef ENVIRONMENT
+	$(error ENVIRONMENT is not defined)
+endif
 
 .PHONY: init-dev-environment
 init-dev-environment: ## Initializes local development environment after first clone
@@ -21,6 +28,10 @@ format: ## Format code
 lint: ## Lint code
 	@./scripts/ci/lint.sh
 
+.PHONY: server-renew-cert
+server-renew-cert: ## Renews the gRPC gateway certificate
+	@./scripts/cert/renew.sh
+
 .PHONY: server-binary
 server-binary: ## Builds server binary
 	@go build -o build/release-registry cmd/server/main.go
@@ -34,9 +45,14 @@ server-image-push: ## Pushes server image to registry
 	@docker push quay.io/rhacs-eng/release-registry:${TAG}
 
 .PHONY: server-helm-deploy
-server-helm-deploy: ## Deploys the server with Helm
-	envsubst
-	@helm upgrade release-registry --install deploy/chart/release-registry --set image.tag=${TAG}
+server-helm-deploy: pre-check ## Deploys the server with Helm
+	@helm upgrade \
+		--install \
+		--namespace release-registry \
+		release-registry \
+		deploy/chart/release-registry \
+		--set image.tag=${TAG} \
+		--values deploy/chart/release-registry/configuration/values-${ENVIRONMENT}.yaml
 
 .PHONY: tests-unit
 tests-unit: ## Runs all unit tests without cache

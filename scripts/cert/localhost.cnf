@@ -1,0 +1,26 @@
+# This is the configuration required to build the self signed cert used for SSL
+# for gRPC gateway.
+
+# To renew:
+# openssl genrsa -out tls-key.pem 4096
+# openssl req -nodes -new -x509 -sha256 -days 365 -config tls.conf -extensions 'req_ext' -key tls-key.pem -out tls-cert.pem
+
+[ req ]
+default_bits = 4096
+prompt = no
+default_md = sha256
+req_extensions = req_ext
+distinguished_name = dn
+
+[ dn ]
+C = US
+ST = North Carolina
+L = Raleigh
+O = Red Hat
+CN = localhost
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = localhost
