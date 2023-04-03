@@ -5,16 +5,17 @@ import (
 
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/storage/models"
-	"github.com/stackrox/release-registry/tests"
+	"github.com/stackrox/release-registry/tests/integration"
+	"github.com/stackrox/release-registry/tests/utils"
 	"github.com/stretchr/testify/assert"
 )
 
 func setupQualityMilestoneTest(t *testing.T) {
 	t.Helper()
 
-	err := tests.SetupDB()
+	err := integration.SetupDB()
 	assert.NoError(t, err)
-	err = tests.Migrate(
+	err = integration.Migrate(
 		&models.Release{},
 		&models.ReleaseMetadata{},
 		&models.QualityMilestoneMetadata{},
@@ -44,6 +45,11 @@ func TestApproveQualityMilestone(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, release.Tag, qualityMilestone.Release.Tag)
 	assert.Equal(t, qmd.Name, qualityMilestone.QualityMilestoneDefinition.Name)
+
+	approvedRelease, err := models.GetRelease(qualityMilestone.Release.Tag, true, false)
+	assert.NoError(t, err)
+	utils.AssertReleasesAreEqual(t, &qualityMilestone.Release, approvedRelease, true, true)
+	assert.Equal(t, qmd.Name, approvedRelease.QualityMilestones[0].QualityMilestoneDefinition.Name)
 }
 
 func TestApproveUnknownReleaseReturnsError(t *testing.T) {
@@ -51,11 +57,11 @@ func TestApproveUnknownReleaseReturnsError(t *testing.T) {
 
 	_, err := models.ApproveQualityMilestone(
 		configuration.New(),
-		"unknown tag", "does not matter", "roxbot@redhat.com",
+		"1.1.1", "does not matter", "roxbot@redhat.com",
 		[]models.QualityMilestoneMetadata{},
 	)
 	assert.Error(t, err)
-	assert.ErrorContains(t, err, "record not found")
+	assert.ErrorContains(t, err, "could not find release or already rejected: record not found")
 }
 
 func TestApproveUnknownQualityMilestoneDefinitionReturnsError(t *testing.T) {
@@ -71,7 +77,7 @@ func TestApproveUnknownQualityMilestoneDefinitionReturnsError(t *testing.T) {
 		[]models.QualityMilestoneMetadata{},
 	)
 	assert.Error(t, err)
-	assert.ErrorContains(t, err, "record not found")
+	assert.ErrorContains(t, err, "could not find quality milestone definition: record not found")
 }
 
 func TestApprovingRejectedQualityMilestoneReturnsError(t *testing.T) {

@@ -7,22 +7,22 @@ import (
 	"github.com/stackrox/release-registry/pkg/utils/validate"
 )
 
-func isMetadataKeyValid(key string) bool {
-	return validate.IsValidString(`^([A-Z][a-z]*)+$`, key)
+func isValidQualityMilestoneDefinitionName(name string) bool {
+	return validate.IsValidString(`^[a-zA-Z0-9 ]+$`, name)
 }
 
-func isQualityMilestoneDefinitionNameValid(name string) bool {
-	return validate.IsValidString(`^[a-zA-Z0-9 ]+$`, name)
+func isValidMetadataKey(key string) bool {
+	return validate.IsValidString(`^([A-Z][a-z]*)+$`, key)
 }
 
 // CreateQualityMilestoneDefinition creates a new QualityMilestoneDefinition.
 func CreateQualityMilestoneDefinition(name string, expectedMetadataKeys []string) (*QualityMilestoneDefinition, error) {
-	if !isQualityMilestoneDefinitionNameValid(name) {
+	if !isValidQualityMilestoneDefinitionName(name) {
 		return nil, fmt.Errorf("%s is not a valid QualityMilestoneDefinition name", name)
 	}
 
 	for _, key := range expectedMetadataKeys {
-		if !isMetadataKeyValid(key) {
+		if !isValidMetadataKey(key) {
 			return nil, fmt.Errorf("%s is not a valid metadata key", key)
 		}
 	}
@@ -44,6 +44,10 @@ func CreateQualityMilestoneDefinition(name string, expectedMetadataKeys []string
 
 // GetQualityMilestoneDefinition returns a QualityMilestoneDefinition for the given name.
 func GetQualityMilestoneDefinition(name string) (*QualityMilestoneDefinition, error) {
+	if !isValidQualityMilestoneDefinitionName(name) {
+		return nil, fmt.Errorf("%s is not a valid QualityMilestoneDefinition name", name)
+	}
+
 	qmd := &QualityMilestoneDefinition{}
 	result := storage.DB.Where("name = ?", name).First(qmd)
 

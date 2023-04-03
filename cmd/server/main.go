@@ -16,7 +16,7 @@ import (
 var log = logging.CreateProductionLogger()
 
 func main() {
-	config := configuration.New()
+	config := configuration.New("./example")
 
 	err := storage.InitDB(config)
 	if err != nil {

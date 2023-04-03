@@ -33,8 +33,6 @@ const (
 	Postgres DBType = "postgres"
 )
 
-var errUnknownDBType = errors.New("unknown db type")
-
 // InitDB is a wrapper around initialization of the selected database type.
 func InitDB(config *configuration.Config) error {
 	dbType := DBType(config.Database.Type)
@@ -44,7 +42,7 @@ func InitDB(config *configuration.Config) error {
 	case Postgres:
 		return initPostgres(config)
 	default:
-		return fmt.Errorf("could not init database: %w (%s)", errUnknownDBType, dbType)
+		return fmt.Errorf("could not init database: unknown db type: %s", dbType)
 	}
 }
 

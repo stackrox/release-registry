@@ -1,5 +1,5 @@
-// Package tests contains integration tests and utils.
-package tests
+// Package integration contains integration tests and utils.
+package integration
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 // SetupDB is a utility function to create an in-memory sqlite database for integration tests.
 // It ignores any other database configuration settings.
 func SetupDB() error {
-	config := configuration.New()
+	config := configuration.New("../../../example", "../../../../example")
 	config.Database.Type = "sqlite"
 	config.Database.Path = ":memory:"
 

@@ -15,14 +15,17 @@ import (
 	v1 "github.com/stackrox/release-registry/gen/go/proto/api/v1"
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/logging"
-	helloworld "github.com/stackrox/release-registry/pkg/service/hello-world"
+	"github.com/stackrox/release-registry/pkg/service/healthz"
+	"github.com/stackrox/release-registry/pkg/service/qualitymilestonedefinition"
+	"github.com/stackrox/release-registry/pkg/service/release"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
 
-type server struct {
+// Server is a wrapped gRPC server with config and error channel.
+type Server struct {
 	*grpc.Server
 	Config *configuration.Config
 	ErrCh  chan error
@@ -32,29 +35,38 @@ type server struct {
 var log = logging.CreateProductionLogger()
 
 // New creates and returns a new server instance.
-func New(config *configuration.Config) server {
-	return server{
+func New(config *configuration.Config) Server {
+	s := Server{
 		grpc.NewServer(),
 		config,
 		make(chan error, 1),
 	}
+	s.registerServiceServers()
+
+	return s
 }
 
-func (s *server) registerServiceServers() {
-	// TODO: loop here over all APIs once more are defined
-	v1.RegisterHelloWorldServiceServer(s, helloworld.NewHelloWorldServer())
+func (s *Server) registerServiceServers() {
+	v1.RegisterQualityMilestoneDefinitionServiceServer(
+		s,
+		qualitymilestonedefinition.NewQualityMilestoneDefinitionServer(s.Config),
+	)
+	v1.RegisterReleaseServiceServer(s, release.NewReleaseServer(s.Config))
 }
 
 func registerServiceHandlers(mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	// TODO: make loop over all APIs once more are defined
-	if err := v1.RegisterHelloWorldServiceHandler(context.Background(), mux, conn); err != nil {
-		return errors.Wrap(err, "could not register hello world service handler")
+	if err := v1.RegisterQualityMilestoneDefinitionServiceHandler(context.Background(), mux, conn); err != nil {
+		return errors.Wrap(err, "could not register QualityMilestoneDefinition service handler")
+	}
+
+	if err := v1.RegisterReleaseServiceHandler(context.Background(), mux, conn); err != nil {
+		return errors.Wrap(err, "could not register Release service handler")
 	}
 
 	return nil
 }
 
-func (s *server) initMux() *http.ServeMux {
+func (s *Server) initMux() *http.ServeMux {
 	// listenAddress is the address that the server will listen on.
 	listenAddress := fmt.Sprintf("0.0.0.0:%d", s.Config.Server.Port)
 	mux := http.NewServeMux()
@@ -76,7 +88,7 @@ func (s *server) initMux() *http.ServeMux {
 	go func() {
 		err := http.ListenAndServeTLS(
 			listenAddress,
-			"example/server.crt", "example/server.key",
+			s.Config.Server.Cert, s.Config.Server.Key,
 			h2c.NewHandler(muxHandler, &http2.Server{}),
 		)
 		if err != nil {
@@ -87,8 +99,8 @@ func (s *server) initMux() *http.ServeMux {
 	return mux
 }
 
-func (s *server) initGateway() (*runtime.ServeMux, error) {
-	certOpt, err := grpcLocalCredentials("example/server.crt")
+func (s *Server) initGateway() (*runtime.ServeMux, error) {
+	certOpt, err := grpcLocalCredentials(s.Config.Server.Cert)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +121,6 @@ func (s *server) initGateway() (*runtime.ServeMux, error) {
 	}
 
 	gwMux := runtime.NewServeMux(
-
 		runtime.WithMarshalerOption("*", &runtime.JSONPb{}),
 	)
 
@@ -131,8 +142,7 @@ func newDocsHandler() http.Handler {
 }
 
 // Run runs a gRPC + HTTP server on a single port.
-func (s *server) Run() error {
-	s.registerServiceServers()
+func (s *Server) Run() error {
 	mux := s.initMux()
 
 	gwMux, err := s.initGateway()
@@ -140,6 +150,7 @@ func (s *server) Run() error {
 		return err
 	}
 
+	mux.Handle("/healthz/", healthz.NewHandler())
 	mux.Handle("/docs/", newDocsHandler())
 	mux.Handle("/v1/", gwMux)
 

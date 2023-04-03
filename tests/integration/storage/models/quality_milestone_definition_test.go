@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stackrox/release-registry/pkg/storage/models"
-	"github.com/stackrox/release-registry/tests"
+	"github.com/stackrox/release-registry/tests/integration"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,9 +13,9 @@ const qualityMilestoneName = "QM1"
 func setupQualityMilestoneDefinitionTest(t *testing.T) {
 	t.Helper()
 
-	err := tests.SetupDB()
+	err := integration.SetupDB()
 	assert.NoError(t, err)
-	err = tests.Migrate(&models.QualityMilestoneDefinition{})
+	err = integration.Migrate(&models.QualityMilestoneDefinition{})
 	assert.NoError(t, err)
 }
 

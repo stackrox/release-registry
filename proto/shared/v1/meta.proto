@@ -1,0 +1,12 @@
+syntax = "proto3";
+package proto.shared.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/stackrox/release-registry/gen/go/proto/shared/v1";
+
+message Meta {
+  int64 id = 1;
+  google.protobuf.Timestamp created_at = 2;
+  google.protobuf.Timestamp updated_at = 3;
+}

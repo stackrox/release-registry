@@ -1,0 +1,55 @@
+syntax = "proto3";
+package proto.api.v1;
+
+import "google/api/annotations.proto";
+import "proto/shared/v1/meta.proto";
+
+option go_package = "github.com/stackrox/release-registry/gen/go/proto/api/v1";
+
+message QualityMilestoneDefinitionServiceCreateRequest {
+  string name = 1;
+  repeated string expected_metadata_keys = 2;
+}
+
+message QualityMilestoneDefinitionServiceCreateResponse {
+  shared.v1.Meta meta = 1;
+  string name = 2;
+  repeated string expected_metadata_keys = 3;
+}
+
+message QualityMilestoneDefinitionServiceGetResponse {
+  shared.v1.Meta meta = 1;
+  string name = 2;
+  repeated string expected_metadata_keys = 3;
+}
+
+message QualityMilestoneDefinitionServiceListRequest {}
+
+message QualityMilestoneDefinitionServiceListResponse {
+  repeated QualityMilestoneDefinitionServiceGetResponse quality_milestone_definitions = 1;
+}
+
+message QualityMilestoneDefinitionServiceGetRequest {
+  string name = 1;
+}
+
+// QualityMilestoneDefinitionService service creates, returns and lists QualityMilestoneDefinitions.
+service QualityMilestoneDefinitionService {
+  // Create creates a new QualityMilestoneDefinition.
+  rpc Create(QualityMilestoneDefinitionServiceCreateRequest) returns (QualityMilestoneDefinitionServiceCreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/qualitymilestonedefinition",
+      body: "*"
+    };
+  }
+
+  // List returns all known QualityMilestoneDefinitions.
+  rpc List(QualityMilestoneDefinitionServiceListRequest) returns (QualityMilestoneDefinitionServiceListResponse) {
+    option (google.api.http) = {get: "/v1/qualitymilestonedefinition"};
+  }
+
+  // Get returns a QualityMilestoneDefinition for a given name.
+  rpc Get(QualityMilestoneDefinitionServiceGetRequest) returns (QualityMilestoneDefinitionServiceGetResponse) {
+    option (google.api.http) = {get: "/v1/qualitymilestonedefinition/{name}"};
+  }
+}
