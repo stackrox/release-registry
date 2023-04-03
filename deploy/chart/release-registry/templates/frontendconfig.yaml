@@ -4,7 +4,7 @@ metadata:
   name: {{ include "release-registry.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ include "release-registry.fullname" . }}
+    {{- include "release-registry.labels" . | nindent 4 }}
 spec:
   redirectToHttps:
     enabled: true
