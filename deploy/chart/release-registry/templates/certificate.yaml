@@ -1,0 +1,13 @@
+{{ if ne .Values.deployment "local" -}}
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: {{ include "release-registry.fullname" . }}-certificate
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "release-registry.labels" . | nindent 4 }}
+spec:
+  domains:
+  {{- toYaml .Values.ingress.hosts | nindent 4 }}
+{{ end }}
