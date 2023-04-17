@@ -48,6 +48,8 @@ jobs:
           go-version: '1.19'
 
       - name: Run ${{ matrix.test-type }} tests
+        env:
+          RELREG_TEST_TOKEN: ${{ secrets.RELREG_TEST_TOKEN }}
         run: |
           make tests-${{ matrix.test-type }}
 
