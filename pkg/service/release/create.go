@@ -2,7 +2,6 @@ package release
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/pkg/errors"
 	v1 "github.com/stackrox/release-registry/gen/go/proto/api/v1"
@@ -43,7 +42,7 @@ func (s *releaseImpl) Create(
 	if err != nil {
 		log.Infow(errMessage, "tag", tag, "error", err.Error())
 
-		return nil, errors.Wrap(err, fmt.Sprintf("%s '%s'", errMessage, tag))
+		return nil, errors.WithMessagef(err, "%s '%s'", errMessage, tag)
 	}
 
 	releaseResponse := conversions.NewCreateReleaseResponseFromRelease(release)

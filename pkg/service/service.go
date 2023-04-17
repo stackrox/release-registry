@@ -36,8 +36,6 @@ type Server struct {
 	oidc     auth.OidcAuth
 }
 
-// TODO: can this be moved into the server struct?
-//
 //nolint:gochecknoglobals
 var log = logging.CreateProductionLogger()
 

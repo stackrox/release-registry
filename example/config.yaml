@@ -1,11 +1,11 @@
 database:
   type: sqlite
-  path: "data/database.sqlite"
+  path: data/database.sqlite
 server:
   port: 8443
-  cert: ./example/server.crt
-  key: ./example/server.key
+  cert: example/server.crt
+  key: example/server.key
 tenant:
   emailDomain: redhat.com
   password: SecretPassW0rd!
-  oidcConfigFile: ./example/oidc.yaml
+  oidcConfigFile: example/oidc.yaml

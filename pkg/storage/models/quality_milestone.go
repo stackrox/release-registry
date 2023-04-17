@@ -47,9 +47,7 @@ func ValidateExpectedMetadataKeysAreProvided(
 
 // ApproveQualityMilestone approves a given Release for a given QualityMilestone.
 func ApproveQualityMilestone(
-	validApproverDomain,
-	tag, milestoneName, approver string,
-	metadata []QualityMilestoneMetadata,
+	validApproverDomain, tag, milestoneName, approver string, metadata []QualityMilestoneMetadata,
 ) (*QualityMilestone, error) {
 	if err := validate.IsValidActorEmail(validApproverDomain, approver); err != nil {
 		return nil, errors.Wrap(err, "not a valid approver")

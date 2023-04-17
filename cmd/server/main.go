@@ -23,11 +23,9 @@ func main() {
 
 	config := configuration.New(*flagConfigDir)
 
-	oidcConfigFile := config.Tenant.OidcConfigFile
-
 	oidc, err := auth.NewFromConfig(config.Tenant.OidcConfigFile)
 	if err != nil {
-		log.Fatalw("failed to load oidc config file", "path", oidcConfigFile, "error", err)
+		log.Fatalw("failed to load oidc config file", "path", config.Tenant.OidcConfigFile, "error", err)
 	}
 
 	err = storage.InitDB(config)

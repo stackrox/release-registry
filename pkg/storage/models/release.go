@@ -19,8 +19,7 @@ const (
 
 // CreateRelease creates a new Release based on based information.
 func CreateRelease(
-	validCreatorDomain,
-	tag, commit, creator string, metadata []ReleaseMetadata,
+	validCreatorDomain, tag, commit, creator string, metadata []ReleaseMetadata,
 ) (*Release, error) {
 	if err := validate.IsValidVersion(tag); err != nil {
 		return nil, errors.Wrap(err, errorCannotCreateRelease)
