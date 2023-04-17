@@ -19,6 +19,8 @@ const (
 )
 
 // RemotePort is the port of the mock server for e2e tests.
+//
+//nolint:gochecknoglobals
 var RemotePort int
 
 func getRandomIntInRange(min, max int) int {

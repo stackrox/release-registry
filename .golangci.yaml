@@ -2,7 +2,7 @@ run:
   timeout: 16m
 
 output:
-  format: "junit-xml:outputs/report.xml,colored-line-number"
+  format: "colored-line-number"
 
 issues:
   exclude-use-default: false
