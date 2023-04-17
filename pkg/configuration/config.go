@@ -42,7 +42,9 @@ type ServerConfig struct {
 
 // TenantConfig holds configuration specific to the tenant.
 type TenantConfig struct {
-	EmailDomain string `mapstructure:"emailDomain"`
+	EmailDomain    string `mapstructure:"emailDomain"`
+	Password       string `mapstructure:"password"`
+	OidcConfigFile string `mapstructure:"oidcConfigFile"`
 }
 
 func setupConfigLocation(additionalConfigDirs ...string) {

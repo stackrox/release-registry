@@ -1,35 +1,37 @@
-// Package e2e contains end-to-end tests and utils.
-package e2e
+package utils
 
 import (
-	"context"
 	"fmt"
 	"io/fs"
 	"log"
-	"math/rand"
-	"net"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/pkg/errors"
+	"github.com/stackrox/infra-auth-lib/auth"
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/service"
 	"github.com/stackrox/release-registry/pkg/storage"
 	"github.com/stackrox/release-registry/pkg/storage/models"
 	"github.com/stretchr/testify/assert"
-	"google.golang.org/grpc/test/bufconn"
 )
 
 const (
-	bufSize          = 1024 * 1024
 	databaseFileMode = fs.FileMode(0644)
-	minPort          = 30000
-	maxPort          = 39999
+
+	// DefaultUser is the email contained in the test JWT.
+	DefaultUser = "roxbot+release-registry-e2e@redhat.com"
 )
 
-//nolint:gochecknoglobals
-var lis *bufconn.Listener
+// DefaultUserJwt returns the default user's JWT used in tests.
+func DefaultUserJwt() string {
+	value := os.Getenv("RELREG_TEST_TOKEN")
+	if value == "" {
+		panic("RELREG_TEST_TOKEN is not set")
+	}
+
+	return value
+}
 
 func copyDatabaseFixtureToTmp(databasePath, prefix string) (string, error) {
 	input, err := os.ReadFile(databasePath)
@@ -50,17 +52,10 @@ func copyDatabaseFixtureToTmp(databasePath, prefix string) (string, error) {
 	return f.Name(), nil
 }
 
-func getRandomPort(min, max int) int {
-	rand.Seed(time.Now().UnixNano())
-
-	return rand.Intn(max-min+1) + min
-}
-
 // SetupE2ETest creates a buffered listener, initializes the database and starts the server.
 func SetupE2ETest(t *testing.T, databasePath string) {
 	t.Helper()
 
-	lis = bufconn.Listen(bufSize)
 	config := configuration.New("../../../example")
 
 	tmpDatabasePath, err := copyDatabaseFixtureToTmp(databasePath, "e2e-test-")
@@ -71,9 +66,23 @@ func SetupE2ETest(t *testing.T, databasePath string) {
 		Path: tmpDatabasePath,
 	}
 
-	config.Server.Port = getRandomPort(minPort, maxPort)
+	RemotePort = getRandomIntInRange(minPort, maxPort)
+	config.Server.Port = RemotePort
+	config.Server.Cert = "../../../example/server.crt"
+	config.Server.Key = "../../../example/server.key"
 
-	s := service.New(config)
+	oidc, err := auth.NewFromConfig("../../../example/oidc.yaml")
+	if err != nil {
+		panic(err)
+	}
+
+	services, err := service.CreateAPIServices(config, *oidc)
+
+	if err != nil {
+		panic(err)
+	}
+
+	s := service.New(config, *oidc, services...)
 
 	err = storage.InitDB(config)
 	if err != nil {
@@ -86,16 +95,10 @@ func SetupE2ETest(t *testing.T, databasePath string) {
 	}
 
 	go func() {
-		if err := s.Serve(lis); err != nil {
+		if err := s.Run(); err != nil {
 			log.Fatalf("Server exited with error: %v", err)
 		}
 	}()
-}
-
-// BufDialer dials the buffered listener.
-func BufDialer(context.Context, string) (net.Conn, error) {
-	//nolint:wrapcheck
-	return lis.Dial()
 }
 
 // GetFixturesPath constructs the absolute path to the fixtures directory.

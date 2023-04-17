@@ -10,7 +10,7 @@ import (
 )
 
 //nolint:cyclop
-func (s *server) List(
+func (s *releaseImpl) List(
 	ctx context.Context, listRelease *v1.ReleaseServiceListRequest,
 ) (*v1.ReleaseServiceListResponse, error) {
 	var (

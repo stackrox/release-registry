@@ -10,9 +10,12 @@ import (
 	"os"
 	"strings"
 
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/pkg/errors"
-	v1 "github.com/stackrox/release-registry/gen/go/proto/api/v1"
+	"github.com/stackrox/infra-auth-lib/auth"
+	authService "github.com/stackrox/infra-auth-lib/service"
+	"github.com/stackrox/infra-auth-lib/service/middleware"
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/logging"
 	"github.com/stackrox/release-registry/pkg/service/healthz"
@@ -27,40 +30,76 @@ import (
 // Server is a wrapped gRPC server with config and error channel.
 type Server struct {
 	*grpc.Server
-	Config *configuration.Config
-	ErrCh  chan error
+	Config   *configuration.Config
+	ErrCh    chan error
+	Services []middleware.APIService
+	oidc     auth.OidcAuth
 }
 
+// TODO: can this be moved into the server struct?
+//
 //nolint:gochecknoglobals
 var log = logging.CreateProductionLogger()
 
 // New creates and returns a new server instance.
-func New(config *configuration.Config) Server {
+func New(config *configuration.Config, oidc auth.OidcAuth, services ...middleware.APIService) Server {
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+			// Extract user from JWT token stored in HTTP cookie.
+			middleware.ContextInterceptor(middleware.UserEnricher(oidc)),
+			// Extract service-account from token stored in Authorization header.
+			middleware.ContextInterceptor(middleware.ServiceAccountEnricher(oidc.ValidateServiceAccountToken)),
+
+			// Enrich with admin privileges from password stored in Authorization header.
+			middleware.ContextInterceptor(middleware.AdminEnricher(config.Tenant.Password)),
+
+			// Enforce authenticated user access on resources that declare it.
+			middleware.ContextInterceptor(middleware.EnforceAccess),
+		)),
+	)
 	s := Server{
-		grpc.NewServer(),
+		grpcServer,
 		config,
 		make(chan error, 1),
+		services,
+		oidc,
 	}
-	s.registerServiceServers()
 
 	return s
 }
 
-func (s *Server) registerServiceServers() {
-	v1.RegisterQualityMilestoneDefinitionServiceServer(
-		s,
-		qualitymilestonedefinition.NewQualityMilestoneDefinitionServer(s.Config),
-	)
-	v1.RegisterReleaseServiceServer(s, release.NewReleaseServer(s.Config))
-}
+// Run runs a gRPC + HTTP server on a single port.
+func (s *Server) Run() error {
+	mux := s.initMux()
 
-func registerServiceHandlers(mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	if err := v1.RegisterQualityMilestoneDefinitionServiceHandler(context.Background(), mux, conn); err != nil {
-		return errors.Wrap(err, "could not register QualityMilestoneDefinition service handler")
+	s.registerServiceServers()
+
+	gwMux, err := s.initGateway()
+	if err != nil {
+		return err
 	}
 
-	if err := v1.RegisterReleaseServiceHandler(context.Background(), mux, conn); err != nil {
-		return errors.Wrap(err, "could not register Release service handler")
+	mux.Handle("/healthz/", healthz.NewHandler())
+	mux.Handle("/docs/", newDocsHandler())
+	mux.Handle("/v1/", gwMux)
+
+	s.oidc.Handle(mux)
+
+	return nil
+}
+
+func (s *Server) registerServiceServers() {
+	// Register the gRPC API service.
+	for _, apiSvc := range s.Services {
+		apiSvc.RegisterServiceServer(s.Server)
+	}
+}
+
+func (s *Server) registerServiceHandlers(mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	for _, apiSvc := range s.Services {
+		if err := apiSvc.RegisterServiceHandler(context.Background(), mux, conn); err != nil {
+			return errors.Wrap(err, "cannot register service handler")
+		}
 	}
 
 	return nil
@@ -125,7 +164,7 @@ func (s *Server) initGateway() (*runtime.ServeMux, error) {
 	)
 
 	// Register each service
-	if err = registerServiceHandlers(gwMux, conn); err != nil {
+	if err = s.registerServiceHandlers(gwMux, conn); err != nil {
 		return nil, err
 	}
 
@@ -139,22 +178,6 @@ func newDocsHandler() http.Handler {
 		"/docs/",
 		http.FileServer(http.Dir(generatedDocsDir)),
 	)
-}
-
-// Run runs a gRPC + HTTP server on a single port.
-func (s *Server) Run() error {
-	mux := s.initMux()
-
-	gwMux, err := s.initGateway()
-	if err != nil {
-		return err
-	}
-
-	mux.Handle("/healthz/", healthz.NewHandler())
-	mux.Handle("/docs/", newDocsHandler())
-	mux.Handle("/v1/", gwMux)
-
-	return nil
 }
 
 //nolint:ireturn,nolintlint
@@ -178,4 +201,20 @@ func grpcLocalCredentials(certFile string) (grpc.DialOption, error) {
 			RootCAs:    rootCAs,
 			ServerName: "localhost",
 		})), nil
+}
+
+// CreateAPIServices returns a list of all gRPC API services.
+func CreateAPIServices(config *configuration.Config, oidc auth.OidcAuth) ([]middleware.APIService, error) {
+	//nolint:wrapcheck
+	return middleware.Services(
+		func() (middleware.APIService, error) {
+			//nolint:wrapcheck
+			return release.NewReleaseService(config.Tenant.EmailDomain)
+		},
+		qualitymilestonedefinition.NewQualityMilestoneDefinitionService,
+		func() (middleware.APIService, error) {
+			//nolint:wrapcheck
+			return authService.NewUserService(oidc.GenerateServiceAccountToken)
+		},
+	)
 }

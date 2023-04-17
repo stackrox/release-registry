@@ -12,7 +12,6 @@ func NewCreateReleaseRequestFromRelease(release *models.Release) *v1.ReleaseServ
 	return &v1.ReleaseServiceCreateRequest{
 		Tag:      release.Tag,
 		Commit:   release.Commit,
-		Creator:  release.Creator,
 		Metadata: newV1ReleaseMetadataFromRelease(release),
 	}
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/stackrox/release-registry/pkg/utils/conversions"
 )
 
-func (s *server) Get(
+func (s *releaseImpl) Get(
 	ctx context.Context, getRelease *v1.ReleaseServiceGetRequest,
 ) (*v1.ReleaseServiceGetResponse, error) {
 	tag := getRelease.GetTag()

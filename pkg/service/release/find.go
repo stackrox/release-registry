@@ -10,7 +10,7 @@ import (
 )
 
 //nolint:cyclop
-func (s *server) FindLatest(
+func (s *releaseImpl) FindLatest(
 	ctx context.Context, findRelease *v1.ReleaseServiceFindLatestRequest,
 ) (*v1.ReleaseServiceFindLatestResponse, error) {
 	var (

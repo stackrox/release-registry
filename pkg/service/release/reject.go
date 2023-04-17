@@ -10,7 +10,7 @@ import (
 	"github.com/stackrox/release-registry/pkg/utils/conversions"
 )
 
-func (s *server) Reject(
+func (s *releaseImpl) Reject(
 	ctx context.Context, rejectedRelease *v1.ReleaseServiceRejectRequest,
 ) (*v1.ReleaseServiceRejectResponse, error) {
 	tag := rejectedRelease.GetTag()
