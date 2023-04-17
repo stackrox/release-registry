@@ -70,6 +70,7 @@ jobs:
           RELREG_OIDC_CONFIG: ${{ secrets.RELREG_OIDC_CONFIG }}
         run: |
           echo "${RELREG_OIDC_CONFIG}" > ./example/oidc.yaml
+          make server-renew-cert
           make tests-e2e
 
   build-and-push:
