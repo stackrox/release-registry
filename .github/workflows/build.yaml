@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        test-type: [ unit, integration, e2e ]
+        test-type: [ unit, integration ]
 
     steps:
       - name: Checkout
@@ -48,10 +48,16 @@ jobs:
           go-version: '1.19'
 
       - name: Run ${{ matrix.test-type }} tests
-        env:
-          RELREG_TEST_TOKEN: ${{ secrets.RELREG_TEST_TOKEN }}
         run: |
           make tests-${{ matrix.test-type }}
+
+      - name: Run e2e tests
+        env:
+          RELREG_TEST_TOKEN: ${{ secrets.RELREG_TEST_TOKEN }}
+          RELREG_OIDC_CONFIG: ${{ secrets.RELREG_OIDC_CONFIG }}
+        run: |
+          echo "${RELREG_OIDC_CONFIG} > ./example/oidc.yaml
+          make tests-e2e
 
   build-and-push:
     needs: [lint, run-tests]
