@@ -3,7 +3,7 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const defaultOptions = {
-  target: process.env.INFRA_API_ENDPOINT || 'https://dev.infra.rox.systems',
+  target: process.env.RELREG_API_ENDPOINT || 'https://dev.infra.rox.systems',
   changeOrigin: true,
   secure: false,
 };
@@ -18,6 +18,5 @@ module.exports = function main(app) {
   app.use('/login', proxy);
   app.use('/callback', proxy);
   app.use('/logout', proxy);
-  app.use('/downloads/infractl-*', proxy);
   /* eslint-enable @typescript-eslint/no-unsafe-call */
 };

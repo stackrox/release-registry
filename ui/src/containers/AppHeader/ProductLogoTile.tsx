@@ -2,7 +2,6 @@ import React, { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 
 import StackRoxLogo from 'components//StackRoxLogo';
-import Version from './Version';
 
 export default function ProductLogoTile(): ReactElement {
   return (
@@ -10,10 +9,9 @@ export default function ProductLogoTile(): ReactElement {
       <Link to="/" className="flex items-center">
         <StackRoxLogo />
         <div className="pl-1 pt-1 text-sm tracking-wide font-600 font-condensed uppercase">
-          Infra
+          Release Registry
         </div>
       </Link>
-      <Version />
     </div>
   );
 }

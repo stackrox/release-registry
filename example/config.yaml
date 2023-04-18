@@ -5,6 +5,7 @@ server:
   port: 8443
   cert: example/server.crt
   key: example/server.key
+  staticDir: ui/build
 tenant:
   emailDomain: redhat.com
   password: SecretPassW0rd!

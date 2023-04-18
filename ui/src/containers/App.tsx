@@ -5,18 +5,12 @@ import UserAuthProvider from 'containers/UserAuthProvider';
 import { ThemeProvider } from 'containers/ThemeProvider';
 import AppHeader from 'containers/AppHeader';
 import HomePage from 'containers/HomePage';
-import DownloadsPage from 'containers/DownloadsPage';
-import LaunchClusterPage from 'containers/LaunchClusterPage';
-import ClusterInfoPage from 'containers/ClusterInfoPage';
 import FullPageError from 'components/FullPageError';
 
 function AppRoutes(): ReactElement {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/downloads" element={<DownloadsPage />} />
-      <Route path="/launch/:flavorId" element={<LaunchClusterPage />} />
-      <Route path="/cluster/:clusterId" element={<ClusterInfoPage />} />
       <Route path="*" element={<FullPageError message="This page doesn't seem to exist." />} />
     </Routes>
   );

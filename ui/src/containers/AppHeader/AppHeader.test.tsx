@@ -10,6 +10,6 @@ test('renders app with the proper header', () => {
       <AppHeader />
     </Router>
   );
-  const headerElement = getByText('Infra');
+  const headerElement = getByText('Release Registry');
   expect(headerElement).toBeInTheDocument();
 });

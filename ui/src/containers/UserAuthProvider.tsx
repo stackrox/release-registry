@@ -9,7 +9,7 @@ import FullPageError from 'components/FullPageError';
 
 const userService = new UserServiceApi(configuration);
 
-const fetchWhoami = (): AxiosPromise<V1WhoamiResponse> => userService.whoami();
+const fetchWhoami = (): AxiosPromise<V1WhoamiResponse> => userService.userServiceWhoami();
 
 const logout = (): void => {
   window.location.href = '/logout';
@@ -44,7 +44,6 @@ export default function UserAuthProvider({ children }: Props): ReactElement | nu
   if (!data?.User) {
     // assuming we're not authenticated
     if (process.env.NODE_ENV === 'development') {
-      // TODO-ivan: temporal "solution", until backend supports dynamically defined redirect URI
       return (
         <FullPageError message="For now, please add token cookie to the app through browser dev tools. Then refresh the page." />
       );

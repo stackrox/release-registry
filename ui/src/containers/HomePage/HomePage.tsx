@@ -1,13 +1,14 @@
 import React, { ReactElement } from 'react';
 
-import LaunchPageSection from './LaunchPageSection';
-import MyClustersPageSection from './MyClustersPageSection';
+import PageSection from 'components/PageSection';
+import UserServiceAccountToken from './UserServiceAccountToken';
 
 export default function HomePage(): ReactElement {
   return (
-    <>
-      <LaunchPageSection />
-      <MyClustersPageSection />
-    </>
+    <PageSection header="Authenticating">
+      <div className="md:w-1/2 mx-2">
+        <UserServiceAccountToken />
+      </div>
+    </PageSection>
   );
 }
