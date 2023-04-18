@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/stackrox/infra-auth-lib/auth"
@@ -18,6 +19,7 @@ import (
 
 const (
 	databaseFileMode = fs.FileMode(0644)
+	serverStartWait  = 10 * time.Second
 
 	// DefaultUser is the email contained in the test JWT.
 	DefaultUser = "roxbot+release-registry-e2e@redhat.com"
@@ -99,6 +101,8 @@ func SetupE2ETest(t *testing.T, databasePath string) {
 			log.Fatalf("Server exited with error: %v", err)
 		}
 	}()
+
+	time.Sleep(serverStartWait)
 }
 
 // GetFixturesPath constructs the absolute path to the fixtures directory.
