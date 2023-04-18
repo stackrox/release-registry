@@ -10,15 +10,12 @@ import (
 
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/backoff"
 	"google.golang.org/grpc/credentials"
 )
 
 const (
 	minPort = 30000
 	maxPort = 39999
-
-	minTimeout = 10 * time.Second
 )
 
 // RemotePort is the port of the mock server for e2e tests.
@@ -55,10 +52,6 @@ func getRemote(port int) string {
 // GetGRPCConnection creates an authenticated GRPC client connection to a remote.
 func GetGRPCConnection(ctx context.Context, remotePort int, token string) (*grpc.ClientConn, error) {
 	conn, err := grpc.DialContext(ctx, getRemote(remotePort),
-		grpc.WithConnectParams(grpc.ConnectParams{
-			Backoff:           backoff.DefaultConfig,
-			MinConnectTimeout: minTimeout,
-		}),
 		grpc.WithPerRPCCredentials(bearerToken(token)),
 		grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{
 			InsecureSkipVerify: true,
