@@ -19,7 +19,7 @@ import (
 
 const (
 	databaseFileMode = fs.FileMode(0644)
-	serverStartWait  = 10 * time.Second
+	serverStartWait  = 1 * time.Second
 
 	// DefaultUser is the email contained in the test JWT.
 	DefaultUser = "roxbot+release-registry-e2e@redhat.com"
