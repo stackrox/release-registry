@@ -1,6 +1,6 @@
 {
-  "short_name": "Infra",
-  "name": "StackRox Infra",
+  "short_name": "Release Registry",
+  "name": "StackRox Release Registry",
   "icons": [
     {
       "src": "favicon.ico",
