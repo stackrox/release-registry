@@ -15,7 +15,7 @@ message ReleaseMetadata {
 message ReleaseServiceCreateRequest {
   string tag = 1;
   string commit = 2;
-  repeated ReleaseMetadata metadata = 4;
+  repeated ReleaseMetadata metadata = 3;
 }
 
 message ReleaseServiceCreateResponse {
@@ -56,7 +56,7 @@ message ReleaseServiceGetResponse {
 message ReleaseServiceApproveRequest {
   string tag = 1;
   string quality_milestone_definition_name = 2;
-  repeated api.v1.QualityMilestoneMetadata metadata = 4;
+  repeated api.v1.QualityMilestoneMetadata metadata = 3;
 }
 
 message ReleaseServiceApproveResponse {
