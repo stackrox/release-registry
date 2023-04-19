@@ -38,7 +38,7 @@ server-binary: ## Builds server binary
 
 .PHONY: server-image
 server-image: ## Builds server image
-	@docker build . \
+	@DOCKER_BUILDKIT=1 docker build . \
 		-f image/Dockerfile \
 		--secret id=npmrc,src=${HOME}/.npmrc \
 		-t quay.io/rhacs-eng/release-registry:${TAG}
