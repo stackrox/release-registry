@@ -1,7 +1,7 @@
 import React, { useContext, createContext, ReactElement, ReactNode } from 'react';
 import { AxiosPromise } from 'axios';
 
-import { V1User, V1WhoamiResponse, UserServiceApi } from 'generated/client';
+import { V1User, V1WhoamiResponse, UserServiceApi } from '@stackrox/infra-auth-lib/lib';
 import useApiQuery from 'client/useApiQuery';
 import configuration from 'client/configuration';
 import FullPageSpinner from 'components/FullPageSpinner';

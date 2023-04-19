@@ -22,6 +22,7 @@
     "gen:src": "./scripts/generate-client.sh"
   },
   "dependencies": {
+    "@stackrox/infra-auth-lib": "0.0.0-2",
     "@stackrox/ui-components": "^0.3.0",
     "axios": "^0.21.4",
     "formik": "^2.2.9",

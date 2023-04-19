@@ -1804,6 +1804,13 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@stackrox/infra-auth-lib@0.0.0-2":
+  version "0.0.0-2"
+  resolved "https://npm.pkg.github.com/download/@stackrox/infra-auth-lib/0.0.0-2/a4a07dd78ab84b423aea690b712d66dd07620565#a4a07dd78ab84b423aea690b712d66dd07620565"
+  integrity sha512-MmohwFWMs0fQ3kRNYV9z2RJ3jToPWWwxOuClVps2HhEc+EfXataWgX6hD/a37fTlIJSnFNs06zNsBjMRc2wQsQ==
+  dependencies:
+    axios "^0.21.4"
+
 "@stackrox/tailwind-config@^0.2.0":
   version "0.2.0"
   resolved "https://npm.pkg.github.com/download/@stackrox/tailwind-config/0.2.0/0a531486128241736a2360cdfa3b1564a5828edb628e86aab1b375fce2897fef#2a0588d986b442fd529e4146070052f0b65340a7"

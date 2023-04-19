@@ -14,6 +14,26 @@ A mechanism to mark, identify and search release artifacts using Quality Milesto
 1. Update `example/config.yaml` to reflect your environment. All options can be found in the configuration package.
 1. Generate localhost certificates for the gRPC gateway: `make server-renew-cert`. They will be placed in the `example` directory.
 
+### Authentication
+
+Follow the guide in the [infra-auth-lib](https://github.com/stackrox/infra-auth-lib/tree/main#how-to-create-the-oidc-configuration-file) to create your OIDC configuration file.
+
+Reference the path to this configuration file in the main configuration file under `tenant.oidcConfigFile`.
+
+### Local Docker run
+
+After finishing the previous bootstrapping steps, run:
+
+```bash
+docker run -p 48443:8443 -v $(pwd)/example:/example quay.io/rhacs-eng/release-registry:$(make tag)
+```
+
+If the image does not exist, run `make server-image` first.
+Choose a free port on your system, if `48443` is already used.
+Use different paths to mount if your configuration files specify so - the command above works with the example configuration files and bootstrapping commands as specified.
+
+### Helm
+
 If you want to deploy to GKE, create a new global IP:
 
 ```bash

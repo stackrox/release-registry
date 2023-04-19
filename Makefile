@@ -38,7 +38,10 @@ server-binary: ## Builds server binary
 
 .PHONY: server-image
 server-image: ## Builds server image
-	@docker build . -f image/Dockerfile -t quay.io/rhacs-eng/release-registry:${TAG}
+	@docker build . \
+		-f image/Dockerfile \
+		--secret id=npmrc,src=${HOME}/.npmrc \
+		-t quay.io/rhacs-eng/release-registry:${TAG}
 
 .PHONY: server-image-push
 server-image-push: ## Pushes server image to registry

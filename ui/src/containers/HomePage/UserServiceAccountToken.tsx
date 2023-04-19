@@ -2,8 +2,9 @@ import React, { ReactElement } from 'react';
 import { AxiosPromise } from 'axios';
 import { useClipboard } from 'use-clipboard-copy';
 import { Tooltip, TooltipOverlay } from '@stackrox/ui-components';
+// TODO: should not have to give /src path
+import { V1TokenResponse, UserServiceApi } from '@stackrox/infra-auth-lib/lib';
 
-import { V1TokenResponse, UserServiceApi } from 'generated/client';
 import useApiQuery from 'client/useApiQuery';
 import configuration from 'client/configuration';
 import { AlertCircle, Clipboard } from 'react-feather';
