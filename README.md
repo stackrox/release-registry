@@ -35,3 +35,18 @@ They contain unit, integration and end-to-end tests.
 
 For the end-to-end tests, must obtain a test token or create your own for the robot user `roxbot+release-registry-e2e@redhat.com`.
 This token must be available in the environment variable `RELREG_TEST_TOKEN` when running end-to-end-tests.
+
+The example assumes you run a local server with self-signed certificates.
+If running against dev or production infrastructure, remove the `--insecure` flag and change the location.
+
+```bash
+curl --insecure --location 'https://localhost:8443/v1/token-create' \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer <ENTER PASSWORD FROM CONFIG tenant.password HERE>' \
+--data-raw '{
+    "Name": "release-registry-e2e-gha",
+    "Description": "CI token used for E2E tests on release-registry (GHA)",
+    "Email": "roxbot+release-registry-e2e@redhat.com"
+}'
+```
