@@ -24,6 +24,8 @@ RUN --mount=type=secret,id=npmrc,target=/root/.npmrc make
 # Application
 FROM scratch as app
 
+COPY --from=server /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
 COPY --from=server /go/src/github.com/stackrox/release-registry/build/release-registry /release-registry
 
 COPY --from=server /go/src/github.com/stackrox/release-registry/gen/openapiv2/proto gen/openapiv2/proto
