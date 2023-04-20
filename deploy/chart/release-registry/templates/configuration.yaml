@@ -19,6 +19,7 @@ data:
       port: {{ .Values.service.port }}
       cert: /config/server.crt
       key: /config/server.key
+      staticDir: ui/build
     tenant:
       emailDomain: {{ .Values.server.emailDomain }}
       password: {{ .Values.server.adminPassword }}
@@ -27,4 +28,5 @@ data:
   server.crt: {{- .Values.server.cert | toYaml | indent 2 }}
   server.key: {{- .Values.server.key | toYaml | indent 2 }}
 
-  oidc.yaml: {{- .Values.oidc | toYaml | indent 2 }}
+  oidc.yaml: |
+{{ toYaml .Values.oidc | indent 4 }}
