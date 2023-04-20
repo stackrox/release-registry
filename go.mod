@@ -6,7 +6,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.15.0
-	github.com/stackrox/infra-auth-lib v0.0.2-rc.1
+	github.com/stackrox/infra-auth-lib v0.0.2-rc.2
 	github.com/stretchr/testify v1.8.2
 	go.uber.org/zap v1.24.0
 	google.golang.org/grpc v1.53.0
