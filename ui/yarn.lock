@@ -1804,10 +1804,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@stackrox/infra-auth-lib@0.0.0-3":
-  version "0.0.0-3"
-  resolved "https://npm.pkg.github.com/download/@stackrox/infra-auth-lib/0.0.0-3/b892af583d8f71e5c8c7655026ae44a64ef68d19#b892af583d8f71e5c8c7655026ae44a64ef68d19"
-  integrity sha512-ffHtlhBqc35B6RsaMkn4yHPLcgFA6tKtvLt1HmLWTAffGJ3a15j4/CRjxNJHOIIzHM4g5RnoTwDEC6JnIgzKhQ==
+"@stackrox/infra-auth-lib@0.0.0-5":
+  version "0.0.0-5"
+  resolved "https://npm.pkg.github.com/download/@stackrox/infra-auth-lib/0.0.0-5/427b1cb7cfae1bd4b25f81e2ed74ccfff5807f72#427b1cb7cfae1bd4b25f81e2ed74ccfff5807f72"
+  integrity sha512-WyJkGlCC8/Eg42TEuPwIKlRw6FciwpNOYVvPnucg4Za6zxIyzUoKOE8HmX3QqbFXlLD12tTLtHHSLC/sC9v6WQ==
   dependencies:
     axios "^0.21.4"
 
