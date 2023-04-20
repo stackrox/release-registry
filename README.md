@@ -25,11 +25,11 @@ Reference the path to this configuration file in the main configuration file und
 After finishing the previous bootstrapping steps, run:
 
 ```bash
-docker run -p 48443:8443 -v $(pwd)/example:/example quay.io/rhacs-eng/release-registry:$(make tag)
+docker run -p 8443:8443 -v $(pwd)/example:/example quay.io/rhacs-eng/release-registry:$(make tag)
 ```
 
 If the image does not exist, run `make server-image` first.
-Choose a free port on your system, if `48443` is already used.
+Choose a free port on your system, if `8443` is already used.
 Use different paths to mount if your configuration files specify so - the command above works with the example configuration files and bootstrapping commands as specified.
 
 ### Helm
