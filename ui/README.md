@@ -1,6 +1,6 @@
-# StackRox Infra App (UI)
+# StackRox Release Registry (UI)
 
-This sub-project contains Web UI (SPA) for StackRox Infra.
+This sub-project contains Web UI (SPA) for StackRox Release Registry.
 
 This project was bootstrapped with
 [Create React App](https://github.com/facebook/create-react-app).
@@ -14,7 +14,7 @@ about the available scripts and the tooling behavior.
 ### Build Tooling
 
 - [Docker](https://www.docker.com/)
-- [Node.js](https://nodejs.org/en/) `10.15.3 LTS` or higher (it's highly
+- [Node.js](https://nodejs.org/en/) `16.20.0 LTS` or higher (it's highly
   recommended to use an LTS version, if you're managing multiple versions of
   Node.js on your machine, consider using
   [nvm](https://github.com/creationix/nvm))
@@ -36,9 +36,9 @@ _If you're going to use `yarn` instead of `make` targets, make sure you've run
 in a browser window that will auto-refresh on any source code or CSS changes.
 
 By default UI dev server will try to proxy API requests to
-`https://dev.infra.rox.systems`. To override the API endpoint use
-`INFRA_API_ENDPOINT` env var. I.e. you can start the dev server via
-`export INFRA_API_ENDPOINT=<api_endpoint>; yarn start`.
+`https://release-registry.dev.rox.systems`. To override the API endpoint use
+`RELREG_API_ENDPOINT` env var. I.e. you can start the dev server via
+`export RELREG_API_ENDPOINT=<api_endpoint>; yarn start`.
 
 ### Generated Sources
 
@@ -47,4 +47,4 @@ client and models. To re-generate the sources run `make gen-src` or
 `yarn gen:src`.
 
 _Hint: for the API client to generate new Swagger definitions from protos in the
-parent dir run `make proto-generated-srcs`._
+parent dir run `make buf-generated-srcs`._

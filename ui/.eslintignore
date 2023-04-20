@@ -6,7 +6,7 @@
 /coverage
 
 # generated sources
-/src/generated
+/src/client/**
 
 # disabling for copy-pasted tailwind plugins
 /tailwind-plugins
