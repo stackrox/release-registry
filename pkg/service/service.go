@@ -231,26 +231,11 @@ func serveApplicationResources(dir string, oidc auth.OidcAuth) http.Handler {
 	// List of path rules, roughly ordered from most-likely matched to
 	// least-likely matched.
 	rules := []rule{
-		{
-			path:   "/static/",
-			prefix: true,
-		},
-		{
-			path: "/manifest.json",
-		},
-		{
-			path:      "/favicon.ico",
-			anonymous: true,
-		},
-		{
-			path:      "/logout-page.html",
-			anonymous: true,
-		},
-		{
-			path:   "/",
-			spa:    true,
-			prefix: true,
-		},
+		{path: "/static/", prefix: true},
+		{path: "/manifest.json"},
+		{path: "/favicon.ico", anonymous: true},
+		{path: "/logout-page.html", anonymous: true},
+		{path: "/", spa: true, prefix: true},
 	}
 
 	fs := http.FileServer(http.Dir(dir))
