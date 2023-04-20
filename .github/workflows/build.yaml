@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        test-type: [ unit, integration, e2e ]
+        test-type: [ unit, integration ]
 
     steps:
       - name: Checkout
@@ -51,8 +51,30 @@ jobs:
         run: |
           make tests-${{ matrix.test-type }}
 
+  run-e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.19'
+
+      - name: Run e2e tests
+        env:
+          RELREG_TEST_TOKEN: ${{ secrets.RELREG_TEST_TOKEN }}
+          RELREG_OIDC_CONFIG: ${{ secrets.RELREG_OIDC_CONFIG }}
+        run: |
+          echo "${RELREG_OIDC_CONFIG}" > ./example/oidc.yaml
+          make server-renew-cert
+          make tests-e2e
+
   build-and-push:
-    needs: [lint, run-tests]
+    needs: [lint, run-tests, run-e2e-tests]
     runs-on: ubuntu-latest
 
     steps:

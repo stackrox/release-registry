@@ -11,7 +11,7 @@ import (
 	"github.com/stackrox/release-registry/pkg/utils/validate"
 )
 
-func (*server) Get(
+func (*qualityMilestoneDefinitionImpl) Get(
 	ctx context.Context, qmdReq *v1.QualityMilestoneDefinitionServiceGetRequest,
 ) (*v1.QualityMilestoneDefinitionServiceGetResponse, error) {
 	name := qmdReq.GetName()

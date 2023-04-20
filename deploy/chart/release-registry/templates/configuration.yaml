@@ -21,5 +21,23 @@ data:
       key: /config/server.key
     tenant:
       emailDomain: {{ .Values.server.emailDomain }}
+      password: {{ .Values.server.adminPassword }}
+      oidcConfigFile: /config/oidc.yaml
+
   server.crt: {{- .Values.server.cert | toYaml | indent 2 }}
   server.key: {{- .Values.server.key | toYaml | indent 2 }}
+
+  oidcConfigFile: |
+    issuer: {{ .Values.server.oidc.issuer }}
+    clientID: {{ .Values.server.oidc.clientID }}
+    clientSecret: {{ .Values.server.oidc.clientSecret }}
+    sessionSecret: {{ .Values.server.oidc.sessionSecret }}
+    endpoint: {{ .Values.server.oidc.endpoint }}
+    accessTokenClaims:
+      - value: '{{ .Values.server.oidc.issuer }}'
+        op: 'eq'
+        path: 'iss'
+      - value: '{{ .Values.server.oidc.group }}'
+        op: 'in'
+        path: 'realm_access.roles'
+    tokenLifetime: {{ .Values.server.oidc.tokenLifetime }}

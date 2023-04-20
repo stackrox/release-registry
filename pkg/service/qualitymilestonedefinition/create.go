@@ -10,7 +10,7 @@ import (
 	"github.com/stackrox/release-registry/pkg/utils/conversions"
 )
 
-func (*server) Create(
+func (*qualityMilestoneDefinitionImpl) Create(
 	ctx context.Context, newQmdReq *v1.QualityMilestoneDefinitionServiceCreateRequest,
 ) (*v1.QualityMilestoneDefinitionServiceCreateResponse, error) {
 	name := newQmdReq.GetName()

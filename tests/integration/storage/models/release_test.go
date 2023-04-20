@@ -40,7 +40,7 @@ func createFakeRelease(t *testing.T) models.Release {
 	t.Helper()
 
 	release, err := models.CreateRelease(
-		configuration.New(),
+		configuration.New().Tenant.EmailDomain,
 		defaultTag, defaultCommit, defaultCreator,
 		[]models.ReleaseMetadata{},
 	)
@@ -75,7 +75,7 @@ func createMultipleFakeReleases(t *testing.T) []models.Release {
 
 	for _, release := range expectedReleases {
 		releaseDBO, err := models.CreateRelease(
-			configuration.New(),
+			configuration.New().Tenant.EmailDomain,
 			release.Tag, release.Commit,
 			release.Creator, release.Metadata,
 		)
@@ -101,7 +101,7 @@ func TestCreateReleaseInvalidSemVer(t *testing.T) {
 	setupReleaseTest(t)
 
 	_, err := models.CreateRelease(
-		configuration.New(),
+		configuration.New().Tenant.EmailDomain,
 		"1.2.3.4.5.6", defaultCommit, defaultCreator, []models.ReleaseMetadata{},
 	)
 	assert.Error(t, err)
@@ -113,7 +113,7 @@ func TestCreateReleaseNightlyVersion(t *testing.T) {
 
 	nightlyTag := "3.74.x-nightly-20230320"
 	release, err := models.CreateRelease(
-		configuration.New(),
+		configuration.New().Tenant.EmailDomain,
 		nightlyTag, defaultCommit, defaultCreator, []models.ReleaseMetadata{},
 	)
 	assert.NoError(t, err)
@@ -162,7 +162,7 @@ func TestGetReleaseByTag(t *testing.T) {
 	setupReleaseTest(t)
 
 	metadata := []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}}
-	originalRelease, err := models.CreateRelease(configuration.New(), defaultTag, defaultCommit, defaultCreator, metadata)
+	originalRelease, err := models.CreateRelease(configuration.New().Tenant.EmailDomain, defaultTag, defaultCommit, defaultCreator, metadata)
 	assert.NoError(t, err)
 
 	// Get a release without preloading metadata
@@ -195,7 +195,7 @@ func TestGetReleaseByTagWithQualityMilestones(t *testing.T) {
 		{Key: "Ghi", Value: "ghi"},
 	}
 
-	_, err := models.ApproveQualityMilestone(config, release.Tag, qmd.Name, "roxbot@redhat.com", metadata)
+	_, err := models.ApproveQualityMilestone(config.Tenant.EmailDomain, release.Tag, qmd.Name, "roxbot@redhat.com", metadata)
 	assert.NoError(t, err)
 
 	releases, err := models.ListAllReleasesAtQualityMilestone(qmd.Name, true, false)
@@ -254,7 +254,7 @@ func TestListAllReleasesAtQualityMilestone(t *testing.T) {
 	config := configuration.New()
 
 	_, err := models.CreateRelease(
-		config, "2.0.0", "b1d4c6264309de1da809dc85ed0825f817c58d8d", "roxbot@redhat.com",
+		config.Tenant.EmailDomain, "2.0.0", "b1d4c6264309de1da809dc85ed0825f817c58d8d", "roxbot@redhat.com",
 		[]models.ReleaseMetadata{},
 	)
 	assert.NoError(t, err)
@@ -266,7 +266,7 @@ func TestListAllReleasesAtQualityMilestone(t *testing.T) {
 		{Key: "Def", Value: "def"},
 		{Key: "Ghi", Value: "ghi"},
 	}
-	_, err = models.ApproveQualityMilestone(config, release.Tag, qmd.Name, "roxbot@redhat.com", metadata)
+	_, err = models.ApproveQualityMilestone(config.Tenant.EmailDomain, release.Tag, qmd.Name, "roxbot@redhat.com", metadata)
 	assert.NoError(t, err)
 
 	// Expect only one release, due to other one not approved for QualityMilestone
@@ -283,24 +283,24 @@ func TestListAllReleasesAtQualityMilestoneWithPrefix(t *testing.T) {
 	qmd := createFakeQualityMilestoneDefinition(t)
 
 	prefixedRelease, err := models.CreateRelease(
-		config, "1.0.0", "b1d4c6264309de1da809dc85ed0825f817c58d8d", "roxbot@redhat.com",
+		config.Tenant.EmailDomain, "1.0.0", "b1d4c6264309de1da809dc85ed0825f817c58d8d", "roxbot@redhat.com",
 		[]models.ReleaseMetadata{},
 	)
 	assert.NoError(t, err)
 
 	_, err = models.CreateRelease(
-		config, "2.0.0", "b1d4c6264309de1da809dc85ed0825f817c58d8d", "roxbot@redhat.com",
+		config.Tenant.EmailDomain, "2.0.0", "b1d4c6264309de1da809dc85ed0825f817c58d8d", "roxbot@redhat.com",
 		[]models.ReleaseMetadata{},
 	)
 	assert.NoError(t, err)
 
 	_, err = models.ApproveQualityMilestone(
-		config, "1.0.0", qmd.Name,
+		config.Tenant.EmailDomain, "1.0.0", qmd.Name,
 		"roxbot@redhat.com", defaultQualityMilestoneMetadata,
 	)
 	assert.NoError(t, err)
 	_, err = models.ApproveQualityMilestone(
-		config, "2.0.0", qmd.Name,
+		config.Tenant.EmailDomain, "2.0.0", qmd.Name,
 		"roxbot@redhat.com", defaultQualityMilestoneMetadata,
 	)
 	assert.NoError(t, err)
@@ -336,21 +336,21 @@ func TestFindLatestReleasesNightlies(t *testing.T) {
 
 	config := configuration.New()
 	lastNightly, err := models.CreateRelease(
-		config,
+		config.Tenant.EmailDomain,
 		"3.74.x-nightly-20230321",
 		defaultCommit, defaultCreator, []models.ReleaseMetadata{},
 	)
 	assert.NoError(t, err)
 
 	_, err = models.CreateRelease(
-		config,
+		config.Tenant.EmailDomain,
 		"3.74.x-nightly-20230319",
 		defaultCommit, defaultCreator, []models.ReleaseMetadata{},
 	)
 	assert.NoError(t, err)
 
 	_, err = models.CreateRelease(
-		config,
+		config.Tenant.EmailDomain,
 		"3.74.x-nightly-20230320",
 		defaultCommit, defaultCreator, []models.ReleaseMetadata{},
 	)
@@ -378,7 +378,7 @@ func TestFindLatestReleaseAtQualityMilestone(t *testing.T) {
 	qmd := createFakeQualityMilestoneDefinition(t)
 
 	_, err := models.ApproveQualityMilestone(
-		configuration.New(),
+		configuration.New().Tenant.EmailDomain,
 		expectedReleases[0].Tag, qmd.Name,
 		"roxbot@redhat.com", defaultQualityMilestoneMetadata,
 	)
@@ -397,14 +397,14 @@ func TestFindLatestRelaseWithPrefixAtQualityMilestone(t *testing.T) {
 
 	// Approve both 1.x releases, expect 1.0.1 to be latest
 	_, err := models.ApproveQualityMilestone(
-		configuration.New(),
+		configuration.New().Tenant.EmailDomain,
 		expectedReleases[0].Tag, qmd.Name,
 		"roxbot@redhat.com", defaultQualityMilestoneMetadata,
 	)
 	assert.NoError(t, err)
 
 	_, err = models.ApproveQualityMilestone(
-		configuration.New(),
+		configuration.New().Tenant.EmailDomain,
 		expectedReleases[1].Tag, qmd.Name,
 		"roxbot@redhat.com", defaultQualityMilestoneMetadata,
 	)

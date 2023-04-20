@@ -223,9 +223,6 @@
                 "qualityMilestoneDefinitionName": {
                   "type": "string"
                 },
-                "approver": {
-                  "type": "string"
-                },
                 "metadata": {
                   "type": "array",
                   "items": {
@@ -403,9 +400,6 @@
           "type": "string"
         },
         "commit": {
-          "type": "string"
-        },
-        "creator": {
           "type": "string"
         },
         "metadata": {

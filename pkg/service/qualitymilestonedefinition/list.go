@@ -9,7 +9,7 @@ import (
 	"github.com/stackrox/release-registry/pkg/utils/conversions"
 )
 
-func (*server) List(
+func (*qualityMilestoneDefinitionImpl) List(
 	context.Context, *v1.QualityMilestoneDefinitionServiceListRequest,
 ) (*v1.QualityMilestoneDefinitionServiceListResponse, error) {
 	knownQmds, err := models.ListQualityMilestoneDefinitions()

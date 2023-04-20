@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
-	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/storage"
 	"github.com/stackrox/release-registry/pkg/utils/validate"
 )
@@ -48,11 +47,9 @@ func ValidateExpectedMetadataKeysAreProvided(
 
 // ApproveQualityMilestone approves a given Release for a given QualityMilestone.
 func ApproveQualityMilestone(
-	config *configuration.Config,
-	tag, milestoneName, approver string,
-	metadata []QualityMilestoneMetadata,
+	validApproverDomain, tag, milestoneName, approver string, metadata []QualityMilestoneMetadata,
 ) (*QualityMilestone, error) {
-	if err := validate.IsValidActorEmail(config, approver); err != nil {
+	if err := validate.IsValidActorEmail(validApproverDomain, approver); err != nil {
 		return nil, errors.Wrap(err, "not a valid approver")
 	}
 

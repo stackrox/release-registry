@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/utils/version"
 )
 
@@ -28,10 +27,9 @@ func IsValidCommit(commit string) error {
 }
 
 // IsValidActorEmail checks if the approver has the expected email domain.
-func IsValidActorEmail(config *configuration.Config, actor string) error {
-	expectedEmailDomain := config.Tenant.EmailDomain
-	if !strings.HasSuffix(actor, expectedEmailDomain) {
-		return fmt.Errorf("actor %s has invalid email domain, expected %s", actor, expectedEmailDomain)
+func IsValidActorEmail(validDomain, actor string) error {
+	if !strings.HasSuffix(actor, validDomain) {
+		return fmt.Errorf("actor %s has invalid email domain, expected %s", actor, validDomain)
 	}
 
 	return nil

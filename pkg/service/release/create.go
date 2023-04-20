@@ -2,7 +2,6 @@ package release
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/pkg/errors"
 	v1 "github.com/stackrox/release-registry/gen/go/proto/api/v1"
@@ -10,9 +9,18 @@ import (
 	"github.com/stackrox/release-registry/pkg/utils/conversions"
 )
 
-func (s *server) Create(
+func (s *releaseImpl) Create(
 	ctx context.Context, newRelease *v1.ReleaseServiceCreateRequest,
 ) (*v1.ReleaseServiceCreateResponse, error) {
+	errMessage := "could not create release"
+
+	creator, err := getActorFromContext(ctx)
+	if err != nil {
+		log.Infow(errMessage, "error", err.Error())
+
+		return nil, errors.Wrap(err, err.Error())
+	}
+
 	tag := newRelease.GetTag()
 
 	releaseMetadata := []models.ReleaseMetadata{}
@@ -24,18 +32,17 @@ func (s *server) Create(
 	}
 
 	release, err := models.CreateRelease(
-		s.Config,
+		s.validActorDomain,
 		tag,
 		newRelease.GetCommit(),
-		newRelease.GetCreator(),
+		creator,
 		releaseMetadata,
 	)
 
 	if err != nil {
-		message := "could not create release"
-		log.Infow(message, "tag", tag, "error", err.Error())
+		log.Infow(errMessage, "tag", tag, "error", err.Error())
 
-		return nil, errors.Wrap(err, fmt.Sprintf("%s '%s'", message, tag))
+		return nil, errors.WithMessagef(err, "%s '%s'", errMessage, tag)
 	}
 
 	releaseResponse := conversions.NewCreateReleaseResponseFromRelease(release)

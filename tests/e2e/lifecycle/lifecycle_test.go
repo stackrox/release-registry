@@ -9,11 +9,9 @@ import (
 	v1 "github.com/stackrox/release-registry/gen/go/proto/api/v1"
 	"github.com/stackrox/release-registry/pkg/storage/models"
 	"github.com/stackrox/release-registry/pkg/utils/conversions"
-	"github.com/stackrox/release-registry/tests/e2e"
+	e2eUtils "github.com/stackrox/release-registry/tests/e2e/utils"
 	"github.com/stackrox/release-registry/tests/utils"
 	"github.com/stretchr/testify/assert"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 // Use case: Support on-call engineer as the reviewer of the nightly marks a tag as successful.
@@ -27,32 +25,27 @@ import (
 //nolint:funlen
 func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
 	qualityMilestoneDefinitionName := "Nightly has passed"
-	user := "roxbot@redhat.com"
-
 	expectedRelease := &models.Release{
 		Tag:     "3.74.x-nightly-20230323",
 		Commit:  "78057dba490233f41b4602f2b2e88775ab7fd4c9",
-		Creator: "roxbot@redhat.com",
+		Creator: e2eUtils.DefaultUser,
 		Metadata: []models.ReleaseMetadata{
 			{Key: "Link", Value: "https://github.com/stackrox/stackrox/releases/tag/3.74.x-nightly-20230323"},
 		},
 	}
 
-	basePath, err := e2e.GetFixturesPath()
+	basePath, err := e2eUtils.GetFixturesPath()
 	assert.NoError(t, err)
 
 	dbPath := fmt.Sprintf("%s/%s", basePath, "prepopulated-with-qualitymilestonedefinitions.sqlite")
-	e2e.SetupE2ETest(t, dbPath)
+	e2eUtils.SetupE2ETest(t, dbPath)
 
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 
 	defer cancel()
 
-	conn, err := grpc.DialContext(ctx, "bufnet",
-		grpc.WithContextDialer(e2e.BufDialer),
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	)
+	conn, err := e2eUtils.GetGRPCConnection(ctx, e2eUtils.RemotePort, e2eUtils.DefaultUserJwt())
 	assert.NoError(t, err)
 
 	//nolint:errcheck
@@ -97,11 +90,10 @@ func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
 	qm, err := releaseClient.Approve(ctx, &v1.ReleaseServiceApproveRequest{
 		Tag:                            expectedRelease.Tag,
 		QualityMilestoneDefinitionName: qualityMilestoneDefinitionName,
-		Approver:                       user,
 		Metadata:                       qualityMilestoneMetadata,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, user, qm.GetApprover())
+	assert.Equal(t, e2eUtils.DefaultUser, qm.GetApprover())
 	assert.Equal(t, qualityMilestoneMetadata[0].Key, qm.GetMetadata()[0].GetKey())
 	assert.Equal(t, qualityMilestoneMetadata[0].Value, qm.GetMetadata()[0].GetValue())
 	assert.Equal(t, qualityMilestoneMetadata[1].Key, qm.GetMetadata()[1].GetKey())
@@ -139,23 +131,19 @@ func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
 func TestFindingLatestRelease(t *testing.T) {
 	qualityMilestoneDefinitionName := "Nightly has passed"
 	prefix := "3.74"
-	user := "lastname@redhat.com"
 
-	basePath, err := e2e.GetFixturesPath()
+	basePath, err := e2eUtils.GetFixturesPath()
 	assert.NoError(t, err)
 
 	dbPath := fmt.Sprintf("%s/%s", basePath, "prepopulated-with-approved-releases.sqlite")
-	e2e.SetupE2ETest(t, dbPath)
+	e2eUtils.SetupE2ETest(t, dbPath)
 
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 
 	defer cancel()
 
-	conn, err := grpc.DialContext(ctx, "bufnet",
-		grpc.WithContextDialer(e2e.BufDialer),
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	)
+	conn, err := e2eUtils.GetGRPCConnection(ctx, e2eUtils.RemotePort, e2eUtils.DefaultUserJwt())
 	assert.NoError(t, err)
 
 	//nolint:errcheck
@@ -191,13 +179,12 @@ func TestFindingLatestRelease(t *testing.T) {
 	qm, err := releaseClient.Approve(ctx, &v1.ReleaseServiceApproveRequest{
 		Tag:                            latestResponse.GetTag(),
 		QualityMilestoneDefinitionName: "Canary successful",
-		Approver:                       user,
 		Metadata: []*v1.QualityMilestoneMetadata{
 			{Key: "DeploymentURL", Value: "this is a url"},
 		},
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, user, qm.GetApprover())
+	assert.Equal(t, e2eUtils.DefaultUser, qm.GetApprover())
 	assert.Equal(t, "Canary successful", qm.GetQualityMilestoneDefinitionName())
 
 	// 4. Get Release including approved QualityMilestones

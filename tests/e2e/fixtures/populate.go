@@ -8,7 +8,7 @@ import (
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/storage"
 	"github.com/stackrox/release-registry/pkg/storage/models"
-	"github.com/stackrox/release-registry/tests/e2e"
+	"github.com/stackrox/release-registry/tests/e2e/utils"
 )
 
 const (
@@ -69,7 +69,7 @@ func populateReleases(databasePath string) error {
 	config.Tenant.EmailDomain = "redhat.com"
 
 	_, err := models.CreateRelease(
-		config,
+		config.Tenant.EmailDomain,
 		"3.73.0",
 		"5c321f6a5b62920b02d2f68592fc14b3ceac656e",
 		"roxbot@redhat.com",
@@ -82,7 +82,7 @@ func populateReleases(databasePath string) error {
 	}
 
 	_, err = models.ApproveQualityMilestone(
-		config,
+		config.Tenant.EmailDomain,
 		"3.73.0",
 		"Nightly has passed",
 		"lastname@redhat.com",
@@ -96,7 +96,7 @@ func populateReleases(databasePath string) error {
 	}
 
 	_, err = models.CreateRelease(
-		config,
+		config.Tenant.EmailDomain,
 		"3.74.x-nightly-20230323",
 		"78057dba490233f41b4602f2b2e88775ab7fd4c9",
 		"roxbot@redhat.com",
@@ -109,7 +109,7 @@ func populateReleases(databasePath string) error {
 	}
 
 	_, err = models.ApproveQualityMilestone(
-		config,
+		config.Tenant.EmailDomain,
 		"3.74.x-nightly-20230323",
 		"Nightly has passed",
 		"lastname@redhat.com",
@@ -126,7 +126,7 @@ func populateReleases(databasePath string) error {
 }
 
 func main() {
-	basePath, err := e2e.GetFixturesPath()
+	basePath, err := utils.GetFixturesPath()
 	if err != nil {
 		log.Fatal(err)
 	}

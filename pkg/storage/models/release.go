@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
-	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/logging"
 	"github.com/stackrox/release-registry/pkg/storage"
 	"github.com/stackrox/release-registry/pkg/utils/validate"
@@ -20,8 +19,7 @@ const (
 
 // CreateRelease creates a new Release based on based information.
 func CreateRelease(
-	config *configuration.Config,
-	tag, commit, creator string, metadata []ReleaseMetadata,
+	validCreatorDomain, tag, commit, creator string, metadata []ReleaseMetadata,
 ) (*Release, error) {
 	if err := validate.IsValidVersion(tag); err != nil {
 		return nil, errors.Wrap(err, errorCannotCreateRelease)
@@ -31,7 +29,7 @@ func CreateRelease(
 		return nil, errors.Wrap(err, errorCannotCreateRelease)
 	}
 
-	if err := validate.IsValidActorEmail(config, creator); err != nil {
+	if err := validate.IsValidActorEmail(validCreatorDomain, creator); err != nil {
 		return nil, errors.Wrap(err, errorCannotCreateRelease)
 	}
 

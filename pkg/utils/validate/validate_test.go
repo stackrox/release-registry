@@ -13,11 +13,11 @@ func TestValidateActorHasValidEmail(t *testing.T) {
 	config.Tenant.EmailDomain = "@redhat.com"
 
 	// Invalid email
-	err := validate.IsValidActorEmail(config, "roxbot@stackrox.com")
+	err := validate.IsValidActorEmail(config.Tenant.EmailDomain, "roxbot@stackrox.com")
 	assert.Error(t, err)
 	assert.ErrorContains(t, err, "actor roxbot@stackrox.com has invalid email domain, expected @redhat.com")
 
 	// Valid email
-	err = validate.IsValidActorEmail(config, "roxbot@redhat.com")
+	err = validate.IsValidActorEmail(config.Tenant.EmailDomain, "roxbot@redhat.com")
 	assert.NoError(t, err)
 }

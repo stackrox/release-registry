@@ -9,7 +9,14 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "cmd/server/main.go"
+            "program": "cmd/server/main.go",
+            "args": ["--config-dir", "../../example"],
+            "env": {
+                "RELREG_SERVER_CERT": "../../example/server.crt",
+                "RELREG_SERVER_KEY": "../../example/server.key",
+                "RELREG_TENANT_OIDCCONFIGFILE": "../../example/oidc.yaml",
+                "RELREG_DATABASE_PATH": "../../data/database.sqlite"
+            }
         }
     ]
 }
