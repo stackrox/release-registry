@@ -7,6 +7,14 @@ deployment: local
 # reservedAddressName is the name of the reserved IP address on GCP
 reservedAddressName: release-registry-local
 
+database:
+  size: 1Gi
+  images:
+    cluster: registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-14.7-0
+    backup: registry.developers.crunchydata.com/crunchydata/crunchy-pgbackrest:ubi8-2.41-4
+  version: 14
+
+
 # pullSecret is a dockerconfig.json as string with access to the image
 pullSecret: ''
 
