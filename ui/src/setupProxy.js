@@ -3,7 +3,7 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const defaultOptions = {
-  target: process.env.RELREG_API_ENDPOINT || 'https://dev.infra.rox.systems',
+  target: process.env.RELREG_API_ENDPOINT || 'https://release-registry.dev.rox.systems',
   changeOrigin: true,
   secure: false,
 };
