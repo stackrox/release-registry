@@ -1,4 +1,10 @@
-# Deployment
+# Deploying Release Registry
+
+## Prerequisites
+
+- GKE cluster
+- kubectl and Helm setup to point to GKE cluster
+- Idendity provider with OIDC support
 
 ## Install operator
 

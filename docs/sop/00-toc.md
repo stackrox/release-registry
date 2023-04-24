@@ -1,3 +1,3 @@
 # Table of contents
 
-* [Deployment](01-deployment.md)
+* [Deploying Release Registry](01-deployment.md)
