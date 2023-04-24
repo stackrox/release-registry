@@ -79,6 +79,9 @@ spec:
           - name: config
             mountPath: "/config"
             readOnly: true
+          - name: certs
+            mountPath: "/certs"
+            readOnly: true
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -93,5 +96,8 @@ spec:
       {{- end }}
       volumes:
       - name: config
-        configMap:
-          name: {{ include "release-registry.fullname" . }}-configuration
+        secret:
+          secretName: {{ include "release-registry.fullname" . }}-configuration
+      - name: certs
+        secret:
+          secretName: {{ include "release-registry.fullname" . }}-certs
