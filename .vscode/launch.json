@@ -14,6 +14,7 @@
             "env": {
                 "RELREG_SERVER_CERT": "../../example/server.crt",
                 "RELREG_SERVER_KEY": "../../example/server.key",
+                "RELREG_SERVER_STATICDIR": "../../ui/build",
                 "RELREG_TENANT_OIDCCONFIGFILE": "../../example/oidc.yaml",
                 "RELREG_DATABASE_PATH": "../../data/database.sqlite"
             }

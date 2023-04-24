@@ -3,9 +3,11 @@ package configuration
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 	"sync"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
@@ -35,9 +37,10 @@ type DatabaseConfig struct {
 
 // ServerConfig holds the configuration for the server.
 type ServerConfig struct {
-	Cert string `mapstructure:"cert"`
-	Key  string `mapstructure:"key"`
-	Port int    `mapstructure:"port"`
+	Cert      string `mapstructure:"cert"`
+	Key       string `mapstructure:"key"`
+	StaticDir string `mapstructure:"staticDir"`
+	Port      int    `mapstructure:"port"`
 }
 
 // TenantConfig holds configuration specific to the tenant.
@@ -59,9 +62,37 @@ func setupConfigLocation(additionalConfigDirs ...string) {
 }
 
 func enableEnvVarOverride() {
-	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.SetEnvPrefix("RELREG")
+}
+
+func setDefaults(input interface{}, parts ...string) error {
+	ifv := reflect.ValueOf(input)
+	ift := reflect.TypeOf(input)
+
+	for i := 0; i < ift.NumField(); i++ {
+		v := ifv.Field(i)
+		t := ift.Field(i)
+
+		tv, ok := t.Tag.Lookup("mapstructure")
+		if !ok {
+			continue
+		}
+
+		//nolint:exhaustive
+		switch v.Kind() {
+		case reflect.Struct:
+			if err := setDefaults(v.Interface(), append(parts, tv)...); err != nil {
+				return err
+			}
+		default:
+			if err := viper.BindEnv(strings.Join(append(parts, tv), ".")); err != nil {
+				return errors.Wrapf(err, "could not bind env var %v, %s", parts, tv)
+			}
+		}
+	}
+
+	return nil
 }
 
 // New is used to generate a configuration instance to pass around the app.
@@ -69,8 +100,12 @@ func New(additionalConfigDirs ...string) *Config {
 	once.Do(func() {
 		setupConfigLocation(additionalConfigDirs...)
 		enableEnvVarOverride()
+		err := setDefaults(config)
+		if err != nil {
+			panic(fmt.Errorf("cannot set defaults: %w", err))
+		}
 
-		err := viper.ReadInConfig()
+		err = viper.ReadInConfig()
 		if err != nil {
 			panic(fmt.Errorf("cannot read config: %w", err))
 		}

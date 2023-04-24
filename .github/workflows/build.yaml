@@ -90,7 +90,10 @@ jobs:
           cache: true
 
       - name: Build server image
+        env:
+          NPM_TOKEN: ${{ secrets.ROBOT_ROX_GITHUB_TOKEN }}
         run: |
+          echo "//npm.pkg.github.com/:_authToken=\"$NPM_TOKEN\"" > ~/.npmrc
           make server-image
 
       - name: Login to quay.io/rhacs-eng

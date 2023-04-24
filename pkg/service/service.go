@@ -77,6 +77,7 @@ func (s *Server) Run() error {
 		return err
 	}
 
+	mux.Handle("/", serveApplicationResources(s.Config.Server.StaticDir, s.oidc))
 	mux.Handle("/healthz/", healthz.NewHandler())
 	mux.Handle("/docs/", newDocsHandler())
 	mux.Handle("/v1/", gwMux)
@@ -215,4 +216,65 @@ func CreateAPIServices(config *configuration.Config, oidc auth.OidcAuth) ([]midd
 			return authService.NewUserService(oidc.GenerateServiceAccountToken)
 		},
 	)
+}
+
+// serveApplicationResources handles requests for SPA endpoints as well as
+// regular resources.
+func serveApplicationResources(dir string, oidc auth.OidcAuth) http.Handler {
+	type rule struct {
+		path      string
+		spa       bool
+		anonymous bool
+		prefix    bool
+	}
+
+	// List of path rules, roughly ordered from most-likely matched to
+	// least-likely matched.
+	rules := []rule{
+		{path: "/static/", prefix: true},
+		{path: "/manifest.json"},
+		{path: "/favicon.ico", anonymous: true},
+		{path: "/logout-page.html", anonymous: true},
+		{path: "/", spa: true, prefix: true},
+	}
+
+	fs := http.FileServer(http.Dir(dir))
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requestPath := r.URL.Path
+
+		for _, rule := range rules {
+			if rule.prefix {
+				// If this rule is supposed to match a path prefix, and that
+				// path prefix isn't matched, move onto the next rule.
+				if !strings.HasPrefix(requestPath, rule.path) {
+					continue
+				}
+			} else {
+				// If this rule is supposed to match a path exactly, and that
+				// path isn't exactly matched, move onto the next rule.
+				if requestPath != rule.path {
+					continue
+				}
+			}
+
+			// If the path is a path in the SPA, set the path to be the root,
+			// so that the index.html is served.
+			if rule.spa {
+				r.URL.Path = "/"
+			}
+
+			if rule.anonymous {
+				// Serve this path anonymously (without any authentication).
+				fs.ServeHTTP(w, r)
+			} else {
+				// Serve this path with authentication.
+				oidc.Authorized(fs).ServeHTTP(w, r)
+			}
+
+			return
+		}
+		// No rules matched, so serve this path with authentication by default.
+		oidc.Authorized(fs).ServeHTTP(w, r)
+	})
 }
