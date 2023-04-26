@@ -7,6 +7,10 @@ all:
 TAG:=$(shell git describe --tags)
 LOCAL_VALUES_FILE=deploy/chart/release-registry/configuration/values-${ENVIRONMENT}.yaml
 
+ifeq '$(SECRET_VERSION)' ''
+SECRET_VERSION := latest
+endif
+
 #################
 # CI & Building #
 #################
@@ -44,7 +48,7 @@ server-image-push: ## Pushes server image to registry
 ###################
 .PHONY: server-helm-template
 server-helm-template: pre-check ## Renders the chart with Helm for debugging
-	@gcloud secrets versions access latest \
+	@gcloud secrets versions access "$(SECRET_VERSION)" \
 		--secret "release-registry-${ENVIRONMENT}" \
 		--project stackrox-infra \
 	| \
@@ -58,7 +62,7 @@ server-helm-template: pre-check ## Renders the chart with Helm for debugging
 
 .PHONY: server-helm-deploy
 server-helm-deploy: pre-check ## Deploys the server with Helm
-	@gcloud secrets versions access latest \
+	@gcloud secrets versions access "$(SECRET_VERSION)" \
 		--secret "release-registry-${ENVIRONMENT}" \
 		--project stackrox-infra \
 	| \
@@ -84,7 +88,7 @@ server-helm-upload-local-values: pre-check ## Upload secrets from local configur
 .PHONY: server-helm-download-secrets
 server-helm-download-local-values: pre-check ## Downloads secrets into local configuration
 	@mkdir -p "$(dir ${LOCAL_VALUES_FILE})"
-	@gcloud secrets versions access latest \
+	@gcloud secrets versions access "${SECRET_VERSION}" \
 		--secret "release-registry-${ENVIRONMENT}" \
 		--project stackrox-infra \
 	> "${LOCAL_VALUES_FILE}"
