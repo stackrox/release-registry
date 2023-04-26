@@ -37,7 +37,7 @@ require (
 )
 
 require (
-	github.com/Masterminds/semver/v3 v3.2.0
+	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
