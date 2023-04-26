@@ -60,3 +60,27 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create secret to access docker registry
+*/}}
+{{- define "release-registry.imagePullSecret" }}
+{{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.imageRegistry.name (printf "%s:%s" .Values.imageRegistry.username .Values.imageRegistry.password | b64enc) | b64enc }}
+{{- end }}
+
+{{/*
+Create configuration secret
+*/}}
+{{- define "release-registry.configuration" }}
+database:
+  type: postgres
+server:
+  port: {{ .Values.service.port }}
+  cert: /certs/tls.crt
+  key: /certs/tls.key
+  staticDir: ui/build
+tenant:
+  emailDomain: {{ .Values.server.emailDomain }}
+  password: {{ .Values.server.adminPassword }}
+  oidcConfigFile: /config/oidc.yaml
+{{- end }}

@@ -2,13 +2,18 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# deployment can be local, development or production
-deployment: local
-# reservedAddressName is the name of the reserved IP address on GCP
-reservedAddressName: release-registry-local
+server:
+  # Release creators/approvers must have this domain in their
+  # service account to execute these actions.
+  emailDomain: redhat.com
 
-# pullSecret is a dockerconfig.json as string with access to the image
-pullSecret: ''
+# Configuration for Postgres database, managed by CrunchyData's postgres-operator.
+database:
+  size: 1Gi
+  images:
+    cluster: registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-14.7-0
+    backup: registry.developers.crunchydata.com/crunchydata/crunchy-pgbackrest:ubi8-2.41-4
+  version: 14
 
 replicaCount: 1
 

@@ -49,9 +49,38 @@ spec:
               scheme: HTTPS
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          env:
+          - name: RELREG_DATABASE_HOST
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "release-registry.fullname" . }}-pguser-{{ include "release-registry.fullname" . }}
+                key: host
+          - name: RELREG_DATABASE_PORT
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "release-registry.fullname" . }}-pguser-{{ include "release-registry.fullname" . }}
+                key: port
+          - name: RELREG_DATABASE_NAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "release-registry.fullname" . }}-pguser-{{ include "release-registry.fullname" . }}
+                key: dbname
+          - name: RELREG_DATABASE_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "release-registry.fullname" . }}-pguser-{{ include "release-registry.fullname" . }}
+                key: user
+          - name: RELREG_DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "release-registry.fullname" . }}-pguser-{{ include "release-registry.fullname" . }}
+                key: password
           volumeMounts:
           - name: config
             mountPath: "/config"
+            readOnly: true
+          - name: certs
+            mountPath: "/certs"
             readOnly: true
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -67,5 +96,8 @@ spec:
       {{- end }}
       volumes:
       - name: config
-        configMap:
-          name: {{ include "release-registry.fullname" . }}-configuration
+        secret:
+          secretName: {{ include "release-registry.fullname" . }}-configuration
+      - name: certs
+        secret:
+          secretName: {{ include "release-registry.fullname" . }}-certs

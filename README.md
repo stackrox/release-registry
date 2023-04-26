@@ -8,6 +8,7 @@ A mechanism to mark, identify and search release artifacts using Quality Milesto
 - [Use Cases](./docs/use-cases.md)
 - [Data Model](./docs/data-model.md)
 - [Architecture](./docs/architecture.md)
+- [Standard Operating Procedures](./docs/sop/00-toc.md)
 
 ## Bootstrapping
 

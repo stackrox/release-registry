@@ -1,0 +1,28 @@
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: {{ include "release-registry.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  image: {{ .Values.database.images.cluster }}
+  postgresVersion: {{ .Values.database.version }}
+  instances:
+    - name: {{ include "release-registry.fullname" . }}
+      dataVolumeClaimSpec:
+        accessModes:
+        - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: {{ .Values.database.size }}
+  backups:
+    pgbackrest:
+      image: {{ .Values.database.images.backup }}
+      repos:
+      - name: repo1
+        volume:
+          volumeClaimSpec:
+            accessModes:
+            - "ReadWriteOnce"
+            resources:
+              requests:
+                storage: {{ .Values.database.size }}

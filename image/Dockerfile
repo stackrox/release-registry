@@ -13,7 +13,7 @@ COPY Makefile Makefile
 RUN go build -o build/release-registry -a -ldflags '-linkmode external -extldflags "-static"' cmd/server/main.go
 
 # UI
-FROM node:16.20.0 as ui
+FROM node:18.15.0 as ui
 
 COPY ui ui
 

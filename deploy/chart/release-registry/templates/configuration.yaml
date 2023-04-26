@@ -1,32 +1,23 @@
+---
 apiVersion: v1
-kind: ConfigMap
-metadata:
+kind: Secret
 metadata:
   name: {{ include "release-registry.fullname" . }}-configuration
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "release-registry.labels" . | nindent 4 }}
 data:
-  config.yaml: |
-    database:
-      type: postgres
-      port: {{ .Values.server.postgres.port }}
-      user: {{ .Values.server.postgres.user }}
-      host: {{ .Values.server.postgres.host }}
-      name: {{ .Values.server.postgres.name }}
-      password: {{ .Values.server.postgres.password | quote }}
-    server:
-      port: {{ .Values.service.port }}
-      cert: /config/server.crt
-      key: /config/server.key
-      staticDir: ui/build
-    tenant:
-      emailDomain: {{ .Values.server.emailDomain }}
-      password: {{ .Values.server.adminPassword }}
-      oidcConfigFile: /config/oidc.yaml
-
-  server.crt: {{- .Values.server.cert | toYaml | indent 2 }}
-  server.key: {{- .Values.server.key | toYaml | indent 2 }}
-
-  oidc.yaml: |
-{{ toYaml .Values.oidc | indent 4 }}
+  config.yaml: {{ include "release-registry.configuration" . | b64enc }}
+  oidc.yaml: {{ .Values.oidc | toYaml | b64enc }}
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: {{ include "release-registry.fullname" . }}-certs
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "release-registry.labels" . | nindent 4 }}
+data:
+  tls.crt: {{ .Values.server.cert | b64enc }}
+  tls.key: {{ .Values.server.key | b64enc }}
