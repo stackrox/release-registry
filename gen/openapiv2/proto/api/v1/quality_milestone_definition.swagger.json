@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "proto/api/v1/quality_milestone_definitions.proto",
+    "title": "proto/api/v1/quality_milestone_definition.proto",
     "version": "version not set"
   },
   "tags": [
@@ -18,7 +18,7 @@
   "paths": {
     "/v1/qualitymilestonedefinition": {
       "get": {
-        "summary": "List returns all known QualityMilestoneDefinitions.",
+        "summary": "List returns all known quality milestone definitions.",
         "operationId": "QualityMilestoneDefinitionService_List",
         "responses": {
           "200": {
@@ -39,7 +39,7 @@
         ]
       },
       "post": {
-        "summary": "Create creates a new QualityMilestoneDefinition.",
+        "summary": "Create creates a new quality milestone definition.",
         "operationId": "QualityMilestoneDefinitionService_Create",
         "responses": {
           "200": {
@@ -72,7 +72,7 @@
     },
     "/v1/qualitymilestonedefinition/{name}": {
       "get": {
-        "summary": "Get returns a QualityMilestoneDefinition for a given name.",
+        "summary": "Get returns a quality milestone definitions for a given name.",
         "operationId": "QualityMilestoneDefinitionService_Get",
         "responses": {
           "200": {
@@ -91,6 +91,7 @@
         "parameters": [
           {
             "name": "name",
+            "description": "Unique name.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -135,65 +136,80 @@
       "properties": {
         "id": {
           "type": "string",
-          "format": "int64"
+          "format": "int64",
+          "description": "Unique Id of the database object."
         },
         "createdAt": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "description": "Timestamp of creation."
         },
         "updatedAt": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "description": "Timestamp of last update."
         }
-      }
+      },
+      "description": "Represents meta information that can be associated with releases, quality milestones and their definitions."
     },
     "v1QualityMilestoneDefinitionServiceCreateRequest": {
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Unique name."
         },
         "expectedMetadataKeys": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "description": "List of metadata keys that quality milestones of this definition must provide."
         }
-      }
+      },
+      "description": "Represents a create request for a quality milestone definition."
     },
     "v1QualityMilestoneDefinitionServiceCreateResponse": {
       "type": "object",
       "properties": {
         "meta": {
-          "$ref": "#/definitions/v1Meta"
+          "$ref": "#/definitions/v1Meta",
+          "description": "Meta information like ID and timestamps."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Unique name."
         },
         "expectedMetadataKeys": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "description": "List of metadata keys that quality milestones of this definition must provide."
         }
-      }
+      },
+      "title": "Represents the response to the creation request for a quality milestone definition"
     },
     "v1QualityMilestoneDefinitionServiceGetResponse": {
       "type": "object",
       "properties": {
         "meta": {
-          "$ref": "#/definitions/v1Meta"
+          "$ref": "#/definitions/v1Meta",
+          "description": "Meta information like ID and timestamps."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Unique name."
         },
         "expectedMetadataKeys": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "description": "List of metadata keys that quality milestones of this definition must provide."
         }
-      }
+      },
+      "description": "Represents the response to a get request for a specific quality milestone definition."
     },
     "v1QualityMilestoneDefinitionServiceListResponse": {
       "type": "object",
@@ -202,9 +218,11 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1QualityMilestoneDefinitionServiceGetResponse"
-          }
+          },
+          "description": "List of quality milestone definitions."
         }
-      }
+      },
+      "description": "Represents the response to list all quality milestone definitions."
     }
   }
 }

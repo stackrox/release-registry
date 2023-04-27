@@ -6,6 +6,7 @@ server:
   cert: example/server.crt
   key: example/server.key
   staticDir: ui/build
+  docsDir: gen/openapiv2
 tenant:
   emailDomain: redhat.com
   password: SecretPassW0rd!

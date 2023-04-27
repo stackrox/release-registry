@@ -1,3 +1,6 @@
+/**
+ * Messages related to quality milestones.
+ */
 syntax = "proto3";
 package proto.api.v1;
 
@@ -5,14 +8,25 @@ import "proto/shared/v1/meta.proto";
 
 option go_package = "github.com/stackrox/release-registry/gen/go/proto/api/v1";
 
+// Represents metadata for quality milestones.
 message QualityMilestoneMetadata {
+  // Unique key to identify the metadata.
   string key = 1;
+  // Metadata value.
   string value = 2;
 }
 
+// Represents a quality milestone.
 message QualityMilestone {
+  // Meta information like ID and timestamps.
   shared.v1.Meta meta = 1;
+
+  // Name of the quality milestone definition.
   string name = 2;
+
+  // Email address of actor who approved the quality milestone.
   string approver = 3;
+
+  // List of metadata associated with the quality milestone.
   repeated QualityMilestoneMetadata metadata = 4;
 }

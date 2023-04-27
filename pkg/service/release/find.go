@@ -19,24 +19,24 @@ func (s *releaseImpl) FindLatest(
 	)
 
 	switch {
-	case findRelease.Prefix == nil && findRelease.QualityMilestoneName == nil:
+	case findRelease.Prefix == "" && findRelease.QualityMilestoneName == "":
 		release, err = models.FindLatestRelease(
 			findRelease.GetPreload(),
 			findRelease.GetIncludeRejected(),
 		)
-	case findRelease.Prefix == nil && findRelease.QualityMilestoneName != nil:
+	case findRelease.Prefix == "" && findRelease.QualityMilestoneName != "":
 		release, err = models.FindLatestReleaseAtQualityMilestone(
 			findRelease.GetQualityMilestoneName(),
 			findRelease.GetPreload(),
 			findRelease.GetIncludeRejected(),
 		)
-	case findRelease.Prefix != nil && findRelease.QualityMilestoneName == nil:
+	case findRelease.Prefix != "" && findRelease.QualityMilestoneName == "":
 		release, err = models.FindLatestReleaseWithPrefix(
 			findRelease.GetPrefix(),
 			findRelease.GetPreload(),
 			findRelease.GetIncludeRejected(),
 		)
-	case findRelease.Prefix != nil && findRelease.QualityMilestoneName != nil:
+	case findRelease.Prefix != "" && findRelease.QualityMilestoneName != "":
 		release, err = models.FindLatestRelaseWithPrefixAtQualityMilestone(
 			findRelease.GetPrefix(),
 			findRelease.GetQualityMilestoneName(),

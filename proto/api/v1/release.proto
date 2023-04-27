@@ -1,3 +1,6 @@
+/**
+ * Messages and endpoints related to quality milestone definitions.
+ */
 syntax = "proto3";
 package proto.api.v1;
 
@@ -7,99 +10,204 @@ import "proto/shared/v1/meta.proto";
 
 option go_package = "github.com/stackrox/release-registry/gen/go/proto/api/v1";
 
+// Represents metadata for releases.
 message ReleaseMetadata {
+  // Unique key to identify the metadata.
   string key = 1;
+
+  // Metadata value.
   string value = 2;
 }
 
+// Represents a create request for a release.
 message ReleaseServiceCreateRequest {
+  // Unique tag to identify the release.
   string tag = 1;
+
+  // Commit hash associated with the release tag.
   string commit = 2;
+
+  // List of metadata associated with the release.
   repeated ReleaseMetadata metadata = 3;
 }
 
+// Represents the response to the creation request for a release.
 message ReleaseServiceCreateResponse {
+  // Meta information like ID and timestamps.
   shared.v1.Meta meta = 1;
+
+  // Unique tag.
   string tag = 2;
+
+  // Commit hash associated with the release tag.
   string commit = 3;
+
+  // Email address of actor who created the release.
   string creator = 4;
+
+  // List of metadata associated with the release.
   repeated ReleaseMetadata metadata = 5;
 }
 
-message ReleaseServiceListRequest {
-  optional string prefix = 1;
-  optional string quality_milestone_name = 2;
-  bool preload = 3;
-  bool include_rejected = 4;
-}
-
-message ReleaseServiceListResponse {
-  repeated ReleaseServiceGetResponse releases = 1;
-}
-
+// Represents a request to get a specific release.
 message ReleaseServiceGetRequest {
+  // Unique tag.
   string tag = 1;
+
+  // Whether to include release metadata and associated quality milestones in the response.
   bool preload = 2;
+
+  // Whether to include rejected releases in the response.
   bool include_rejected = 3;
 }
 
+// Represents the response to a get request for a specific release.
 message ReleaseServiceGetResponse {
+  // Meta information like ID and timestamps.
   shared.v1.Meta meta = 1;
+
+  // Unique tag.
   string tag = 2;
+
+  // Commit hash associated with the release tag.
   string commit = 3;
+
+  // Email address of actor who created the release.
   string creator = 4;
+
+  // List of metadata associated with the release.
   repeated ReleaseMetadata metadata = 5;
+
+  // List of quality milestones that the release has passed.
   repeated api.v1.QualityMilestone quality_milestones = 6;
+
+  // Whether the release is rejected.
   bool rejected = 7;
 }
 
-message ReleaseServiceApproveRequest {
-  string tag = 1;
-  string quality_milestone_definition_name = 2;
-  repeated api.v1.QualityMilestoneMetadata metadata = 3;
-}
+// Represents a request to list all releases matching the search criteria.
+message ReleaseServiceListRequest {
+  // Prefix of the release tag.
+  string prefix = 1;
 
-message ReleaseServiceApproveResponse {
-  shared.v1.Meta meta = 1;
-  string tag = 2;
-  string quality_milestone_definition_name = 3;
-  string approver = 4;
-  repeated api.v1.QualityMilestoneMetadata metadata = 5;
-}
+  // Name of a quality milestone that a release must have passed.
+  string quality_milestone_name = 2;
 
-message ReleaseServiceRejectRequest {
-  string tag = 1;
-  bool preload = 2;
-}
-
-message ReleaseServiceRejectResponse {
-  shared.v1.Meta meta = 1;
-  string tag = 2;
-  string commit = 3;
-  string creator = 4;
-  repeated ReleaseMetadata metadata = 5;
-  bool rejected = 6;
-}
-
-message ReleaseServiceFindLatestRequest {
-  optional string prefix = 1;
-  optional string quality_milestone_name = 2;
+  // Whether to include release metadata and associated quality milestones in the response.
   bool preload = 3;
+
+  // Whether to include rejected releases in the response.
   bool include_rejected = 4;
 }
 
-message ReleaseServiceFindLatestResponse {
+// Represents the response to list all releases matching the requested search criteria.
+message ReleaseServiceListResponse {
+  // List of releases.
+  repeated ReleaseServiceGetResponse releases = 1;
+}
+
+// Represents a request to approve a release for a quality milestone.
+message ReleaseServiceApproveRequest {
+  // Unique tag.
+  string tag = 1;
+
+  // Name of a quality milestone definition that the release shall be marked as passed for.
+  string quality_milestone_definition_name = 2;
+
+  // List of metadata associated with the quality milestone.
+  repeated api.v1.QualityMilestoneMetadata metadata = 3;
+}
+
+// Represents the response to the request to approve a release for a quality milestone.
+message ReleaseServiceApproveResponse {
+  // Meta information like ID and timestamps.
   shared.v1.Meta meta = 1;
+
+  // Unique tag.
   string tag = 2;
+
+  // Name of a quality milestone definition that the release has been marked as passed for.
+  string quality_milestone_definition_name = 3;
+
+  // Email address of actor who approved the quality milestone.
+  string approver = 4;
+
+  // List of metadata associated with the quality milestone.
+  repeated api.v1.QualityMilestoneMetadata metadata = 5;
+}
+
+// Represents a request to reject a release and hide it from results.
+message ReleaseServiceRejectRequest {
+  // Unique tag.
+  string tag = 1;
+
+  // Whether to include release metadata and associated quality milestones in the response.
+  bool preload = 2;
+}
+
+// Represents the response to the request to reject a release.
+message ReleaseServiceRejectResponse {
+  // Meta information like ID and timestamps.
+  shared.v1.Meta meta = 1;
+
+  // Unique tag.
+  string tag = 2;
+
+  // Commit hash associated with the release tag.
   string commit = 3;
+
+  // Email address of actor who created the release.
   string creator = 4;
+
+  // List of metadata associated with the release.
   repeated ReleaseMetadata metadata = 5;
+
+  // Rejection status of the release.
+  bool rejected = 6;
+}
+
+// Represents a request to find the latest release for given search criteria.
+message ReleaseServiceFindLatestRequest {
+  // Prefix of the release tag.
+  string prefix = 1;
+
+  // Name of a quality milestone that a release must have passed.
+  string quality_milestone_name = 2;
+
+  // Whether to include release metadata and associated quality milestones in the response.
+  bool preload = 3;
+
+  // Whether to include rejected releases in the response.
+  bool include_rejected = 4;
+}
+
+// Represents the response with the latest release for given search criteria.
+message ReleaseServiceFindLatestResponse {
+  // Meta information like ID and timestamps.
+  shared.v1.Meta meta = 1;
+
+  // Unique tag.
+  string tag = 2;
+
+  // Commit hash associated with the release tag.
+  string commit = 3;
+
+  // Email address of actor who created the release.
+  string creator = 4;
+
+  // List of metadata associated with the release.
+  repeated ReleaseMetadata metadata = 5;
+
+  // List of quality milestones that the release has passed.
   repeated api.v1.QualityMilestone quality_milestones = 6;
+
+  // Whether the release is rejected.
   bool rejected = 7;
 }
 
+// Release service creates, lists, gets, approves and rejects releases.
 service ReleaseService {
-  // Create creates a new Release.
+  // Create creates a new release.
   rpc Create(ReleaseServiceCreateRequest) returns (ReleaseServiceCreateResponse) {
     option (google.api.http) = {
       post: "/v1/release",
@@ -107,17 +215,17 @@ service ReleaseService {
     };
   }
 
-  // List returns all tracked Releases.
+  // List returns all tracked releases.
   rpc List(ReleaseServiceListRequest) returns (ReleaseServiceListResponse) {
     option (google.api.http) = {get: "/v1/release"};
   }
 
-  // Get returns a Release identified by its tag.
+  // Get returns a release identified by its tag.
   rpc Get(ReleaseServiceGetRequest) returns (ReleaseServiceGetResponse) {
     option (google.api.http) = {get: "/v1/release/{tag}"};
   }
 
-  // Approve approves a Release identified by its tag for a QualityMilestone.
+  // Approve approves a release identified by its tag for a quality milestone.
   rpc Approve(ReleaseServiceApproveRequest) returns (ReleaseServiceApproveResponse) {
     option (google.api.http) = {
       post: "/v1/release/{tag}/approve",
@@ -125,7 +233,7 @@ service ReleaseService {
     };
   }
 
-  // Reject marks a Release identified by its tag as rejected.
+  // Reject marks a release identified by its tag as rejected.
   rpc Reject(ReleaseServiceRejectRequest) returns (ReleaseServiceRejectResponse) {
     option (google.api.http) = {
       post: "/v1/release/{tag}/reject",

@@ -37,24 +37,28 @@
         "parameters": [
           {
             "name": "prefix",
+            "description": "Prefix of the release tag.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "qualityMilestoneName",
+            "description": "Name of a quality milestone that a release must have passed.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "preload",
+            "description": "Whether to include release metadata and associated quality milestones in the response.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "includeRejected",
+            "description": "Whether to include rejected releases in the response.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -67,7 +71,7 @@
     },
     "/v1/release": {
       "get": {
-        "summary": "List returns all tracked Releases.",
+        "summary": "List returns all tracked releases.",
         "operationId": "ReleaseService_List",
         "responses": {
           "200": {
@@ -86,24 +90,28 @@
         "parameters": [
           {
             "name": "prefix",
+            "description": "Prefix of the release tag.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "qualityMilestoneName",
+            "description": "Name of a quality milestone that a release must have passed.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "preload",
+            "description": "Whether to include release metadata and associated quality milestones in the response.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "includeRejected",
+            "description": "Whether to include rejected releases in the response.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -114,7 +122,7 @@
         ]
       },
       "post": {
-        "summary": "Create creates a new Release.",
+        "summary": "Create creates a new release.",
         "operationId": "ReleaseService_Create",
         "responses": {
           "200": {
@@ -147,7 +155,7 @@
     },
     "/v1/release/{tag}": {
       "get": {
-        "summary": "Get returns a Release identified by its tag.",
+        "summary": "Get returns a release identified by its tag.",
         "operationId": "ReleaseService_Get",
         "responses": {
           "200": {
@@ -166,18 +174,21 @@
         "parameters": [
           {
             "name": "tag",
+            "description": "Unique tag.",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
             "name": "preload",
+            "description": "Whether to include release metadata and associated quality milestones in the response.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "includeRejected",
+            "description": "Whether to include rejected releases in the response.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -190,7 +201,7 @@
     },
     "/v1/release/{tag}/approve": {
       "post": {
-        "summary": "Approve approves a Release identified by its tag for a QualityMilestone.",
+        "summary": "Approve approves a release identified by its tag for a quality milestone.",
         "operationId": "ReleaseService_Approve",
         "responses": {
           "200": {
@@ -209,6 +220,7 @@
         "parameters": [
           {
             "name": "tag",
+            "description": "Unique tag.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -221,15 +233,18 @@
               "type": "object",
               "properties": {
                 "qualityMilestoneDefinitionName": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "Name of a quality milestone definition that the release shall be marked as passed for."
                 },
                 "metadata": {
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/v1QualityMilestoneMetadata"
-                  }
+                  },
+                  "description": "List of metadata associated with the quality milestone."
                 }
-              }
+              },
+              "description": "Represents a request to approve a release for a quality milestone."
             }
           }
         ],
@@ -240,7 +255,7 @@
     },
     "/v1/release/{tag}/reject": {
       "post": {
-        "summary": "Reject marks a Release identified by its tag as rejected.",
+        "summary": "Reject marks a release identified by its tag as rejected.",
         "operationId": "ReleaseService_Reject",
         "responses": {
           "200": {
@@ -259,6 +274,7 @@
         "parameters": [
           {
             "name": "tag",
+            "description": "Unique tag.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -271,9 +287,11 @@
               "type": "object",
               "properties": {
                 "preload": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Whether to include release metadata and associated quality milestones in the response."
                 }
-              }
+              },
+              "description": "Represents a request to reject a release and hide it from results."
             }
           }
         ],
@@ -316,186 +334,233 @@
       "properties": {
         "id": {
           "type": "string",
-          "format": "int64"
+          "format": "int64",
+          "description": "Unique Id of the database object."
         },
         "createdAt": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "description": "Timestamp of creation."
         },
         "updatedAt": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "description": "Timestamp of last update."
         }
-      }
+      },
+      "description": "Represents meta information that can be associated with releases, quality milestones and their definitions."
     },
     "v1QualityMilestone": {
       "type": "object",
       "properties": {
         "meta": {
-          "$ref": "#/definitions/v1Meta"
+          "$ref": "#/definitions/v1Meta",
+          "description": "Meta information like ID and timestamps."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Name of the quality milestone definition."
         },
         "approver": {
-          "type": "string"
+          "type": "string",
+          "description": "Email address of actor who approved the quality milestone."
         },
         "metadata": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1QualityMilestoneMetadata"
-          }
+          },
+          "description": "List of metadata associated with the quality milestone."
         }
-      }
+      },
+      "description": "Represents a quality milestone."
     },
     "v1QualityMilestoneMetadata": {
       "type": "object",
       "properties": {
         "key": {
-          "type": "string"
+          "type": "string",
+          "description": "Unique key to identify the metadata."
         },
         "value": {
-          "type": "string"
+          "type": "string",
+          "description": "Metadata value."
         }
-      }
+      },
+      "description": "Represents metadata for quality milestones."
     },
     "v1ReleaseMetadata": {
       "type": "object",
       "properties": {
         "key": {
-          "type": "string"
+          "type": "string",
+          "description": "Unique key to identify the metadata."
         },
         "value": {
-          "type": "string"
+          "type": "string",
+          "description": "Metadata value."
         }
-      }
+      },
+      "description": "Represents metadata for releases."
     },
     "v1ReleaseServiceApproveResponse": {
       "type": "object",
       "properties": {
         "meta": {
-          "$ref": "#/definitions/v1Meta"
+          "$ref": "#/definitions/v1Meta",
+          "description": "Meta information like ID and timestamps."
         },
         "tag": {
-          "type": "string"
+          "type": "string",
+          "description": "Unique tag."
         },
         "qualityMilestoneDefinitionName": {
-          "type": "string"
+          "type": "string",
+          "description": "Name of a quality milestone definition that the release has been marked as passed for."
         },
         "approver": {
-          "type": "string"
+          "type": "string",
+          "description": "Email address of actor who approved the quality milestone."
         },
         "metadata": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1QualityMilestoneMetadata"
-          }
+          },
+          "description": "List of metadata associated with the quality milestone."
         }
-      }
+      },
+      "description": "Represents the response to the request to approve a release for a quality milestone."
     },
     "v1ReleaseServiceCreateRequest": {
       "type": "object",
       "properties": {
         "tag": {
-          "type": "string"
+          "type": "string",
+          "description": "Unique tag to identify the release."
         },
         "commit": {
-          "type": "string"
+          "type": "string",
+          "description": "Commit hash associated with the release tag."
         },
         "metadata": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1ReleaseMetadata"
-          }
+          },
+          "description": "List of metadata associated with the release."
         }
-      }
+      },
+      "description": "Represents a create request for a release."
     },
     "v1ReleaseServiceCreateResponse": {
       "type": "object",
       "properties": {
         "meta": {
-          "$ref": "#/definitions/v1Meta"
+          "$ref": "#/definitions/v1Meta",
+          "description": "Meta information like ID and timestamps."
         },
         "tag": {
-          "type": "string"
+          "type": "string",
+          "description": "Unique tag."
         },
         "commit": {
-          "type": "string"
+          "type": "string",
+          "description": "Commit hash associated with the release tag."
         },
         "creator": {
-          "type": "string"
+          "type": "string",
+          "description": "Email address of actor who created the release."
         },
         "metadata": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1ReleaseMetadata"
-          }
+          },
+          "description": "List of metadata associated with the release."
         }
-      }
+      },
+      "description": "Represents the response to the creation request for a release."
     },
     "v1ReleaseServiceFindLatestResponse": {
       "type": "object",
       "properties": {
         "meta": {
-          "$ref": "#/definitions/v1Meta"
+          "$ref": "#/definitions/v1Meta",
+          "description": "Meta information like ID and timestamps."
         },
         "tag": {
-          "type": "string"
+          "type": "string",
+          "description": "Unique tag."
         },
         "commit": {
-          "type": "string"
+          "type": "string",
+          "description": "Commit hash associated with the release tag."
         },
         "creator": {
-          "type": "string"
+          "type": "string",
+          "description": "Email address of actor who created the release."
         },
         "metadata": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1ReleaseMetadata"
-          }
+          },
+          "description": "List of metadata associated with the release."
         },
         "qualityMilestones": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1QualityMilestone"
-          }
+          },
+          "description": "List of quality milestones that the release has passed."
         },
         "rejected": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Whether the release is rejected."
         }
-      }
+      },
+      "description": "Represents the response with the latest release for given search criteria."
     },
     "v1ReleaseServiceGetResponse": {
       "type": "object",
       "properties": {
         "meta": {
-          "$ref": "#/definitions/v1Meta"
+          "$ref": "#/definitions/v1Meta",
+          "description": "Meta information like ID and timestamps."
         },
         "tag": {
-          "type": "string"
+          "type": "string",
+          "description": "Unique tag."
         },
         "commit": {
-          "type": "string"
+          "type": "string",
+          "description": "Commit hash associated with the release tag."
         },
         "creator": {
-          "type": "string"
+          "type": "string",
+          "description": "Email address of actor who created the release."
         },
         "metadata": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1ReleaseMetadata"
-          }
+          },
+          "description": "List of metadata associated with the release."
         },
         "qualityMilestones": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1QualityMilestone"
-          }
+          },
+          "description": "List of quality milestones that the release has passed."
         },
         "rejected": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Whether the release is rejected."
         }
-      }
+      },
+      "description": "Represents the response to a get request for a specific release."
     },
     "v1ReleaseServiceListResponse": {
       "type": "object",
@@ -504,35 +569,44 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1ReleaseServiceGetResponse"
-          }
+          },
+          "description": "List of releases."
         }
-      }
+      },
+      "description": "Represents the response to list all releases matching the requested search criteria."
     },
     "v1ReleaseServiceRejectResponse": {
       "type": "object",
       "properties": {
         "meta": {
-          "$ref": "#/definitions/v1Meta"
+          "$ref": "#/definitions/v1Meta",
+          "description": "Meta information like ID and timestamps."
         },
         "tag": {
-          "type": "string"
+          "type": "string",
+          "description": "Unique tag."
         },
         "commit": {
-          "type": "string"
+          "type": "string",
+          "description": "Commit hash associated with the release tag."
         },
         "creator": {
-          "type": "string"
+          "type": "string",
+          "description": "Email address of actor who created the release."
         },
         "metadata": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1ReleaseMetadata"
-          }
+          },
+          "description": "List of metadata associated with the release."
         },
         "rejected": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Rejection status of the release."
         }
-      }
+      },
+      "description": "Represents the response to the request to reject a release."
     }
   }
 }
