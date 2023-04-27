@@ -80,6 +80,7 @@ server:
   key: /certs/tls.key
   staticDir: ui
   docsDir: docs
+  measureLatency: {{ .Values.server.measureLatency }}
 tenant:
   emailDomain: {{ .Values.server.emailDomain }}
   password: {{ .Values.server.adminPassword }}

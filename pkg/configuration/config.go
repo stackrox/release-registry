@@ -37,11 +37,12 @@ type DatabaseConfig struct {
 
 // ServerConfig holds the configuration for the server.
 type ServerConfig struct {
-	Cert      string `mapstructure:"cert"`
-	Key       string `mapstructure:"key"`
-	StaticDir string `mapstructure:"staticDir"`
-	DocsDir   string `mapstructure:"docsDir"`
-	Port      int    `mapstructure:"port"`
+	Cert           string `mapstructure:"cert"`
+	Key            string `mapstructure:"key"`
+	StaticDir      string `mapstructure:"staticDir"`
+	DocsDir        string `mapstructure:"docsDir"`
+	Port           int    `mapstructure:"port"`
+	MeasureLatency bool   `mapstructure:"measureLatency"`
 }
 
 // TenantConfig holds configuration specific to the tenant.
