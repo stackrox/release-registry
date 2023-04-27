@@ -96,9 +96,9 @@ func (s *Server) Run() error {
 
 	mux.Handle("/", s.serveApplicationResources())
 	mux.Handle("/healthz/", healthz.NewHandler())
+	mux.Handle("/metrics", promhttp.Handler())
 	mux.Handle("/docs/", s.newDocsHandler())
 	mux.Handle("/v1/", gwMux)
-	mux.Handle("/metrics", promhttp.Handler())
 
 	s.oidc.Handle(mux)
 
