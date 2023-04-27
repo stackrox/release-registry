@@ -64,7 +64,7 @@ func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
 	// 2. List all Releases with prefix
 	prefix := expectedRelease.Tag[:4]
 	releaseList, err := releaseClient.List(ctx, &v1.ReleaseServiceListRequest{
-		Prefix:  &prefix,
+		Prefix:  prefix,
 		Preload: true,
 	})
 	assert.NoError(t, err)
@@ -103,9 +103,9 @@ func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
 
 	// 5. List all Releases with prefix at QualityMilestone
 	releaseListAtQualityMilestone, err := releaseClient.List(ctx, &v1.ReleaseServiceListRequest{
-		Prefix:               &prefix,
+		Prefix:               prefix,
 		Preload:              true,
-		QualityMilestoneName: &qualityMilestoneDefinitionName,
+		QualityMilestoneName: qualityMilestoneDefinitionName,
 	})
 	assert.NoError(t, err)
 	assert.Len(t, releaseList.GetReleases(), 1)
@@ -152,7 +152,7 @@ func TestFindingLatestRelease(t *testing.T) {
 	// 1. List all Releases with Prefix at QualityMilestone
 	releaseClient := v1.NewReleaseServiceClient(conn)
 	releaseList, err := releaseClient.List(ctx, &v1.ReleaseServiceListRequest{
-		QualityMilestoneName: &qualityMilestoneDefinitionName,
+		QualityMilestoneName: qualityMilestoneDefinitionName,
 		Preload:              true,
 	})
 	assert.NoError(t, err)
@@ -160,8 +160,8 @@ func TestFindingLatestRelease(t *testing.T) {
 
 	// 2. FindLatest Release at QualityMilestone with prefix
 	latestResponse, err := releaseClient.FindLatest(ctx, &v1.ReleaseServiceFindLatestRequest{
-		Prefix:               &prefix,
-		QualityMilestoneName: &qualityMilestoneDefinitionName,
+		Prefix:               prefix,
+		QualityMilestoneName: qualityMilestoneDefinitionName,
 		Preload:              true,
 	})
 	assert.NoError(t, err)

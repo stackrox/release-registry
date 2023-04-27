@@ -18,15 +18,15 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ReleaseServiceClient interface {
-	// Create creates a new Release.
+	// Create creates a new release.
 	Create(ctx context.Context, in *ReleaseServiceCreateRequest, opts ...grpc.CallOption) (*ReleaseServiceCreateResponse, error)
-	// List returns all tracked Releases.
+	// List returns all tracked releases.
 	List(ctx context.Context, in *ReleaseServiceListRequest, opts ...grpc.CallOption) (*ReleaseServiceListResponse, error)
-	// Get returns a Release identified by its tag.
+	// Get returns a release identified by its tag.
 	Get(ctx context.Context, in *ReleaseServiceGetRequest, opts ...grpc.CallOption) (*ReleaseServiceGetResponse, error)
-	// Approve approves a Release identified by its tag for a QualityMilestone.
+	// Approve approves a release identified by its tag for a quality milestone.
 	Approve(ctx context.Context, in *ReleaseServiceApproveRequest, opts ...grpc.CallOption) (*ReleaseServiceApproveResponse, error)
-	// Reject marks a Release identified by its tag as rejected.
+	// Reject marks a release identified by its tag as rejected.
 	Reject(ctx context.Context, in *ReleaseServiceRejectRequest, opts ...grpc.CallOption) (*ReleaseServiceRejectResponse, error)
 	// FindLatest returns the latest release for a given query.
 	FindLatest(ctx context.Context, in *ReleaseServiceFindLatestRequest, opts ...grpc.CallOption) (*ReleaseServiceFindLatestResponse, error)
@@ -98,15 +98,15 @@ func (c *releaseServiceClient) FindLatest(ctx context.Context, in *ReleaseServic
 // All implementations must embed UnimplementedReleaseServiceServer
 // for forward compatibility
 type ReleaseServiceServer interface {
-	// Create creates a new Release.
+	// Create creates a new release.
 	Create(context.Context, *ReleaseServiceCreateRequest) (*ReleaseServiceCreateResponse, error)
-	// List returns all tracked Releases.
+	// List returns all tracked releases.
 	List(context.Context, *ReleaseServiceListRequest) (*ReleaseServiceListResponse, error)
-	// Get returns a Release identified by its tag.
+	// Get returns a release identified by its tag.
 	Get(context.Context, *ReleaseServiceGetRequest) (*ReleaseServiceGetResponse, error)
-	// Approve approves a Release identified by its tag for a QualityMilestone.
+	// Approve approves a release identified by its tag for a quality milestone.
 	Approve(context.Context, *ReleaseServiceApproveRequest) (*ReleaseServiceApproveResponse, error)
-	// Reject marks a Release identified by its tag as rejected.
+	// Reject marks a release identified by its tag as rejected.
 	Reject(context.Context, *ReleaseServiceRejectRequest) (*ReleaseServiceRejectResponse, error)
 	// FindLatest returns the latest release for a given query.
 	FindLatest(context.Context, *ReleaseServiceFindLatestRequest) (*ReleaseServiceFindLatestResponse, error)

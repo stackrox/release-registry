@@ -18,11 +18,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type QualityMilestoneDefinitionServiceClient interface {
-	// Create creates a new QualityMilestoneDefinition.
+	// Create creates a new quality milestone definition.
 	Create(ctx context.Context, in *QualityMilestoneDefinitionServiceCreateRequest, opts ...grpc.CallOption) (*QualityMilestoneDefinitionServiceCreateResponse, error)
-	// List returns all known QualityMilestoneDefinitions.
+	// List returns all known quality milestone definitions.
 	List(ctx context.Context, in *QualityMilestoneDefinitionServiceListRequest, opts ...grpc.CallOption) (*QualityMilestoneDefinitionServiceListResponse, error)
-	// Get returns a QualityMilestoneDefinition for a given name.
+	// Get returns a quality milestone definitions for a given name.
 	Get(ctx context.Context, in *QualityMilestoneDefinitionServiceGetRequest, opts ...grpc.CallOption) (*QualityMilestoneDefinitionServiceGetResponse, error)
 }
 
@@ -65,11 +65,11 @@ func (c *qualityMilestoneDefinitionServiceClient) Get(ctx context.Context, in *Q
 // All implementations must embed UnimplementedQualityMilestoneDefinitionServiceServer
 // for forward compatibility
 type QualityMilestoneDefinitionServiceServer interface {
-	// Create creates a new QualityMilestoneDefinition.
+	// Create creates a new quality milestone definition.
 	Create(context.Context, *QualityMilestoneDefinitionServiceCreateRequest) (*QualityMilestoneDefinitionServiceCreateResponse, error)
-	// List returns all known QualityMilestoneDefinitions.
+	// List returns all known quality milestone definitions.
 	List(context.Context, *QualityMilestoneDefinitionServiceListRequest) (*QualityMilestoneDefinitionServiceListResponse, error)
-	// Get returns a QualityMilestoneDefinition for a given name.
+	// Get returns a quality milestone definitions for a given name.
 	Get(context.Context, *QualityMilestoneDefinitionServiceGetRequest) (*QualityMilestoneDefinitionServiceGetResponse, error)
 	mustEmbedUnimplementedQualityMilestoneDefinitionServiceServer()
 }
@@ -176,5 +176,5 @@ var QualityMilestoneDefinitionService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/api/v1/quality_milestone_definitions.proto",
+	Metadata: "proto/api/v1/quality_milestone_definition.proto",
 }

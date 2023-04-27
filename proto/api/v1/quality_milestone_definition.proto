@@ -1,3 +1,6 @@
+/**
+ * Messages and endpoints related to quality milestone definitions.
+ */
 syntax = "proto3";
 package proto.api.v1;
 
@@ -6,36 +9,57 @@ import "proto/shared/v1/meta.proto";
 
 option go_package = "github.com/stackrox/release-registry/gen/go/proto/api/v1";
 
+// Represents a create request for a quality milestone definition.
 message QualityMilestoneDefinitionServiceCreateRequest {
+  // Unique name.
   string name = 1;
-  repeated string expected_metadata_keys = 2;
+
+  // List of metadata keys that quality milestones of this definition must provide.
+  repeated string expected_metadata_keys = 2; //
 }
 
+// Represents the response to the creation request for a quality milestone definition
 message QualityMilestoneDefinitionServiceCreateResponse {
+  // Meta information like ID and timestamps.
   shared.v1.Meta meta = 1;
+
+  // Unique name.
   string name = 2;
+
+  // List of metadata keys that quality milestones of this definition must provide.
   repeated string expected_metadata_keys = 3;
 }
 
+// Represents a request to get a specific quality milestone definition.
+message QualityMilestoneDefinitionServiceGetRequest {
+  // Unique name.
+  string name = 1;
+}
+
+// Represents the response to a get request for a specific quality milestone definition.
 message QualityMilestoneDefinitionServiceGetResponse {
+  // Meta information like ID and timestamps.
   shared.v1.Meta meta = 1;
+
+  // Unique name.
   string name = 2;
+
+  // List of metadata keys that quality milestones of this definition must provide.
   repeated string expected_metadata_keys = 3;
 }
 
+// Represents a request to list all quality milestone definitions.
 message QualityMilestoneDefinitionServiceListRequest {}
 
+// Represents the response to list all quality milestone definitions.
 message QualityMilestoneDefinitionServiceListResponse {
+  // List of quality milestone definitions.
   repeated QualityMilestoneDefinitionServiceGetResponse quality_milestone_definitions = 1;
-}
-
-message QualityMilestoneDefinitionServiceGetRequest {
-  string name = 1;
 }
 
 // QualityMilestoneDefinitionService service creates, returns and lists QualityMilestoneDefinitions.
 service QualityMilestoneDefinitionService {
-  // Create creates a new QualityMilestoneDefinition.
+  // Create creates a new quality milestone definition.
   rpc Create(QualityMilestoneDefinitionServiceCreateRequest) returns (QualityMilestoneDefinitionServiceCreateResponse) {
     option (google.api.http) = {
       post: "/v1/qualitymilestonedefinition",
@@ -43,12 +67,12 @@ service QualityMilestoneDefinitionService {
     };
   }
 
-  // List returns all known QualityMilestoneDefinitions.
+  // List returns all known quality milestone definitions.
   rpc List(QualityMilestoneDefinitionServiceListRequest) returns (QualityMilestoneDefinitionServiceListResponse) {
     option (google.api.http) = {get: "/v1/qualitymilestonedefinition"};
   }
 
-  // Get returns a QualityMilestoneDefinition for a given name.
+  // Get returns a quality milestone definitions for a given name.
   rpc Get(QualityMilestoneDefinitionServiceGetRequest) returns (QualityMilestoneDefinitionServiceGetResponse) {
     option (google.api.http) = {get: "/v1/qualitymilestonedefinition/{name}"};
   }

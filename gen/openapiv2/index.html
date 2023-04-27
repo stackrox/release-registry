@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Protocol Documentation</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic"/>
+    <style>
+      body {
+        width: 60em;
+        margin: 1em auto;
+        color: #222;
+        font-family: "Ubuntu", sans-serif;
+        padding-bottom: 4em;
+      }
+
+      h1 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      h2 {
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+        margin: 1.5em 0;
+      }
+
+      h3 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      a {
+        text-decoration: none;
+        color: #567e25;
+      }
+
+      table {
+        width: 100%;
+        font-size: 80%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        font-weight: 700;
+        background-color: #dcdcdc;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #fbfbfb;
+      }
+
+      td {
+        border: 1px solid #ccc;
+        padding: 0.5ex 2ex;
+      }
+
+      td p {
+        text-indent: 1em;
+        margin: 0;
+      }
+
+      td p:nth-child(1) {
+        text-indent: 0;  
+      }
+
+       
+      .field-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .field-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .field-table td:nth-child(3) {  
+        width: 6em;
+      }
+      .field-table td:nth-child(4) {  
+        width: auto;
+      }
+
+       
+      .extension-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(3) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(4) {  
+        width: 5em;
+      }
+      .extension-table td:nth-child(5) {  
+        width: auto;
+      }
+
+       
+      .enum-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .enum-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .enum-table td:nth-child(3) {  
+        width: auto;
+      }
+
+       
+      .scalar-value-types-table tr {
+        height: 3em;
+      }
+
+       
+      #toc-container ul {
+        list-style-type: none;
+        padding-left: 1em;
+        line-height: 180%;
+        margin: 0;
+      }
+      #toc > li > a {
+        font-weight: bold;
+      }
+
+       
+      .file-heading {
+        width: 100%;
+        display: table;
+        border-bottom: 1px solid #aaa;
+        margin: 4em 0 1.5em 0;
+      }
+      .file-heading h2 {
+        border: none;
+        display: table-cell;
+      }
+      .file-heading a {
+        text-align: right;
+        display: table-cell;
+      }
+
+       
+      .badge {
+        width: 1.6em;
+        height: 1.6em;
+        display: inline-block;
+
+        line-height: 1.6em;
+        text-align: center;
+        font-weight: bold;
+        font-size: 60%;
+
+        color: #89ba48;
+        background-color: #dff0c8;
+
+        margin: 0.5ex 1em 0.5ex -1em;
+        border: 1px solid #fbfbfb;
+        border-radius: 1ex;
+      }
+    </style>
+
+    
+    <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+  </head>
+
+  <body>
+
+    <h1 id="title">Protocol Documentation</h1>
+
+    <h2>Table of Contents</h2>
+
+    <div id="toc-container">
+      <ul id="toc">
+        
+          
+          <li>
+            <a href="#proto%2fshared%2fv1%2fmeta.proto">proto/shared/v1/meta.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#proto.shared.v1.Meta"><span class="badge">M</span>Meta</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#proto%2fapi%2fv1%2fquality_milestone.proto">proto/api/v1/quality_milestone.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#proto.api.v1.QualityMilestone"><span class="badge">M</span>QualityMilestone</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.QualityMilestoneMetadata"><span class="badge">M</span>QualityMilestoneMetadata</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#proto%2fapi%2fv1%2fquality_milestone_definition.proto">proto/api/v1/quality_milestone_definition.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#proto.api.v1.QualityMilestoneDefinitionServiceCreateRequest"><span class="badge">M</span>QualityMilestoneDefinitionServiceCreateRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.QualityMilestoneDefinitionServiceCreateResponse"><span class="badge">M</span>QualityMilestoneDefinitionServiceCreateResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.QualityMilestoneDefinitionServiceGetRequest"><span class="badge">M</span>QualityMilestoneDefinitionServiceGetRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.QualityMilestoneDefinitionServiceGetResponse"><span class="badge">M</span>QualityMilestoneDefinitionServiceGetResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.QualityMilestoneDefinitionServiceListRequest"><span class="badge">M</span>QualityMilestoneDefinitionServiceListRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.QualityMilestoneDefinitionServiceListResponse"><span class="badge">M</span>QualityMilestoneDefinitionServiceListResponse</a>
+                </li>
+              
+              
+              
+              
+                <li>
+                  <a href="#proto.api.v1.QualityMilestoneDefinitionService"><span class="badge">S</span>QualityMilestoneDefinitionService</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#proto%2fapi%2fv1%2frelease.proto">proto/api/v1/release.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseMetadata"><span class="badge">M</span>ReleaseMetadata</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseServiceApproveRequest"><span class="badge">M</span>ReleaseServiceApproveRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseServiceApproveResponse"><span class="badge">M</span>ReleaseServiceApproveResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseServiceCreateRequest"><span class="badge">M</span>ReleaseServiceCreateRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseServiceCreateResponse"><span class="badge">M</span>ReleaseServiceCreateResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseServiceFindLatestRequest"><span class="badge">M</span>ReleaseServiceFindLatestRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseServiceFindLatestResponse"><span class="badge">M</span>ReleaseServiceFindLatestResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseServiceGetRequest"><span class="badge">M</span>ReleaseServiceGetRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseServiceGetResponse"><span class="badge">M</span>ReleaseServiceGetResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseServiceListRequest"><span class="badge">M</span>ReleaseServiceListRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseServiceListResponse"><span class="badge">M</span>ReleaseServiceListResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseServiceRejectRequest"><span class="badge">M</span>ReleaseServiceRejectRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseServiceRejectResponse"><span class="badge">M</span>ReleaseServiceRejectResponse</a>
+                </li>
+              
+              
+              
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseService"><span class="badge">S</span>ReleaseService</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+        <li><a href="#scalar-value-types">Scalar Value Types</a></li>
+      </ul>
+    </div>
+
+    
+      
+      <div class="file-heading">
+        <h2 id="proto/shared/v1/meta.proto">proto/shared/v1/meta.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>Messages related the meta information.</p>
+
+      
+        <h3 id="proto.shared.v1.Meta">Meta</h3>
+        <p>Represents meta information that can be associated with releases, quality milestones and their definitions.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Unique Id of the database object. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>created_at</td>
+                  <td><a href="#google.protobuf.Timestamp">google.protobuf.Timestamp</a></td>
+                  <td></td>
+                  <td><p>Timestamp of creation. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>updated_at</td>
+                  <td><a href="#google.protobuf.Timestamp">google.protobuf.Timestamp</a></td>
+                  <td></td>
+                  <td><p>Timestamp of last update. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="proto/api/v1/quality_milestone.proto">proto/api/v1/quality_milestone.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>Messages related to quality milestones.</p>
+
+      
+        <h3 id="proto.api.v1.QualityMilestone">QualityMilestone</h3>
+        <p>Represents a quality milestone.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>meta</td>
+                  <td><a href="#proto.shared.v1.Meta">proto.shared.v1.Meta</a></td>
+                  <td></td>
+                  <td><p>Meta information like ID and timestamps. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Name of the quality milestone definition. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>approver</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Email address of actor who approved the quality milestone. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#proto.api.v1.QualityMilestoneMetadata">QualityMilestoneMetadata</a></td>
+                  <td>repeated</td>
+                  <td><p>List of metadata associated with the quality milestone. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.QualityMilestoneMetadata">QualityMilestoneMetadata</h3>
+        <p>Represents metadata for quality milestones.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique key to identify the metadata. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Metadata value. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="proto/api/v1/quality_milestone_definition.proto">proto/api/v1/quality_milestone_definition.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>Messages and endpoints related to quality milestone definitions.</p>
+
+      
+        <h3 id="proto.api.v1.QualityMilestoneDefinitionServiceCreateRequest">QualityMilestoneDefinitionServiceCreateRequest</h3>
+        <p>Represents a create request for a quality milestone definition.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique name. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>expected_metadata_keys</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p>List of metadata keys that quality milestones of this definition must provide. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.QualityMilestoneDefinitionServiceCreateResponse">QualityMilestoneDefinitionServiceCreateResponse</h3>
+        <p>Represents the response to the creation request for a quality milestone definition</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>meta</td>
+                  <td><a href="#proto.shared.v1.Meta">proto.shared.v1.Meta</a></td>
+                  <td></td>
+                  <td><p>Meta information like ID and timestamps. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique name. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>expected_metadata_keys</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p>List of metadata keys that quality milestones of this definition must provide. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.QualityMilestoneDefinitionServiceGetRequest">QualityMilestoneDefinitionServiceGetRequest</h3>
+        <p>Represents a request to get a specific quality milestone definition.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique name. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.QualityMilestoneDefinitionServiceGetResponse">QualityMilestoneDefinitionServiceGetResponse</h3>
+        <p>Represents the response to a get request for a specific quality milestone definition.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>meta</td>
+                  <td><a href="#proto.shared.v1.Meta">proto.shared.v1.Meta</a></td>
+                  <td></td>
+                  <td><p>Meta information like ID and timestamps. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique name. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>expected_metadata_keys</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p>List of metadata keys that quality milestones of this definition must provide. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.QualityMilestoneDefinitionServiceListRequest">QualityMilestoneDefinitionServiceListRequest</h3>
+        <p>Represents a request to list all quality milestone definitions.</p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.QualityMilestoneDefinitionServiceListResponse">QualityMilestoneDefinitionServiceListResponse</h3>
+        <p>Represents the response to list all quality milestone definitions.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>quality_milestone_definitions</td>
+                  <td><a href="#proto.api.v1.QualityMilestoneDefinitionServiceGetResponse">QualityMilestoneDefinitionServiceGetResponse</a></td>
+                  <td>repeated</td>
+                  <td><p>List of quality milestone definitions. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+        <h3 id="proto.api.v1.QualityMilestoneDefinitionService">QualityMilestoneDefinitionService</h3>
+        <p>QualityMilestoneDefinitionService service creates, returns and lists QualityMilestoneDefinitions.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>Create</td>
+                <td><a href="#proto.api.v1.QualityMilestoneDefinitionServiceCreateRequest">QualityMilestoneDefinitionServiceCreateRequest</a></td>
+                <td><a href="#proto.api.v1.QualityMilestoneDefinitionServiceCreateResponse">QualityMilestoneDefinitionServiceCreateResponse</a></td>
+                <td><p>Create creates a new quality milestone definition.</p></td>
+              </tr>
+            
+              <tr>
+                <td>List</td>
+                <td><a href="#proto.api.v1.QualityMilestoneDefinitionServiceListRequest">QualityMilestoneDefinitionServiceListRequest</a></td>
+                <td><a href="#proto.api.v1.QualityMilestoneDefinitionServiceListResponse">QualityMilestoneDefinitionServiceListResponse</a></td>
+                <td><p>List returns all known quality milestone definitions.</p></td>
+              </tr>
+            
+              <tr>
+                <td>Get</td>
+                <td><a href="#proto.api.v1.QualityMilestoneDefinitionServiceGetRequest">QualityMilestoneDefinitionServiceGetRequest</a></td>
+                <td><a href="#proto.api.v1.QualityMilestoneDefinitionServiceGetResponse">QualityMilestoneDefinitionServiceGetResponse</a></td>
+                <td><p>Get returns a quality milestone definitions for a given name.</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+          
+          
+          <h4>Methods with HTTP bindings</h4>
+          <table>
+            <thead>
+              <tr>
+                <td>Method Name</td>
+                <td>Method</td>
+                <td>Pattern</td>
+                <td>Body</td>
+              </tr>
+            </thead>
+            <tbody>
+            
+              
+              
+              <tr>
+                <td>Create</td>
+                <td>POST</td>
+                <td>/v1/qualitymilestonedefinition</td>
+                <td>*</td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>List</td>
+                <td>GET</td>
+                <td>/v1/qualitymilestonedefinition</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>Get</td>
+                <td>GET</td>
+                <td>/v1/qualitymilestonedefinition/{name}</td>
+                <td></td>
+              </tr>
+              
+            
+            </tbody>
+          </table>
+          
+        
+    
+      
+      <div class="file-heading">
+        <h2 id="proto/api/v1/release.proto">proto/api/v1/release.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>Messages and endpoints related to quality milestone definitions.</p>
+
+      
+        <h3 id="proto.api.v1.ReleaseMetadata">ReleaseMetadata</h3>
+        <p>Represents metadata for releases.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique key to identify the metadata. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Metadata value. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ReleaseServiceApproveRequest">ReleaseServiceApproveRequest</h3>
+        <p>Represents a request to approve a release for a quality milestone.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>tag</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>quality_milestone_definition_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Name of a quality milestone definition that the release shall be marked as passed for. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#proto.api.v1.QualityMilestoneMetadata">QualityMilestoneMetadata</a></td>
+                  <td>repeated</td>
+                  <td><p>List of metadata associated with the quality milestone. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ReleaseServiceApproveResponse">ReleaseServiceApproveResponse</h3>
+        <p>Represents the response to the request to approve a release for a quality milestone.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>meta</td>
+                  <td><a href="#proto.shared.v1.Meta">proto.shared.v1.Meta</a></td>
+                  <td></td>
+                  <td><p>Meta information like ID and timestamps. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tag</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>quality_milestone_definition_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Name of a quality milestone definition that the release has been marked as passed for. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>approver</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Email address of actor who approved the quality milestone. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#proto.api.v1.QualityMilestoneMetadata">QualityMilestoneMetadata</a></td>
+                  <td>repeated</td>
+                  <td><p>List of metadata associated with the quality milestone. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ReleaseServiceCreateRequest">ReleaseServiceCreateRequest</h3>
+        <p>Represents a create request for a release.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>tag</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique tag to identify the release. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>commit</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Commit hash associated with the release tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#proto.api.v1.ReleaseMetadata">ReleaseMetadata</a></td>
+                  <td>repeated</td>
+                  <td><p>List of metadata associated with the release. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ReleaseServiceCreateResponse">ReleaseServiceCreateResponse</h3>
+        <p>Represents the response to the creation request for a release.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>meta</td>
+                  <td><a href="#proto.shared.v1.Meta">proto.shared.v1.Meta</a></td>
+                  <td></td>
+                  <td><p>Meta information like ID and timestamps. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tag</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>commit</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Commit hash associated with the release tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Email address of actor who created the release. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#proto.api.v1.ReleaseMetadata">ReleaseMetadata</a></td>
+                  <td>repeated</td>
+                  <td><p>List of metadata associated with the release. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ReleaseServiceFindLatestRequest">ReleaseServiceFindLatestRequest</h3>
+        <p>Represents a request to find the latest release for given search criteria.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>prefix</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Prefix of the release tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>quality_milestone_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Name of a quality milestone that a release must have passed. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>preload</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Whether to include release metadata and associated quality milestones in the response. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>include_rejected</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Whether to include rejected releases in the response. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ReleaseServiceFindLatestResponse">ReleaseServiceFindLatestResponse</h3>
+        <p>Represents the response with the latest release for given search criteria.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>meta</td>
+                  <td><a href="#proto.shared.v1.Meta">proto.shared.v1.Meta</a></td>
+                  <td></td>
+                  <td><p>Meta information like ID and timestamps. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tag</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>commit</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Commit hash associated with the release tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Email address of actor who created the release. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#proto.api.v1.ReleaseMetadata">ReleaseMetadata</a></td>
+                  <td>repeated</td>
+                  <td><p>List of metadata associated with the release. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>quality_milestones</td>
+                  <td><a href="#proto.api.v1.QualityMilestone">QualityMilestone</a></td>
+                  <td>repeated</td>
+                  <td><p>List of quality milestones that the release has passed. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>rejected</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Whether the release is rejected. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ReleaseServiceGetRequest">ReleaseServiceGetRequest</h3>
+        <p>Represents a request to get a specific release.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>tag</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>preload</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Whether to include release metadata and associated quality milestones in the response. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>include_rejected</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Whether to include rejected releases in the response. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ReleaseServiceGetResponse">ReleaseServiceGetResponse</h3>
+        <p>Represents the response to a get request for a specific release.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>meta</td>
+                  <td><a href="#proto.shared.v1.Meta">proto.shared.v1.Meta</a></td>
+                  <td></td>
+                  <td><p>Meta information like ID and timestamps. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tag</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>commit</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Commit hash associated with the release tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Email address of actor who created the release. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#proto.api.v1.ReleaseMetadata">ReleaseMetadata</a></td>
+                  <td>repeated</td>
+                  <td><p>List of metadata associated with the release. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>quality_milestones</td>
+                  <td><a href="#proto.api.v1.QualityMilestone">QualityMilestone</a></td>
+                  <td>repeated</td>
+                  <td><p>List of quality milestones that the release has passed. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>rejected</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Whether the release is rejected. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ReleaseServiceListRequest">ReleaseServiceListRequest</h3>
+        <p>Represents a request to list all releases matching the search criteria.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>prefix</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Prefix of the release tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>quality_milestone_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Name of a quality milestone that a release must have passed. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>preload</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Whether to include release metadata and associated quality milestones in the response. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>include_rejected</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Whether to include rejected releases in the response. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ReleaseServiceListResponse">ReleaseServiceListResponse</h3>
+        <p>Represents the response to list all releases matching the requested search criteria.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>releases</td>
+                  <td><a href="#proto.api.v1.ReleaseServiceGetResponse">ReleaseServiceGetResponse</a></td>
+                  <td>repeated</td>
+                  <td><p>List of releases. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ReleaseServiceRejectRequest">ReleaseServiceRejectRequest</h3>
+        <p>Represents a request to reject a release and hide it from results.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>tag</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>preload</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Whether to include release metadata and associated quality milestones in the response. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ReleaseServiceRejectResponse">ReleaseServiceRejectResponse</h3>
+        <p>Represents the response to the request to reject a release.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>meta</td>
+                  <td><a href="#proto.shared.v1.Meta">proto.shared.v1.Meta</a></td>
+                  <td></td>
+                  <td><p>Meta information like ID and timestamps. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tag</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>commit</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Commit hash associated with the release tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Email address of actor who created the release. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#proto.api.v1.ReleaseMetadata">ReleaseMetadata</a></td>
+                  <td>repeated</td>
+                  <td><p>List of metadata associated with the release. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>rejected</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Rejection status of the release. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+        <h3 id="proto.api.v1.ReleaseService">ReleaseService</h3>
+        <p>Release service creates, lists, gets, approves and rejects releases.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>Create</td>
+                <td><a href="#proto.api.v1.ReleaseServiceCreateRequest">ReleaseServiceCreateRequest</a></td>
+                <td><a href="#proto.api.v1.ReleaseServiceCreateResponse">ReleaseServiceCreateResponse</a></td>
+                <td><p>Create creates a new release.</p></td>
+              </tr>
+            
+              <tr>
+                <td>List</td>
+                <td><a href="#proto.api.v1.ReleaseServiceListRequest">ReleaseServiceListRequest</a></td>
+                <td><a href="#proto.api.v1.ReleaseServiceListResponse">ReleaseServiceListResponse</a></td>
+                <td><p>List returns all tracked releases.</p></td>
+              </tr>
+            
+              <tr>
+                <td>Get</td>
+                <td><a href="#proto.api.v1.ReleaseServiceGetRequest">ReleaseServiceGetRequest</a></td>
+                <td><a href="#proto.api.v1.ReleaseServiceGetResponse">ReleaseServiceGetResponse</a></td>
+                <td><p>Get returns a release identified by its tag.</p></td>
+              </tr>
+            
+              <tr>
+                <td>Approve</td>
+                <td><a href="#proto.api.v1.ReleaseServiceApproveRequest">ReleaseServiceApproveRequest</a></td>
+                <td><a href="#proto.api.v1.ReleaseServiceApproveResponse">ReleaseServiceApproveResponse</a></td>
+                <td><p>Approve approves a release identified by its tag for a quality milestone.</p></td>
+              </tr>
+            
+              <tr>
+                <td>Reject</td>
+                <td><a href="#proto.api.v1.ReleaseServiceRejectRequest">ReleaseServiceRejectRequest</a></td>
+                <td><a href="#proto.api.v1.ReleaseServiceRejectResponse">ReleaseServiceRejectResponse</a></td>
+                <td><p>Reject marks a release identified by its tag as rejected.</p></td>
+              </tr>
+            
+              <tr>
+                <td>FindLatest</td>
+                <td><a href="#proto.api.v1.ReleaseServiceFindLatestRequest">ReleaseServiceFindLatestRequest</a></td>
+                <td><a href="#proto.api.v1.ReleaseServiceFindLatestResponse">ReleaseServiceFindLatestResponse</a></td>
+                <td><p>FindLatest returns the latest release for a given query.</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+          
+          
+          <h4>Methods with HTTP bindings</h4>
+          <table>
+            <thead>
+              <tr>
+                <td>Method Name</td>
+                <td>Method</td>
+                <td>Pattern</td>
+                <td>Body</td>
+              </tr>
+            </thead>
+            <tbody>
+            
+              
+              
+              <tr>
+                <td>Create</td>
+                <td>POST</td>
+                <td>/v1/release</td>
+                <td>*</td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>List</td>
+                <td>GET</td>
+                <td>/v1/release</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>Get</td>
+                <td>GET</td>
+                <td>/v1/release/{tag}</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>Approve</td>
+                <td>POST</td>
+                <td>/v1/release/{tag}/approve</td>
+                <td>*</td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>Reject</td>
+                <td>POST</td>
+                <td>/v1/release/{tag}/reject</td>
+                <td>*</td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>FindLatest</td>
+                <td>GET</td>
+                <td>/v1/find</td>
+                <td></td>
+              </tr>
+              
+            
+            </tbody>
+          </table>
+          
+        
+    
+
+    <h2 id="scalar-value-types">Scalar Value Types</h2>
+    <table class="scalar-value-types-table">
+      <thead>
+        <tr><td>.proto Type</td><td>Notes</td><td>C++</td><td>Java</td><td>Python</td><td>Go</td><td>C#</td><td>PHP</td><td>Ruby</td></tr>
+      </thead>
+      <tbody>
+        
+          <tr id="double">
+            <td>double</td>
+            <td></td>
+            <td>double</td>
+            <td>double</td>
+            <td>float</td>
+            <td>float64</td>
+            <td>double</td>
+            <td>float</td>
+            <td>Float</td>
+          </tr>
+        
+          <tr id="float">
+            <td>float</td>
+            <td></td>
+            <td>float</td>
+            <td>float</td>
+            <td>float</td>
+            <td>float32</td>
+            <td>float</td>
+            <td>float</td>
+            <td>Float</td>
+          </tr>
+        
+          <tr id="int32">
+            <td>int32</td>
+            <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="int64">
+            <td>int64</td>
+            <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="uint32">
+            <td>uint32</td>
+            <td>Uses variable-length encoding.</td>
+            <td>uint32</td>
+            <td>int</td>
+            <td>int/long</td>
+            <td>uint32</td>
+            <td>uint</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="uint64">
+            <td>uint64</td>
+            <td>Uses variable-length encoding.</td>
+            <td>uint64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>uint64</td>
+            <td>ulong</td>
+            <td>integer/string</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sint32">
+            <td>sint32</td>
+            <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sint64">
+            <td>sint64</td>
+            <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="fixed32">
+            <td>fixed32</td>
+            <td>Always four bytes. More efficient than uint32 if values are often greater than 2^28.</td>
+            <td>uint32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>uint32</td>
+            <td>uint</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="fixed64">
+            <td>fixed64</td>
+            <td>Always eight bytes. More efficient than uint64 if values are often greater than 2^56.</td>
+            <td>uint64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>uint64</td>
+            <td>ulong</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="sfixed32">
+            <td>sfixed32</td>
+            <td>Always four bytes.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sfixed64">
+            <td>sfixed64</td>
+            <td>Always eight bytes.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="bool">
+            <td>bool</td>
+            <td></td>
+            <td>bool</td>
+            <td>boolean</td>
+            <td>boolean</td>
+            <td>bool</td>
+            <td>bool</td>
+            <td>boolean</td>
+            <td>TrueClass/FalseClass</td>
+          </tr>
+        
+          <tr id="string">
+            <td>string</td>
+            <td>A string must always contain UTF-8 encoded or 7-bit ASCII text.</td>
+            <td>string</td>
+            <td>String</td>
+            <td>str/unicode</td>
+            <td>string</td>
+            <td>string</td>
+            <td>string</td>
+            <td>String (UTF-8)</td>
+          </tr>
+        
+          <tr id="bytes">
+            <td>bytes</td>
+            <td>May contain any arbitrary sequence of bytes.</td>
+            <td>string</td>
+            <td>ByteString</td>
+            <td>str</td>
+            <td>[]byte</td>
+            <td>ByteString</td>
+            <td>string</td>
+            <td>String (ASCII-8BIT)</td>
+          </tr>
+        
+      </tbody>
+    </table>
+  </body>
+</html>
+

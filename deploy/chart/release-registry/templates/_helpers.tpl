@@ -78,7 +78,8 @@ server:
   port: {{ .Values.service.port }}
   cert: /certs/tls.crt
   key: /certs/tls.key
-  staticDir: ui/build
+  staticDir: ui
+  docsDir: docs
 tenant:
   emailDomain: {{ .Values.server.emailDomain }}
   password: {{ .Values.server.adminPassword }}

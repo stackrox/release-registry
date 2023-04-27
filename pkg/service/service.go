@@ -77,9 +77,9 @@ func (s *Server) Run() error {
 		return err
 	}
 
-	mux.Handle("/", serveApplicationResources(s.Config.Server.StaticDir, s.oidc))
+	mux.Handle("/", s.serveApplicationResources())
 	mux.Handle("/healthz/", healthz.NewHandler())
-	mux.Handle("/docs/", newDocsHandler())
+	mux.Handle("/docs/", s.newDocsHandler())
 	mux.Handle("/v1/", gwMux)
 
 	s.oidc.Handle(mux)
@@ -170,12 +170,10 @@ func (s *Server) initGateway() (*runtime.ServeMux, error) {
 	return gwMux, nil
 }
 
-func newDocsHandler() http.Handler {
-	generatedDocsDir := "./gen/openapiv2/proto/api/v1"
-
+func (s *Server) newDocsHandler() http.Handler {
 	return http.StripPrefix(
 		"/docs/",
-		http.FileServer(http.Dir(generatedDocsDir)),
+		http.FileServer(http.Dir(s.Config.Server.DocsDir)),
 	)
 }
 
@@ -220,7 +218,7 @@ func CreateAPIServices(config *configuration.Config, oidc auth.OidcAuth) ([]midd
 
 // serveApplicationResources handles requests for SPA endpoints as well as
 // regular resources.
-func serveApplicationResources(dir string, oidc auth.OidcAuth) http.Handler {
+func (s *Server) serveApplicationResources() http.Handler {
 	type rule struct {
 		path      string
 		spa       bool
@@ -238,7 +236,7 @@ func serveApplicationResources(dir string, oidc auth.OidcAuth) http.Handler {
 		{path: "/", spa: true, prefix: true},
 	}
 
-	fs := http.FileServer(http.Dir(dir))
+	fs := http.FileServer(http.Dir(s.Config.Server.StaticDir))
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requestPath := r.URL.Path
@@ -269,12 +267,12 @@ func serveApplicationResources(dir string, oidc auth.OidcAuth) http.Handler {
 				fs.ServeHTTP(w, r)
 			} else {
 				// Serve this path with authentication.
-				oidc.Authorized(fs).ServeHTTP(w, r)
+				s.oidc.Authorized(fs).ServeHTTP(w, r)
 			}
 
 			return
 		}
 		// No rules matched, so serve this path with authentication by default.
-		oidc.Authorized(fs).ServeHTTP(w, r)
+		s.oidc.Authorized(fs).ServeHTTP(w, r)
 	})
 }

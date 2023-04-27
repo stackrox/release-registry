@@ -1,3 +1,6 @@
+/**
+ * Messages related the meta information.
+ */
 syntax = "proto3";
 package proto.shared.v1;
 
@@ -5,8 +8,14 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/stackrox/release-registry/gen/go/proto/shared/v1";
 
+// Represents meta information that can be associated with releases, quality milestones and their definitions.
 message Meta {
+  // Unique Id of the database object.
   int64 id = 1;
+
+  // Timestamp of creation.
   google.protobuf.Timestamp created_at = 2;
+
+  // Timestamp of last update.
   google.protobuf.Timestamp updated_at = 3;
 }
