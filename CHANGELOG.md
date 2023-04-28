@@ -9,4 +9,8 @@ Please avoid adding duplicate information across this changelog and JIRA/doc inp
 
 ## [NEXT RELEASE]
 
-- Bootstrap repository - linters, configuration & logging frameworks, build and deploy mechanisms
+## [0.1.0]
+
+- Publish repository as open source under Apache 2.0 license
+- Implemented backend service and login and token UI
+- Bootstraped repository - linters, configuration & logging frameworks, build and deploy mechanisms
