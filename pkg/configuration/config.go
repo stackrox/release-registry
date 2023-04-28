@@ -37,12 +37,12 @@ type DatabaseConfig struct {
 
 // ServerConfig holds the configuration for the server.
 type ServerConfig struct {
-	Cert           string `mapstructure:"cert"`
-	Key            string `mapstructure:"key"`
-	StaticDir      string `mapstructure:"staticDir"`
-	DocsDir        string `mapstructure:"docsDir"`
-	Port           int    `mapstructure:"port"`
-	MeasureLatency bool   `mapstructure:"measureLatency"`
+	Cert      string        `mapstructure:"cert"`
+	Key       string        `mapstructure:"key"`
+	StaticDir string        `mapstructure:"staticDir"`
+	DocsDir   string        `mapstructure:"docsDir"`
+	Port      int           `mapstructure:"port"`
+	Metrics   MetricsConfig `mapstructure:"metrics"`
 }
 
 // TenantConfig holds configuration specific to the tenant.
@@ -50,6 +50,12 @@ type TenantConfig struct {
 	EmailDomain    string `mapstructure:"emailDomain"`
 	Password       string `mapstructure:"password"`
 	OidcConfigFile string `mapstructure:"oidcConfigFile"`
+}
+
+// MetricsConfig holds configuration for the metrics exposure.
+type MetricsConfig struct {
+	Port           int  `mapstructure:"port"`
+	MeasureLatency bool `mapstructure:"measureLatency"`
 }
 
 func setupConfigLocation(additionalConfigDirs ...string) {

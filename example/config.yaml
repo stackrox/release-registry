@@ -7,7 +7,9 @@ server:
   key: example/server.key
   staticDir: ui/build
   docsDir: gen/openapiv2
-  measureLatency: true
+  metrics:
+    port: 9101
+    measureLatency: true
 tenant:
   emailDomain: redhat.com
   password: SecretPassW0rd!
