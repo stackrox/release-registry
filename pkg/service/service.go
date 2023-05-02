@@ -11,8 +11,10 @@ import (
 	"strings"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/pkg/errors"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/stackrox/infra-auth-lib/auth"
 	authService "github.com/stackrox/infra-auth-lib/service"
 	"github.com/stackrox/infra-auth-lib/service/middleware"
@@ -53,7 +55,12 @@ func New(config *configuration.Config, oidc auth.OidcAuth, services ...middlewar
 
 			// Enforce authenticated user access on resources that declare it.
 			middleware.ContextInterceptor(middleware.EnforceAccess),
+
+			// Collect and expose Prometheus metrics
+			grpc_prometheus.UnaryServerInterceptor,
 		)),
+		// Collect and expose Prometheus metrics
+		grpc.StreamInterceptor(grpc_prometheus.StreamServerInterceptor),
 	)
 	s := Server{
 		grpcServer,
@@ -66,11 +73,39 @@ func New(config *configuration.Config, oidc auth.OidcAuth, services ...middlewar
 	return s
 }
 
+func (s *Server) registerMetrics() {
+	listenAddress := fmt.Sprintf("0.0.0.0:%d", s.Config.Server.Metrics.Port)
+
+	if s.Config.Server.Metrics.MeasureLatency {
+		// This is hidden behind a flag because it is bad practice to have metrics of high cardinality.
+		grpc_prometheus.EnableHandlingTimeHistogram()
+	}
+
+	grpc_prometheus.Register(s.Server)
+
+	mux := http.NewServeMux()
+	mux.Handle("/metrics", promhttp.Handler())
+
+	log.Infow("starting metrics server", "listenAddress", listenAddress)
+
+	go func() {
+		err := http.ListenAndServeTLS(
+			listenAddress,
+			s.Config.Server.Cert, s.Config.Server.Key,
+			mux,
+		)
+		if err != nil {
+			s.ErrCh <- err
+		}
+	}()
+}
+
 // Run runs a gRPC + HTTP server on a single port.
 func (s *Server) Run() error {
 	mux := s.initMux()
 
 	s.registerServiceServers()
+	s.registerMetrics()
 
 	gwMux, err := s.initGateway()
 	if err != nil {
