@@ -7,6 +7,14 @@ server:
   # service account to execute these actions.
   emailDomain: redhat.com
 
+  metrics:
+    # Which port to expose metrics on
+    port: 9101
+
+    # Whether to measure and expose latency metrics
+    measureLatency: false
+
+
 # Configuration for Postgres database, managed by CrunchyData's postgres-operator.
 database:
   size: 1Gi
