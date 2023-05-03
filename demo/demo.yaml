@@ -1,0 +1,90 @@
+qualityMilestoneDefinition:
+- name: Nightly passed
+  expectedMetadataKeys:
+    - BuildUrl
+    - NumberOfCIFailures
+- name: Cloud service validation passed
+  expectedMetadataKeys:
+    - BakeDuration
+    - CanarySize
+releases:
+- commit: 6b054479cc81593acdf6159b23827c219ac72816
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.0
+  tag: 4.0.0
+- commit: f301cddef55e58a3242127b1c85054eb2cd69117
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.0-rc.1
+  tag: 4.0.0-rc.1
+- commit: ab7901f271bb78a1a3c673d76925babc96026b31
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.0-rc.2
+  tag: 4.0.0-rc.2
+- commit: f1204c35f513acd9523ced5d756cff5954ccfdd0
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.0-rc.3
+  tag: 4.0.0-rc.3
+- commit: 756497f07cea38a7301071efb30f007787774393
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.0-rc.4
+  tag: 4.0.0-rc.4
+- commit: 43072f8fa2be0bd9f13f9ff0208cf99729fc0a51
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.0-rc.5
+  tag: 4.0.0-rc.5
+- commit: 5e7ef42d754926c11e34e1561ea6890929983c17
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.0-rc.6
+  tag: 4.0.0-rc.6
+- commit: 0902f6496db435fd15d98a7cbc700441d6336e96
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.x-nightly-20230411
+  tag: 4.0.x-nightly-20230411
+- commit: a5e8761c4e258ac2deea78933ce350db8e235ed6
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.x-nightly-20230412
+  tag: 4.0.x-nightly-20230412
+- commit: e2d435f6e7722823f8188464b8ab14f6873995b0
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.x-nightly-20230413
+  tag: 4.0.x-nightly-20230413
+- commit: a2b7830e5b55821f8620e160ac80db3981335ed1
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.x-nightly-20230414
+  tag: 4.0.x-nightly-20230414
+- commit: 8865149d9d3ec0852880cff4026292e517f89a48
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.x-nightly-20230417
+  tag: 4.0.x-nightly-20230417
+- commit: 4c5a9ff9300599b051cd25c2a2ae918267ca7d96
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.x-nightly-20230420
+  tag: 4.0.x-nightly-20230420
+- commit: 79c13d4db55501b306174303c076cb5a796ff187
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.x-nightly-20230421
+  tag: 4.0.x-nightly-20230421
+- commit: e99be8b102a4362a47d0001a80bbd0b202f778a4
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.x-nightly-20230424
+  tag: 4.0.x-nightly-20230424
+- commit: 49ea97726bcf0b3355d4bf8baec42959e0b8f9f9
+  metadata:
+  - key: image
+    value: quay.io/rhacs-eng/main:4.0.x-nightly-20230502
+  tag: 4.0.x-nightly-20230502
