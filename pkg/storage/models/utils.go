@@ -41,7 +41,7 @@ func withIncludedRejectedReleases(db *gorm.DB, includeRejected bool) *gorm.DB {
 
 func withIgnoredReleaseKinds(db *gorm.DB, ignoredKinds []version.Kind) *gorm.DB {
 	for _, kind := range ignoredKinds {
-		db = db.Where("kind = ?", kind)
+		db = db.Where("kind != ?", kind)
 	}
 
 	return db

@@ -69,6 +69,21 @@ func createMultipleFakeReleases(t *testing.T) []models.Release {
 			Commit:   "e4280c38e2bbb53cd60444e490ce0ea35f1b339c",
 			Creator:  "roxbot@redhat.com",
 			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
+		}, {
+			Tag:      "0.1.x-14-gabcdef1234",
+			Commit:   "e4280c38e2bbb53cd60444e490ce0ea35f1b339c",
+			Creator:  "roxbot@redhat.com",
+			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
+		}, {
+			Tag:      "0.1.1-rc.1",
+			Commit:   "e4280c38e2bbb53cd60444e490ce0ea35f1b339c",
+			Creator:  "roxbot@redhat.com",
+			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
+		}, {
+			Tag:      "0.1.x-nightly-20230508",
+			Commit:   "e4280c38e2bbb53cd60444e490ce0ea35f1b339c",
+			Creator:  "roxbot@redhat.com",
+			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
 		},
 	}
 
@@ -228,7 +243,7 @@ func TestListAllReleasesWithWithoutRejected(t *testing.T) {
 
 	releasesWithoutRejected, err := models.ListAllReleases([]version.Kind{}, true, false)
 	assert.NoError(t, err)
-	assert.Len(t, releasesWithoutRejected, 2)
+	assert.Len(t, releasesWithoutRejected, 5)
 
 	// expectedReleases[0] is rejected, don't compare that one.
 	utils.AssertReleasesAreEqual(t, &expectedReleases[1], &releasesWithoutRejected[0], false, true)
@@ -236,7 +251,7 @@ func TestListAllReleasesWithWithoutRejected(t *testing.T) {
 
 	releasesWithRejected, err := models.ListAllReleases([]version.Kind{}, true, true)
 	assert.NoError(t, err)
-	assert.Len(t, releasesWithRejected, 3)
+	assert.Len(t, releasesWithRejected, 6)
 
 	for i := range expectedReleases {
 		utils.AssertReleasesAreEqual(t, &expectedReleases[i], &releasesWithRejected[i], false, true)
@@ -429,4 +444,31 @@ func TestFindLatestRelaseWithPrefixAtQualityMilestone(t *testing.T) {
 	latest, err := models.FindLatestRelaseWithPrefixAtQualityMilestone("1.0", "QM1", []version.Kind{}, true, false)
 	assert.NoError(t, err)
 	utils.AssertReleasesAreEqual(t, &expectedReleases[1], latest, false, true)
+}
+
+func TestReleaseKindExclusion(t *testing.T) {
+	setupReleaseTest(t)
+	expectedReleases := createMultipleFakeReleases(t)
+
+	allReleases, err := models.ListAllReleases([]version.Kind{}, false, false)
+	assert.NoError(t, err)
+	assert.Len(t, allReleases, 6)
+
+	ignoredKinds := []version.Kind{version.ReleaseKind}
+	withExcludedReleases, err := models.ListAllReleases(ignoredKinds, false, false)
+	assert.NoError(t, err)
+	assert.Len(t, withExcludedReleases, 3)
+
+	for i := range withExcludedReleases {
+		utils.AssertReleasesAreEqual(t, &expectedReleases[i+3], &withExcludedReleases[i], false, false)
+	}
+
+	ignoredKinds = []version.Kind{version.RCKind, version.NightlyKind}
+	withExcludedReleases, err = models.ListAllReleases(ignoredKinds, false, false)
+	assert.NoError(t, err)
+	assert.Len(t, withExcludedReleases, 4)
+
+	for i := range withExcludedReleases {
+		utils.AssertReleasesAreEqual(t, &expectedReleases[i], &withExcludedReleases[i], false, false)
+	}
 }

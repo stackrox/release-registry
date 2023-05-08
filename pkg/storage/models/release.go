@@ -38,6 +38,7 @@ func CreateRelease(
 		Tag:      tag,
 		Commit:   commit,
 		Creator:  creator,
+		Kind:     version.GetKind(tag),
 		Metadata: metadata,
 	}
 	result := storage.DB.Where(release).FirstOrCreate(release)
@@ -112,7 +113,11 @@ func ListAllReleases(ignoredKinds []version.Kind, preload bool, includeRejected 
 }
 
 // ListAllReleasesWithPrefix implements search to return all Releases starting with a specific prefix.
-func ListAllReleasesWithPrefix(prefix string, ignoredKinds []version.Kind, preload, includeRejected bool) ([]Release, error) {
+func ListAllReleasesWithPrefix(
+	prefix string,
+	ignoredKinds []version.Kind,
+	preload, includeRejected bool,
+) ([]Release, error) {
 	if err := validate.IsNotEmpty(prefix); err != nil {
 		return nil, errors.Wrapf(err, "prefix parameter is empty")
 	}
