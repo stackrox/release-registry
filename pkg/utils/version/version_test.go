@@ -11,7 +11,7 @@ func TestLatestDev(t *testing.T) {
 	assert.Equal(t, version.GetKind("1.2.x-24-gabcdef1234"), version.DevelopmentKind)
 	latest, err := version.LatestVersion([]string{"1.2.x-24-gabcdef1234", "1.2.x-123-gabcdef1234"})
 	assert.NoError(t, err)
-	assert.Equal(t, latest, "1.2.3-123-gabcdef1234")
+	assert.Equal(t, latest, "1.2.x-123-gabcdef1234")
 }
 
 func TestLatestReleaseVersion(t *testing.T) {
