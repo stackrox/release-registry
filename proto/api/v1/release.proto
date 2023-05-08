@@ -19,6 +19,15 @@ message ReleaseMetadata {
   string value = 2;
 }
 
+// Represents kind of releases.
+enum ReleaseKind {
+  RELEASE_KIND_INVALID_UNSPECIFIED = 0;
+  RELEASE_KIND_DEVELOPMENT = 1;
+  RELEASE_KIND_RC = 2;
+  RELEASE_KIND_RELEASE = 3;
+  RELEASE_KIND_NIGHTLY = 4;
+}
+
 // Represents a create request for a release.
 message ReleaseServiceCreateRequest {
   // Unique tag to identify the release.
@@ -45,8 +54,11 @@ message ReleaseServiceCreateResponse {
   // Email address of actor who created the release.
   string creator = 4;
 
+  // Kind of the release.
+  ReleaseKind kind = 5;
+
   // List of metadata associated with the release.
-  repeated ReleaseMetadata metadata = 5;
+  repeated ReleaseMetadata metadata = 6;
 }
 
 // Represents a request to get a specific release.
@@ -75,14 +87,17 @@ message ReleaseServiceGetResponse {
   // Email address of actor who created the release.
   string creator = 4;
 
+  // Kind of the release.
+  ReleaseKind kind = 5;
+
   // List of metadata associated with the release.
-  repeated ReleaseMetadata metadata = 5;
+  repeated ReleaseMetadata metadata = 6;
 
   // List of quality milestones that the release has passed.
-  repeated api.v1.QualityMilestone quality_milestones = 6;
+  repeated api.v1.QualityMilestone quality_milestones = 7;
 
   // Whether the release is rejected.
-  bool rejected = 7;
+  bool rejected = 8;
 }
 
 // Represents a request to list all releases matching the search criteria.
@@ -93,11 +108,14 @@ message ReleaseServiceListRequest {
   // Name of a quality milestone that a release must have passed.
   string quality_milestone_name = 2;
 
+  // List of release kinds to ignore in output.
+  repeated ReleaseKind ignored_release_kinds = 3;
+
   // Whether to include release metadata and associated quality milestones in the response.
-  bool preload = 3;
+  bool preload = 4;
 
   // Whether to include rejected releases in the response.
-  bool include_rejected = 4;
+  bool include_rejected = 5;
 }
 
 // Represents the response to list all releases matching the requested search criteria.
@@ -115,7 +133,7 @@ message ReleaseServiceApproveRequest {
   string quality_milestone_definition_name = 2;
 
   // List of metadata associated with the quality milestone.
-  repeated api.v1.QualityMilestoneMetadata metadata = 3;
+  repeated api.v1.QualityMilestoneMetadata metadata = 4;
 }
 
 // Represents the response to the request to approve a release for a quality milestone.
@@ -132,8 +150,11 @@ message ReleaseServiceApproveResponse {
   // Email address of actor who approved the quality milestone.
   string approver = 4;
 
+  // Kind of the release.
+  ReleaseKind kind = 5;
+
   // List of metadata associated with the quality milestone.
-  repeated api.v1.QualityMilestoneMetadata metadata = 5;
+  repeated api.v1.QualityMilestoneMetadata metadata = 6;
 }
 
 // Represents a request to reject a release and hide it from results.
@@ -159,11 +180,14 @@ message ReleaseServiceRejectResponse {
   // Email address of actor who created the release.
   string creator = 4;
 
+  // Kind of the release.
+  ReleaseKind kind = 5;
+
   // List of metadata associated with the release.
-  repeated ReleaseMetadata metadata = 5;
+  repeated ReleaseMetadata metadata = 6;
 
   // Rejection status of the release.
-  bool rejected = 6;
+  bool rejected = 7;
 }
 
 // Represents a request to find the latest release for given search criteria.
@@ -174,11 +198,14 @@ message ReleaseServiceFindLatestRequest {
   // Name of a quality milestone that a release must have passed.
   string quality_milestone_name = 2;
 
+  // List of release kinds to ignore in sorting.
+  repeated ReleaseKind ignored_release_kinds = 3;
+
   // Whether to include release metadata and associated quality milestones in the response.
-  bool preload = 3;
+  bool preload = 4;
 
   // Whether to include rejected releases in the response.
-  bool include_rejected = 4;
+  bool include_rejected = 5;
 }
 
 // Represents the response with the latest release for given search criteria.
@@ -195,14 +222,17 @@ message ReleaseServiceFindLatestResponse {
   // Email address of actor who created the release.
   string creator = 4;
 
+  // Kind of the release.
+  ReleaseKind kind = 5;
+
   // List of metadata associated with the release.
-  repeated ReleaseMetadata metadata = 5;
+  repeated ReleaseMetadata metadata = 6;
 
   // List of quality milestones that the release has passed.
-  repeated api.v1.QualityMilestone quality_milestones = 6;
+  repeated api.v1.QualityMilestone quality_milestones = 7;
 
   // Whether the release is rejected.
-  bool rejected = 7;
+  bool rejected = 8;
 }
 
 // Release service creates, lists, gets, approves and rejects releases.

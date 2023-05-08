@@ -62,6 +62,24 @@
             "in": "query",
             "required": false,
             "type": "boolean"
+          },
+          {
+            "name": "ignoredReleaseKinds",
+            "description": "List of release kinds to ignore in sorting.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "RELEASE_KIND_INVALID_UNSPECIFIED",
+                "RELEASE_KIND_DEVELOPMENT",
+                "RELEASE_KIND_RC",
+                "RELEASE_KIND_RELEASE",
+                "RELEASE_KIND_NIGHTLY"
+              ]
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -101,6 +119,24 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "ignoredReleaseKinds",
+            "description": "List of release kinds to ignore in output.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "RELEASE_KIND_INVALID_UNSPECIFIED",
+                "RELEASE_KIND_DEVELOPMENT",
+                "RELEASE_KIND_RC",
+                "RELEASE_KIND_RELEASE",
+                "RELEASE_KIND_NIGHTLY"
+              ]
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "preload",
@@ -389,6 +425,18 @@
       },
       "description": "Represents metadata for quality milestones."
     },
+    "v1ReleaseKind": {
+      "type": "string",
+      "enum": [
+        "RELEASE_KIND_INVALID_UNSPECIFIED",
+        "RELEASE_KIND_DEVELOPMENT",
+        "RELEASE_KIND_RC",
+        "RELEASE_KIND_RELEASE",
+        "RELEASE_KIND_NIGHTLY"
+      ],
+      "default": "RELEASE_KIND_INVALID_UNSPECIFIED",
+      "description": "Represents kind of releases."
+    },
     "v1ReleaseMetadata": {
       "type": "object",
       "properties": {
@@ -421,6 +469,10 @@
         "approver": {
           "type": "string",
           "description": "Email address of actor who approved the quality milestone."
+        },
+        "kind": {
+          "$ref": "#/definitions/v1ReleaseKind",
+          "description": "Kind of the release."
         },
         "metadata": {
           "type": "array",
@@ -472,6 +524,10 @@
           "type": "string",
           "description": "Email address of actor who created the release."
         },
+        "kind": {
+          "$ref": "#/definitions/v1ReleaseKind",
+          "description": "Kind of the release."
+        },
         "metadata": {
           "type": "array",
           "items": {
@@ -500,6 +556,10 @@
         "creator": {
           "type": "string",
           "description": "Email address of actor who created the release."
+        },
+        "kind": {
+          "$ref": "#/definitions/v1ReleaseKind",
+          "description": "Kind of the release."
         },
         "metadata": {
           "type": "array",
@@ -540,6 +600,10 @@
         "creator": {
           "type": "string",
           "description": "Email address of actor who created the release."
+        },
+        "kind": {
+          "$ref": "#/definitions/v1ReleaseKind",
+          "description": "Kind of the release."
         },
         "metadata": {
           "type": "array",
@@ -593,6 +657,10 @@
         "creator": {
           "type": "string",
           "description": "Email address of actor who created the release."
+        },
+        "kind": {
+          "$ref": "#/definitions/v1ReleaseKind",
+          "description": "Kind of the release."
         },
         "metadata": {
           "type": "array",

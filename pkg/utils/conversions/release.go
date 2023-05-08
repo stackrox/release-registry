@@ -4,6 +4,7 @@ package conversions
 import (
 	v1 "github.com/stackrox/release-registry/gen/go/proto/api/v1"
 	"github.com/stackrox/release-registry/pkg/storage/models"
+	"github.com/stackrox/release-registry/pkg/utils/version"
 	"gorm.io/gorm"
 )
 
@@ -23,6 +24,7 @@ func NewCreateReleaseResponseFromRelease(release *models.Release) *v1.ReleaseSer
 		Tag:      release.Tag,
 		Commit:   release.Commit,
 		Creator:  release.Creator,
+		Kind:     v1.ReleaseKind(release.Kind),
 		Metadata: newV1ReleaseMetadataFromRelease(release),
 	}
 }
@@ -38,6 +40,7 @@ func NewReleaseFromCreateReleaseResponse(release *v1.ReleaseServiceCreateRespons
 		Tag:      release.GetTag(),
 		Commit:   release.GetCommit(),
 		Creator:  release.GetCreator(),
+		Kind:     version.Kind(release.GetKind()),
 		Metadata: newReleaseMetadataFromV1ReleaseMetadata(release.GetMetadata()),
 	}
 }
@@ -49,6 +52,7 @@ func NewGetReleaseResponseFromRelease(release *models.Release) *v1.ReleaseServic
 		Tag:               release.Tag,
 		Commit:            release.Commit,
 		Creator:           release.Creator,
+		Kind:              v1.ReleaseKind(release.Kind),
 		Metadata:          newV1ReleaseMetadataFromRelease(release),
 		Rejected:          release.Rejected,
 		QualityMilestones: newV1QualityMilestonesFromQualityMilestones(release.QualityMilestones),
@@ -66,6 +70,7 @@ func NewReleaseFromGetReleaseResponse(release *v1.ReleaseServiceGetResponse) *mo
 		Tag:               release.GetTag(),
 		Commit:            release.GetCommit(),
 		Creator:           release.GetCreator(),
+		Kind:              version.Kind(release.GetKind()),
 		Metadata:          newReleaseMetadataFromV1ReleaseMetadata(release.GetMetadata()),
 		QualityMilestones: newQualityMilestonesFromV1QualityMilestones(release.GetQualityMilestones()),
 	}
@@ -90,6 +95,7 @@ func NewFindLatestReleaseResponseFromRelease(release *models.Release) *v1.Releas
 		Tag:               release.Tag,
 		Commit:            release.Commit,
 		Creator:           release.Creator,
+		Kind:              v1.ReleaseKind(release.Kind),
 		Metadata:          newV1ReleaseMetadataFromRelease(release),
 		Rejected:          release.Rejected,
 		QualityMilestones: newV1QualityMilestonesFromQualityMilestones(release.QualityMilestones),
@@ -107,6 +113,7 @@ func NewReleaseFromFindLatestReponse(release *v1.ReleaseServiceFindLatestRespons
 		Tag:               release.GetTag(),
 		Commit:            release.GetCommit(),
 		Creator:           release.GetCreator(),
+		Kind:              version.Kind(release.GetKind()),
 		Metadata:          newReleaseMetadataFromV1ReleaseMetadata(release.GetMetadata()),
 		QualityMilestones: newQualityMilestonesFromV1QualityMilestones(release.GetQualityMilestones()),
 	}
@@ -122,6 +129,7 @@ func NewApproveQualityMilestoneResponseFromQualityMilestone(
 		Tag:                            qm.Release.Tag,
 		QualityMilestoneDefinitionName: qm.QualityMilestoneDefinition.Name,
 		Approver:                       qm.Approver,
+		Kind:                           v1.ReleaseKind(qm.Release.Kind),
 		Metadata:                       newV1QualityMilestoneMetadataFromQualityMilestoneMetadata(qm.Metadata),
 	}
 }
@@ -133,6 +141,7 @@ func NewRejectReleaseResponseFromRelease(release *models.Release) *v1.ReleaseSer
 		Tag:      release.Tag,
 		Commit:   release.Commit,
 		Creator:  release.Creator,
+		Kind:     v1.ReleaseKind(release.Kind),
 		Metadata: newV1ReleaseMetadataFromRelease(release),
 		Rejected: release.Rejected,
 	}
