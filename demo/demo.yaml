@@ -11,8 +11,8 @@ releases:
 - commit: 6b054479cc81593acdf6159b23827c219ac72816
   metadata:
   - key: image
-    value: quay.io/rhacs-eng/main:4.0.0
-  tag: 4.0.0
+    value: quay.io/rhacs-eng/main:4.1.0
+  tag: 4.1.0
 - commit: f301cddef55e58a3242127b1c85054eb2cd69117
   metadata:
   - key: image

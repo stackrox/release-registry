@@ -8,7 +8,7 @@ import yaml
 
 BASE_URL="localhost:8443"
 
-RELREG_TOKEN = os.getenv("RELREG_TOKEN")
+RELREG_TOKEN = os.getenv("RELREG_TEST_TOKEN")
 
 HEADERS = {
         'Content-Type': 'application/json',
