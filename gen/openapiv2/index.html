@@ -978,6 +978,13 @@
                 </tr>
               
                 <tr>
+                  <td>ignored_release_kinds</td>
+                  <td><a href="#proto.api.v1.ReleaseKind">ReleaseKind</a></td>
+                  <td>repeated</td>
+                  <td><p>List of release kinds to ignore in sorting. </p></td>
+                </tr>
+              
+                <tr>
                   <td>preload</td>
                   <td><a href="#bool">bool</a></td>
                   <td></td>
@@ -989,13 +996,6 @@
                   <td><a href="#bool">bool</a></td>
                   <td></td>
                   <td><p>Whether to include rejected releases in the response. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>ignored_release_kinds</td>
-                  <td><a href="#proto.api.v1.ReleaseKind">ReleaseKind</a></td>
-                  <td>repeated</td>
-                  <td><p>List of release kinds to ignore in sorting. </p></td>
                 </tr>
               
             </tbody>
@@ -1375,31 +1375,31 @@
               <tr>
                 <td>RELEASE_KIND_INVALID_UNSPECIFIED</td>
                 <td>0</td>
-                <td><p></p></td>
+                <td><p>Invalid or unspecified kind.</p></td>
               </tr>
             
               <tr>
                 <td>RELEASE_KIND_DEVELOPMENT</td>
                 <td>1</td>
-                <td><p></p></td>
+                <td><p>Development (untagged) kind.</p></td>
               </tr>
             
               <tr>
                 <td>RELEASE_KIND_RC</td>
                 <td>2</td>
-                <td><p></p></td>
+                <td><p>Release candidate kind.</p></td>
               </tr>
             
               <tr>
                 <td>RELEASE_KIND_RELEASE</td>
                 <td>3</td>
-                <td><p></p></td>
+                <td><p>Release kind.</p></td>
               </tr>
             
               <tr>
                 <td>RELEASE_KIND_NIGHTLY</td>
                 <td>4</td>
-                <td><p></p></td>
+                <td><p>Nightly build kind.</p></td>
               </tr>
             
           </tbody>

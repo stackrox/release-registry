@@ -21,10 +21,15 @@ message ReleaseMetadata {
 
 // Represents kind of releases.
 enum ReleaseKind {
+  // Invalid or unspecified kind.
   RELEASE_KIND_INVALID_UNSPECIFIED = 0;
+  // Development (untagged) kind.
   RELEASE_KIND_DEVELOPMENT = 1;
+  // Release candidate kind.
   RELEASE_KIND_RC = 2;
+  // Release kind.
   RELEASE_KIND_RELEASE = 3;
+  // Nightly build kind.
   RELEASE_KIND_NIGHTLY = 4;
 }
 

@@ -50,22 +50,8 @@
             "type": "string"
           },
           {
-            "name": "preload",
-            "description": "Whether to include release metadata and associated quality milestones in the response.",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "includeRejected",
-            "description": "Whether to include rejected releases in the response.",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
             "name": "ignoredReleaseKinds",
-            "description": "List of release kinds to ignore in sorting.",
+            "description": "List of release kinds to ignore in sorting.\n\n - RELEASE_KIND_INVALID_UNSPECIFIED: Invalid or unspecified kind.\n - RELEASE_KIND_DEVELOPMENT: Development (untagged) kind.\n - RELEASE_KIND_RC: Release candidate kind.\n - RELEASE_KIND_RELEASE: Release kind.\n - RELEASE_KIND_NIGHTLY: Nightly build kind.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -80,6 +66,20 @@
               ]
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "preload",
+            "description": "Whether to include release metadata and associated quality milestones in the response.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "includeRejected",
+            "description": "Whether to include rejected releases in the response.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -122,7 +122,7 @@
           },
           {
             "name": "ignoredReleaseKinds",
-            "description": "List of release kinds to ignore in output.",
+            "description": "List of release kinds to ignore in output.\n\n - RELEASE_KIND_INVALID_UNSPECIFIED: Invalid or unspecified kind.\n - RELEASE_KIND_DEVELOPMENT: Development (untagged) kind.\n - RELEASE_KIND_RC: Release candidate kind.\n - RELEASE_KIND_RELEASE: Release kind.\n - RELEASE_KIND_NIGHTLY: Nightly build kind.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -435,7 +435,7 @@
         "RELEASE_KIND_NIGHTLY"
       ],
       "default": "RELEASE_KIND_INVALID_UNSPECIFIED",
-      "description": "Represents kind of releases."
+      "description": "Represents kind of releases.\n\n - RELEASE_KIND_INVALID_UNSPECIFIED: Invalid or unspecified kind.\n - RELEASE_KIND_DEVELOPMENT: Development (untagged) kind.\n - RELEASE_KIND_RC: Release candidate kind.\n - RELEASE_KIND_RELEASE: Release kind.\n - RELEASE_KIND_NIGHTLY: Nightly build kind."
     },
     "v1ReleaseMetadata": {
       "type": "object",
