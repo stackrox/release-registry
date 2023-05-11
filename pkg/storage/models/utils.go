@@ -39,6 +39,14 @@ func withIncludedRejectedReleases(db *gorm.DB, includeRejected bool) *gorm.DB {
 	return db
 }
 
+func withIgnoredReleaseKinds(db *gorm.DB, ignoredKinds []version.Kind) *gorm.DB {
+	for _, kind := range ignoredKinds {
+		db = db.Where("kind != ?", kind)
+	}
+
+	return db
+}
+
 func joinReleasesWithQualityMilestoneDefinitions(tx *gorm.DB) *gorm.DB {
 	return tx.Joins(
 		"JOIN quality_milestones ON quality_milestones.release_id = releases.id",

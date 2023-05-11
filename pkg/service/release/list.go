@@ -21,18 +21,21 @@ func (s *releaseImpl) List(
 	switch {
 	case listRelease.Prefix == "" && listRelease.QualityMilestoneName == "":
 		releases, err = models.ListAllReleases(
+			determineIgnoredReleaseKinds(listRelease),
 			listRelease.GetPreload(),
 			listRelease.GetIncludeRejected(),
 		)
 	case listRelease.Prefix == "" && listRelease.QualityMilestoneName != "":
 		releases, err = models.ListAllReleasesAtQualityMilestone(
 			listRelease.GetQualityMilestoneName(),
+			determineIgnoredReleaseKinds(listRelease),
 			listRelease.GetPreload(),
 			listRelease.GetIncludeRejected(),
 		)
 	case listRelease.Prefix != "" && listRelease.QualityMilestoneName == "":
 		releases, err = models.ListAllReleasesWithPrefix(
 			listRelease.GetPrefix(),
+			determineIgnoredReleaseKinds(listRelease),
 			listRelease.GetPreload(),
 			listRelease.GetIncludeRejected(),
 		)
@@ -40,6 +43,7 @@ func (s *releaseImpl) List(
 		releases, err = models.ListAllReleasesWithPrefixAtQualityMilestone(
 			listRelease.GetPrefix(),
 			listRelease.GetQualityMilestoneName(),
+			determineIgnoredReleaseKinds(listRelease),
 			listRelease.GetPreload(),
 			listRelease.GetIncludeRejected(),
 		)

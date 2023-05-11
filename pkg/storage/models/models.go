@@ -2,6 +2,7 @@
 package models
 
 import (
+	"github.com/stackrox/release-registry/pkg/utils/version"
 	"gorm.io/gorm"
 )
 
@@ -13,6 +14,7 @@ type Release struct {
 	Creator           string
 	Metadata          []ReleaseMetadata
 	QualityMilestones []QualityMilestone
+	Kind              version.Kind
 	Rejected          bool
 }
 

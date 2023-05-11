@@ -50,6 +50,24 @@
             "type": "string"
           },
           {
+            "name": "ignoredReleaseKinds",
+            "description": "List of release kinds to ignore in sorting.\n\n - RELEASE_KIND_INVALID_UNSPECIFIED: Invalid or unspecified kind.\n - RELEASE_KIND_DEVELOPMENT: Development (untagged) kind.\n - RELEASE_KIND_RC: Release candidate kind.\n - RELEASE_KIND_RELEASE: Release kind.\n - RELEASE_KIND_NIGHTLY: Nightly build kind.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "RELEASE_KIND_INVALID_UNSPECIFIED",
+                "RELEASE_KIND_DEVELOPMENT",
+                "RELEASE_KIND_RC",
+                "RELEASE_KIND_RELEASE",
+                "RELEASE_KIND_NIGHTLY"
+              ]
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "preload",
             "description": "Whether to include release metadata and associated quality milestones in the response.",
             "in": "query",
@@ -101,6 +119,24 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "ignoredReleaseKinds",
+            "description": "List of release kinds to ignore in output.\n\n - RELEASE_KIND_INVALID_UNSPECIFIED: Invalid or unspecified kind.\n - RELEASE_KIND_DEVELOPMENT: Development (untagged) kind.\n - RELEASE_KIND_RC: Release candidate kind.\n - RELEASE_KIND_RELEASE: Release kind.\n - RELEASE_KIND_NIGHTLY: Nightly build kind.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "RELEASE_KIND_INVALID_UNSPECIFIED",
+                "RELEASE_KIND_DEVELOPMENT",
+                "RELEASE_KIND_RC",
+                "RELEASE_KIND_RELEASE",
+                "RELEASE_KIND_NIGHTLY"
+              ]
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "preload",
@@ -389,6 +425,18 @@
       },
       "description": "Represents metadata for quality milestones."
     },
+    "v1ReleaseKind": {
+      "type": "string",
+      "enum": [
+        "RELEASE_KIND_INVALID_UNSPECIFIED",
+        "RELEASE_KIND_DEVELOPMENT",
+        "RELEASE_KIND_RC",
+        "RELEASE_KIND_RELEASE",
+        "RELEASE_KIND_NIGHTLY"
+      ],
+      "default": "RELEASE_KIND_INVALID_UNSPECIFIED",
+      "description": "Represents kind of releases.\n\n - RELEASE_KIND_INVALID_UNSPECIFIED: Invalid or unspecified kind.\n - RELEASE_KIND_DEVELOPMENT: Development (untagged) kind.\n - RELEASE_KIND_RC: Release candidate kind.\n - RELEASE_KIND_RELEASE: Release kind.\n - RELEASE_KIND_NIGHTLY: Nightly build kind."
+    },
     "v1ReleaseMetadata": {
       "type": "object",
       "properties": {
@@ -421,6 +469,10 @@
         "approver": {
           "type": "string",
           "description": "Email address of actor who approved the quality milestone."
+        },
+        "kind": {
+          "$ref": "#/definitions/v1ReleaseKind",
+          "description": "Kind of the release."
         },
         "metadata": {
           "type": "array",
@@ -472,6 +524,10 @@
           "type": "string",
           "description": "Email address of actor who created the release."
         },
+        "kind": {
+          "$ref": "#/definitions/v1ReleaseKind",
+          "description": "Kind of the release."
+        },
         "metadata": {
           "type": "array",
           "items": {
@@ -500,6 +556,10 @@
         "creator": {
           "type": "string",
           "description": "Email address of actor who created the release."
+        },
+        "kind": {
+          "$ref": "#/definitions/v1ReleaseKind",
+          "description": "Kind of the release."
         },
         "metadata": {
           "type": "array",
@@ -540,6 +600,10 @@
         "creator": {
           "type": "string",
           "description": "Email address of actor who created the release."
+        },
+        "kind": {
+          "$ref": "#/definitions/v1ReleaseKind",
+          "description": "Kind of the release."
         },
         "metadata": {
           "type": "array",
@@ -593,6 +657,10 @@
         "creator": {
           "type": "string",
           "description": "Email address of actor who created the release."
+        },
+        "kind": {
+          "$ref": "#/definitions/v1ReleaseKind",
+          "description": "Kind of the release."
         },
         "metadata": {
           "type": "array",

@@ -21,18 +21,21 @@ func (s *releaseImpl) FindLatest(
 	switch {
 	case findRelease.Prefix == "" && findRelease.QualityMilestoneName == "":
 		release, err = models.FindLatestRelease(
+			determineIgnoredReleaseKinds(findRelease),
 			findRelease.GetPreload(),
 			findRelease.GetIncludeRejected(),
 		)
 	case findRelease.Prefix == "" && findRelease.QualityMilestoneName != "":
 		release, err = models.FindLatestReleaseAtQualityMilestone(
 			findRelease.GetQualityMilestoneName(),
+			determineIgnoredReleaseKinds(findRelease),
 			findRelease.GetPreload(),
 			findRelease.GetIncludeRejected(),
 		)
 	case findRelease.Prefix != "" && findRelease.QualityMilestoneName == "":
 		release, err = models.FindLatestReleaseWithPrefix(
 			findRelease.GetPrefix(),
+			determineIgnoredReleaseKinds(findRelease),
 			findRelease.GetPreload(),
 			findRelease.GetIncludeRejected(),
 		)
@@ -40,6 +43,7 @@ func (s *releaseImpl) FindLatest(
 		release, err = models.FindLatestRelaseWithPrefixAtQualityMilestone(
 			findRelease.GetPrefix(),
 			findRelease.GetQualityMilestoneName(),
+			determineIgnoredReleaseKinds(findRelease),
 			findRelease.GetPreload(),
 			findRelease.GetIncludeRejected(),
 		)

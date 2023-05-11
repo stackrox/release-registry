@@ -5,6 +5,7 @@ import (
 
 	"github.com/stackrox/release-registry/pkg/configuration"
 	"github.com/stackrox/release-registry/pkg/storage/models"
+	"github.com/stackrox/release-registry/pkg/utils/version"
 	"github.com/stackrox/release-registry/tests/integration"
 	"github.com/stackrox/release-registry/tests/utils"
 	"github.com/stretchr/testify/assert"
@@ -68,6 +69,21 @@ func createMultipleFakeReleases(t *testing.T) []models.Release {
 			Commit:   "e4280c38e2bbb53cd60444e490ce0ea35f1b339c",
 			Creator:  "roxbot@redhat.com",
 			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
+		}, {
+			Tag:      "0.1.x-14-gabcdef1234",
+			Commit:   "e4280c38e2bbb53cd60444e490ce0ea35f1b339c",
+			Creator:  "roxbot@redhat.com",
+			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
+		}, {
+			Tag:      "0.1.1-rc.1",
+			Commit:   "e4280c38e2bbb53cd60444e490ce0ea35f1b339c",
+			Creator:  "roxbot@redhat.com",
+			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
+		}, {
+			Tag:      "0.1.x-nightly-20230508",
+			Commit:   "e4280c38e2bbb53cd60444e490ce0ea35f1b339c",
+			Creator:  "roxbot@redhat.com",
+			Metadata: []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}},
 		},
 	}
 
@@ -102,10 +118,10 @@ func TestCreateReleaseInvalidSemVer(t *testing.T) {
 
 	_, err := models.CreateRelease(
 		configuration.New().Tenant.EmailDomain,
-		"1.2.3.4.5.6", defaultCommit, defaultCreator, []models.ReleaseMetadata{},
+		"1.2.3aszihiuh", defaultCommit, defaultCreator, []models.ReleaseMetadata{},
 	)
 	assert.Error(t, err)
-	assert.ErrorContains(t, err, "tag 1.2.3.4.5.6 is not a valid version")
+	assert.ErrorContains(t, err, "tag 1.2.3aszihiuh is not a valid version")
 }
 
 func TestCreateReleaseNightlyVersion(t *testing.T) {
@@ -162,7 +178,11 @@ func TestGetReleaseByTag(t *testing.T) {
 	setupReleaseTest(t)
 
 	metadata := []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}}
-	originalRelease, err := models.CreateRelease(configuration.New().Tenant.EmailDomain, defaultTag, defaultCommit, defaultCreator, metadata)
+	originalRelease, err := models.CreateRelease(
+		configuration.New().Tenant.EmailDomain,
+		defaultTag, defaultCommit, defaultCreator,
+		metadata,
+	)
 	assert.NoError(t, err)
 
 	// Get a release without preloading metadata
@@ -195,10 +215,14 @@ func TestGetReleaseByTagWithQualityMilestones(t *testing.T) {
 		{Key: "Ghi", Value: "ghi"},
 	}
 
-	_, err := models.ApproveQualityMilestone(config.Tenant.EmailDomain, release.Tag, qmd.Name, "roxbot@redhat.com", metadata)
+	_, err := models.ApproveQualityMilestone(
+		config.Tenant.EmailDomain,
+		release.Tag, qmd.Name, "roxbot@redhat.com",
+		metadata,
+	)
 	assert.NoError(t, err)
 
-	releases, err := models.ListAllReleasesAtQualityMilestone(qmd.Name, true, false)
+	releases, err := models.ListAllReleasesAtQualityMilestone(qmd.Name, []version.Kind{}, true, false)
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
 	utils.AssertReleasesAreEqual(t, &releases[0], &release, true, true)
@@ -217,17 +241,17 @@ func TestListAllReleasesWithWithoutRejected(t *testing.T) {
 	_, err := models.RejectRelease(expectedReleases[0].Tag, false)
 	assert.NoError(t, err)
 
-	releasesWithoutRejected, err := models.ListAllReleases(true, false)
+	releasesWithoutRejected, err := models.ListAllReleases([]version.Kind{}, true, false)
 	assert.NoError(t, err)
-	assert.Len(t, releasesWithoutRejected, 2)
+	assert.Len(t, releasesWithoutRejected, 5)
 
 	// expectedReleases[0] is rejected, don't compare that one.
 	utils.AssertReleasesAreEqual(t, &expectedReleases[1], &releasesWithoutRejected[0], false, true)
 	utils.AssertReleasesAreEqual(t, &expectedReleases[2], &releasesWithoutRejected[1], false, true)
 
-	releasesWithRejected, err := models.ListAllReleases(true, true)
+	releasesWithRejected, err := models.ListAllReleases([]version.Kind{}, true, true)
 	assert.NoError(t, err)
-	assert.Len(t, releasesWithRejected, 3)
+	assert.Len(t, releasesWithRejected, 6)
 
 	for i := range expectedReleases {
 		utils.AssertReleasesAreEqual(t, &expectedReleases[i], &releasesWithRejected[i], false, true)
@@ -240,7 +264,7 @@ func TestListAllReleasesWithPrefix(t *testing.T) {
 	expectedReleaseDatabaseObjects := createMultipleFakeReleases(t)
 
 	// Expect only 2 releases due to the third release having the wrong prefix
-	actualReleases, err := models.ListAllReleasesWithPrefix("1.0", true, false)
+	actualReleases, err := models.ListAllReleasesWithPrefix("1.0", []version.Kind{}, true, false)
 	assert.NoError(t, err)
 
 	assert.Len(t, actualReleases, 2)
@@ -266,11 +290,15 @@ func TestListAllReleasesAtQualityMilestone(t *testing.T) {
 		{Key: "Def", Value: "def"},
 		{Key: "Ghi", Value: "ghi"},
 	}
-	_, err = models.ApproveQualityMilestone(config.Tenant.EmailDomain, release.Tag, qmd.Name, "roxbot@redhat.com", metadata)
+	_, err = models.ApproveQualityMilestone(
+		config.Tenant.EmailDomain,
+		release.Tag, qmd.Name, "roxbot@redhat.com",
+		metadata,
+	)
 	assert.NoError(t, err)
 
 	// Expect only one release, due to other one not approved for QualityMilestone
-	releases, err := models.ListAllReleasesAtQualityMilestone(qmd.Name, true, false)
+	releases, err := models.ListAllReleasesAtQualityMilestone(qmd.Name, []version.Kind{}, true, false)
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
 	utils.AssertReleasesAreEqual(t, &release, &releases[0], true, false)
@@ -306,7 +334,10 @@ func TestListAllReleasesAtQualityMilestoneWithPrefix(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Expect only 1 release due to 2.0.0 not having the correct prefix
-	releases, err := models.ListAllReleasesWithPrefixAtQualityMilestone(prefixedRelease.Tag, qmd.Name, false, false)
+	releases, err := models.ListAllReleasesWithPrefixAtQualityMilestone(
+		prefixedRelease.Tag, qmd.Name,
+		[]version.Kind{}, false, false,
+	)
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
 	utils.AssertReleasesAreEqual(t, prefixedRelease, &releases[0], true, false)
@@ -318,7 +349,7 @@ func TestFindLatestRelease(t *testing.T) {
 
 	expectedReleases := createMultipleFakeReleases(t)
 
-	latest, err := models.FindLatestRelease(false, false)
+	latest, err := models.FindLatestRelease([]version.Kind{}, false, false)
 	assert.NoError(t, err)
 	utils.AssertReleasesAreEqual(t, &expectedReleases[2], latest, false, false)
 }
@@ -326,7 +357,7 @@ func TestFindLatestRelease(t *testing.T) {
 func TestFindLatestReleasesNoReleases(t *testing.T) {
 	setupReleaseTest(t)
 
-	_, err := models.FindLatestRelease(false, false)
+	_, err := models.FindLatestRelease([]version.Kind{}, false, false)
 	assert.Error(t, err)
 	assert.ErrorContains(t, err, "no releases found")
 }
@@ -356,7 +387,7 @@ func TestFindLatestReleasesNightlies(t *testing.T) {
 	)
 	assert.NoError(t, err)
 
-	latestRetrieved, err := models.FindLatestRelease(false, false)
+	latestRetrieved, err := models.FindLatestRelease([]version.Kind{}, false, false)
 	assert.NoError(t, err)
 	utils.AssertReleasesAreEqual(t, lastNightly, latestRetrieved, true, true)
 }
@@ -366,7 +397,7 @@ func TestFindLatestReleaseWithPrefix(t *testing.T) {
 
 	expectedReleases := createMultipleFakeReleases(t)
 
-	latest, err := models.FindLatestReleaseWithPrefix("1.0", true, false)
+	latest, err := models.FindLatestReleaseWithPrefix("1.0", []version.Kind{}, true, false)
 	assert.NoError(t, err)
 	utils.AssertReleasesAreEqual(t, &expectedReleases[1], latest, false, true)
 }
@@ -384,7 +415,7 @@ func TestFindLatestReleaseAtQualityMilestone(t *testing.T) {
 	)
 	assert.NoError(t, err)
 
-	latest, err := models.FindLatestReleaseAtQualityMilestone("QM1", true, false)
+	latest, err := models.FindLatestReleaseAtQualityMilestone("QM1", []version.Kind{}, true, false)
 	assert.NoError(t, err)
 	utils.AssertReleasesAreEqual(t, &expectedReleases[0], latest, false, true)
 }
@@ -410,7 +441,34 @@ func TestFindLatestRelaseWithPrefixAtQualityMilestone(t *testing.T) {
 	)
 	assert.NoError(t, err)
 
-	latest, err := models.FindLatestRelaseWithPrefixAtQualityMilestone("1.0", "QM1", true, false)
+	latest, err := models.FindLatestRelaseWithPrefixAtQualityMilestone("1.0", "QM1", []version.Kind{}, true, false)
 	assert.NoError(t, err)
 	utils.AssertReleasesAreEqual(t, &expectedReleases[1], latest, false, true)
+}
+
+func TestReleaseKindExclusion(t *testing.T) {
+	setupReleaseTest(t)
+	expectedReleases := createMultipleFakeReleases(t)
+
+	allReleases, err := models.ListAllReleases([]version.Kind{}, false, false)
+	assert.NoError(t, err)
+	assert.Len(t, allReleases, 6)
+
+	ignoredKinds := []version.Kind{version.ReleaseKind}
+	withExcludedReleases, err := models.ListAllReleases(ignoredKinds, false, false)
+	assert.NoError(t, err)
+	assert.Len(t, withExcludedReleases, 3)
+
+	for i := range withExcludedReleases {
+		utils.AssertReleasesAreEqual(t, &expectedReleases[i+3], &withExcludedReleases[i], false, false)
+	}
+
+	ignoredKinds = []version.Kind{version.RCKind, version.NightlyKind}
+	withExcludedReleases, err = models.ListAllReleases(ignoredKinds, false, false)
+	assert.NoError(t, err)
+	assert.Len(t, withExcludedReleases, 4)
+
+	for i := range withExcludedReleases {
+		utils.AssertReleasesAreEqual(t, &expectedReleases[i], &withExcludedReleases[i], false, false)
+	}
 }

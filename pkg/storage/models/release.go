@@ -7,6 +7,7 @@ import (
 	"github.com/stackrox/release-registry/pkg/logging"
 	"github.com/stackrox/release-registry/pkg/storage"
 	"github.com/stackrox/release-registry/pkg/utils/validate"
+	"github.com/stackrox/release-registry/pkg/utils/version"
 )
 
 //nolint:gochecknoglobals
@@ -37,6 +38,7 @@ func CreateRelease(
 		Tag:      tag,
 		Commit:   commit,
 		Creator:  creator,
+		Kind:     version.GetKind(tag),
 		Metadata: metadata,
 	}
 	result := storage.DB.Where(release).FirstOrCreate(release)
@@ -93,9 +95,10 @@ func GetRelease(tag string, preload, includeRejected bool) (*Release, error) {
 }
 
 // ListAllReleases returns all known Releases.
-func ListAllReleases(preload bool, includeRejected bool) ([]Release, error) {
+func ListAllReleases(ignoredKinds []version.Kind, preload bool, includeRejected bool) ([]Release, error) {
 	releases := []Release{}
 	tx := storage.DB
+	tx = withIgnoredReleaseKinds(tx, ignoredKinds)
 	tx = withPreloadedMetadata(tx, preload)
 	tx = withPreloadedQualityMilestones(tx, preload)
 	tx = withPreloadedQualityMilestoneDefinitions(tx, preload)
@@ -110,13 +113,18 @@ func ListAllReleases(preload bool, includeRejected bool) ([]Release, error) {
 }
 
 // ListAllReleasesWithPrefix implements search to return all Releases starting with a specific prefix.
-func ListAllReleasesWithPrefix(prefix string, preload, includeRejected bool) ([]Release, error) {
+func ListAllReleasesWithPrefix(
+	prefix string,
+	ignoredKinds []version.Kind,
+	preload, includeRejected bool,
+) ([]Release, error) {
 	if err := validate.IsNotEmpty(prefix); err != nil {
 		return nil, errors.Wrapf(err, "prefix parameter is empty")
 	}
 
 	releases := []Release{}
 	tx := storage.DB.Where("tag LIKE ?", fmt.Sprintf("%s%%", prefix))
+	tx = withIgnoredReleaseKinds(tx, ignoredKinds)
 	tx = withPreloadedMetadata(tx, preload)
 	tx = withPreloadedQualityMilestones(tx, preload)
 	tx = withPreloadedQualityMilestoneDefinitions(tx, preload)
@@ -131,13 +139,14 @@ func ListAllReleasesWithPrefix(prefix string, preload, includeRejected bool) ([]
 }
 
 // ListAllReleasesAtQualityMilestone returns all Releases that have reached a specific QualityMilestone.
-func ListAllReleasesAtQualityMilestone(qualityMilestoneName string, preload, includeRejected bool) ([]Release, error) {
+func ListAllReleasesAtQualityMilestone(qualityMilestoneName string, ignoredKinds []version.Kind, preload, includeRejected bool) ([]Release, error) {
 	if err := validate.IsNotEmpty(qualityMilestoneName); err != nil {
 		return nil, errors.Wrapf(err, "qualityMilestoneName parameter is empty")
 	}
 
 	releases := []Release{}
 	tx := storage.DB.Where("quality_milestone_definitions.name = ?", qualityMilestoneName)
+	tx = withIgnoredReleaseKinds(tx, ignoredKinds)
 	tx = joinReleasesWithQualityMilestoneDefinitions(tx)
 	tx = withPreloadedMetadata(tx, preload)
 	tx = withPreloadedQualityMilestones(tx, preload)
@@ -156,6 +165,7 @@ func ListAllReleasesAtQualityMilestone(qualityMilestoneName string, preload, inc
 // with a specific prefix at a specific QualityMilestone.
 func ListAllReleasesWithPrefixAtQualityMilestone(
 	prefix, qualityMilestoneName string,
+	ignoredKinds []version.Kind,
 	preload, includeRejected bool,
 ) ([]Release, error) {
 	if err := validate.IsNotEmpty(prefix); err != nil {
@@ -171,6 +181,7 @@ func ListAllReleasesWithPrefixAtQualityMilestone(
 	tx := joinReleasesWithQualityMilestoneDefinitions(storage.DB)
 	tx = tx.Where("quality_milestone_definitions.name = ?", qualityMilestoneName)
 	tx = tx.Where("releases.tag LIKE ?", fmt.Sprintf("%s%%", prefix))
+	tx = withIgnoredReleaseKinds(tx, ignoredKinds)
 	tx = withPreloadedMetadata(tx, preload)
 	tx = withPreloadedQualityMilestones(tx, preload)
 	tx = withPreloadedQualityMilestoneDefinitions(tx, preload)
@@ -185,8 +196,8 @@ func ListAllReleasesWithPrefixAtQualityMilestone(
 }
 
 // FindLatestRelease returns the latest Release overall, sorted by semantic versioning.
-func FindLatestRelease(preload, includeRejected bool) (*Release, error) {
-	releases, err := ListAllReleases(false, includeRejected)
+func FindLatestRelease(ignoredKinds []version.Kind, preload, includeRejected bool) (*Release, error) {
+	releases, err := ListAllReleases(ignoredKinds, false, includeRejected)
 	if err != nil {
 		return nil, err
 	}
@@ -200,8 +211,12 @@ func FindLatestRelease(preload, includeRejected bool) (*Release, error) {
 }
 
 // FindLatestReleaseWithPrefix returns the latest Release with a prefix, sorted by semantic versioning.
-func FindLatestReleaseWithPrefix(prefix string, preload, includeRejected bool) (*Release, error) {
-	releases, err := ListAllReleasesWithPrefix(prefix, false, includeRejected)
+func FindLatestReleaseWithPrefix(
+	prefix string,
+	ignoredKinds []version.Kind,
+	preload, includeRejected bool,
+) (*Release, error) {
+	releases, err := ListAllReleasesWithPrefix(prefix, ignoredKinds, false, includeRejected)
 	if err != nil {
 		return nil, err
 	}
@@ -215,8 +230,12 @@ func FindLatestReleaseWithPrefix(prefix string, preload, includeRejected bool) (
 }
 
 // FindLatestReleaseAtQualityMilestone returns the latest Release at a QualityMilestone, sorted by semantic versioning.
-func FindLatestReleaseAtQualityMilestone(qualityMilestoneName string, preload, includeRejected bool) (*Release, error) {
-	releases, err := ListAllReleasesAtQualityMilestone(qualityMilestoneName, false, includeRejected)
+func FindLatestReleaseAtQualityMilestone(
+	qualityMilestoneName string,
+	ignoredKinds []version.Kind,
+	preload, includeRejected bool,
+) (*Release, error) {
+	releases, err := ListAllReleasesAtQualityMilestone(qualityMilestoneName, ignoredKinds, false, includeRejected)
 	if err != nil {
 		return nil, err
 	}
@@ -233,9 +252,14 @@ func FindLatestReleaseAtQualityMilestone(qualityMilestoneName string, preload, i
 // sorted by semantic versioning.
 func FindLatestRelaseWithPrefixAtQualityMilestone(
 	prefix, qualityMilestoneName string,
+	ignoredKinds []version.Kind,
 	preload, includeRejected bool,
 ) (*Release, error) {
-	releases, err := ListAllReleasesWithPrefixAtQualityMilestone(prefix, qualityMilestoneName, false, includeRejected)
+	releases, err := ListAllReleasesWithPrefixAtQualityMilestone(
+		prefix, qualityMilestoneName,
+		ignoredKinds,
+		false, includeRejected,
+	)
 	if err != nil {
 		return nil, err
 	}

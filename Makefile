@@ -78,14 +78,14 @@ server-helm-deploy: pre-check ## Deploys the server with Helm
 #########################
 # Local Helm Deployment #
 #########################
-.PHONY: server-helm-upload-secrets
+.PHONY: server-helm-upload-local-values
 server-helm-upload-local-values: pre-check ## Upload secrets from local configuration
 	@gcloud secrets versions add "release-registry-${ENVIRONMENT}" \
 		--data-file="${LOCAL_VALUES_FILE}" \
 		--project stackrox-infra
 
 
-.PHONY: server-helm-download-secrets
+.PHONY: server-helm-download-local-values
 server-helm-download-local-values: pre-check ## Downloads secrets into local configuration
 	@mkdir -p "$(dir ${LOCAL_VALUES_FILE})"
 	@gcloud secrets versions access "${SECRET_VERSION}" \

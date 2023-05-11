@@ -304,6 +304,10 @@
                 </li>
               
               
+                <li>
+                  <a href="#proto.api.v1.ReleaseKind"><span class="badge">E</span>ReleaseKind</a>
+                </li>
+              
               
               
                 <li>
@@ -832,6 +836,13 @@
                 </tr>
               
                 <tr>
+                  <td>kind</td>
+                  <td><a href="#proto.api.v1.ReleaseKind">ReleaseKind</a></td>
+                  <td></td>
+                  <td><p>Kind of the release. </p></td>
+                </tr>
+              
+                <tr>
                   <td>metadata</td>
                   <td><a href="#proto.api.v1.QualityMilestoneMetadata">QualityMilestoneMetadata</a></td>
                   <td>repeated</td>
@@ -922,6 +933,13 @@
                 </tr>
               
                 <tr>
+                  <td>kind</td>
+                  <td><a href="#proto.api.v1.ReleaseKind">ReleaseKind</a></td>
+                  <td></td>
+                  <td><p>Kind of the release. </p></td>
+                </tr>
+              
+                <tr>
                   <td>metadata</td>
                   <td><a href="#proto.api.v1.ReleaseMetadata">ReleaseMetadata</a></td>
                   <td>repeated</td>
@@ -957,6 +975,13 @@
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p>Name of a quality milestone that a release must have passed. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>ignored_release_kinds</td>
+                  <td><a href="#proto.api.v1.ReleaseKind">ReleaseKind</a></td>
+                  <td>repeated</td>
+                  <td><p>List of release kinds to ignore in sorting. </p></td>
                 </tr>
               
                 <tr>
@@ -1016,6 +1041,13 @@
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p>Email address of actor who created the release. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>kind</td>
+                  <td><a href="#proto.api.v1.ReleaseKind">ReleaseKind</a></td>
+                  <td></td>
+                  <td><p>Kind of the release. </p></td>
                 </tr>
               
                 <tr>
@@ -1123,6 +1155,13 @@
                 </tr>
               
                 <tr>
+                  <td>kind</td>
+                  <td><a href="#proto.api.v1.ReleaseKind">ReleaseKind</a></td>
+                  <td></td>
+                  <td><p>Kind of the release. </p></td>
+                </tr>
+              
+                <tr>
                   <td>metadata</td>
                   <td><a href="#proto.api.v1.ReleaseMetadata">ReleaseMetadata</a></td>
                   <td>repeated</td>
@@ -1172,6 +1211,13 @@
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p>Name of a quality milestone that a release must have passed. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>ignored_release_kinds</td>
+                  <td><a href="#proto.api.v1.ReleaseKind">ReleaseKind</a></td>
+                  <td>repeated</td>
+                  <td><p>List of release kinds to ignore in output. </p></td>
                 </tr>
               
                 <tr>
@@ -1289,6 +1335,13 @@
                 </tr>
               
                 <tr>
+                  <td>kind</td>
+                  <td><a href="#proto.api.v1.ReleaseKind">ReleaseKind</a></td>
+                  <td></td>
+                  <td><p>Kind of the release. </p></td>
+                </tr>
+              
+                <tr>
                   <td>metadata</td>
                   <td><a href="#proto.api.v1.ReleaseMetadata">ReleaseMetadata</a></td>
                   <td>repeated</td>
@@ -1310,6 +1363,47 @@
         
       
 
+      
+        <h3 id="proto.api.v1.ReleaseKind">ReleaseKind</h3>
+        <p>Represents kind of releases.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>RELEASE_KIND_INVALID_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p>Invalid or unspecified kind.</p></td>
+              </tr>
+            
+              <tr>
+                <td>RELEASE_KIND_DEVELOPMENT</td>
+                <td>1</td>
+                <td><p>Development (untagged) kind.</p></td>
+              </tr>
+            
+              <tr>
+                <td>RELEASE_KIND_RC</td>
+                <td>2</td>
+                <td><p>Release candidate kind.</p></td>
+              </tr>
+            
+              <tr>
+                <td>RELEASE_KIND_RELEASE</td>
+                <td>3</td>
+                <td><p>Release kind.</p></td>
+              </tr>
+            
+              <tr>
+                <td>RELEASE_KIND_NIGHTLY</td>
+                <td>4</td>
+                <td><p>Nightly build kind.</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
       
 
       
