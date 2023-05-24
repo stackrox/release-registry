@@ -8,7 +8,7 @@ require (
 	github.com/prometheus/client_golang v1.15.1
 	github.com/spf13/viper v1.15.0
 	github.com/stackrox/infra-auth-lib v0.0.2
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.3
 	go.uber.org/zap v1.24.0
 	google.golang.org/grpc v1.55.0
 	google.golang.org/protobuf v1.30.0
@@ -44,7 +44,6 @@ require (
 )
 
 require (
-	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
