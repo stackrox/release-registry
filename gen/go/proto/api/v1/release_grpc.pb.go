@@ -24,6 +24,8 @@ type ReleaseServiceClient interface {
 	List(ctx context.Context, in *ReleaseServiceListRequest, opts ...grpc.CallOption) (*ReleaseServiceListResponse, error)
 	// Get returns a release identified by its tag.
 	Get(ctx context.Context, in *ReleaseServiceGetRequest, opts ...grpc.CallOption) (*ReleaseServiceGetResponse, error)
+	// Update updates the metadata for a release identified by its tag.
+	Update(ctx context.Context, in *ReleaseServiceUpdateRequest, opts ...grpc.CallOption) (*ReleaseServiceUpdateResponse, error)
 	// Approve approves a release identified by its tag for a quality milestone.
 	Approve(ctx context.Context, in *ReleaseServiceApproveRequest, opts ...grpc.CallOption) (*ReleaseServiceApproveResponse, error)
 	// Reject marks a release identified by its tag as rejected.
@@ -67,6 +69,15 @@ func (c *releaseServiceClient) Get(ctx context.Context, in *ReleaseServiceGetReq
 	return out, nil
 }
 
+func (c *releaseServiceClient) Update(ctx context.Context, in *ReleaseServiceUpdateRequest, opts ...grpc.CallOption) (*ReleaseServiceUpdateResponse, error) {
+	out := new(ReleaseServiceUpdateResponse)
+	err := c.cc.Invoke(ctx, "/proto.api.v1.ReleaseService/Update", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *releaseServiceClient) Approve(ctx context.Context, in *ReleaseServiceApproveRequest, opts ...grpc.CallOption) (*ReleaseServiceApproveResponse, error) {
 	out := new(ReleaseServiceApproveResponse)
 	err := c.cc.Invoke(ctx, "/proto.api.v1.ReleaseService/Approve", in, out, opts...)
@@ -104,6 +115,8 @@ type ReleaseServiceServer interface {
 	List(context.Context, *ReleaseServiceListRequest) (*ReleaseServiceListResponse, error)
 	// Get returns a release identified by its tag.
 	Get(context.Context, *ReleaseServiceGetRequest) (*ReleaseServiceGetResponse, error)
+	// Update updates the metadata for a release identified by its tag.
+	Update(context.Context, *ReleaseServiceUpdateRequest) (*ReleaseServiceUpdateResponse, error)
 	// Approve approves a release identified by its tag for a quality milestone.
 	Approve(context.Context, *ReleaseServiceApproveRequest) (*ReleaseServiceApproveResponse, error)
 	// Reject marks a release identified by its tag as rejected.
@@ -125,6 +138,9 @@ func (UnimplementedReleaseServiceServer) List(context.Context, *ReleaseServiceLi
 }
 func (UnimplementedReleaseServiceServer) Get(context.Context, *ReleaseServiceGetRequest) (*ReleaseServiceGetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedReleaseServiceServer) Update(context.Context, *ReleaseServiceUpdateRequest) (*ReleaseServiceUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedReleaseServiceServer) Approve(context.Context, *ReleaseServiceApproveRequest) (*ReleaseServiceApproveResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Approve not implemented")
@@ -202,6 +218,24 @@ func _ReleaseService_Get_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReleaseService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReleaseServiceUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReleaseServiceServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.api.v1.ReleaseService/Update",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReleaseServiceServer).Update(ctx, req.(*ReleaseServiceUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ReleaseService_Approve_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ReleaseServiceApproveRequest)
 	if err := dec(in); err != nil {
@@ -274,6 +308,10 @@ var ReleaseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Get",
 			Handler:    _ReleaseService_Get_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _ReleaseService_Update_Handler,
 		},
 		{
 			MethodName: "Approve",

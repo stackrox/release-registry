@@ -52,6 +52,36 @@ func CreateRelease(
 	return release, nil
 }
 
+// UpdateRelease updates the metadata for a release identified by a tag.
+func UpdateRelease(tag string, newMetadata []ReleaseMetadata, includeRejected bool) (*Release, error) {
+	if err := validate.IsValidVersion(tag); err != nil {
+		return nil, errors.Wrap(err, errorInvalidVersion)
+	}
+
+	release, err := GetRelease(tag, true, includeRejected)
+	if err != nil {
+		return nil, errors.Wrap(err, "release not found or already rejected")
+	}
+
+	release.Metadata = []ReleaseMetadata{}
+
+	result := storage.DB.Model(&ReleaseMetadata{}).Where("release_id = ?", release.ID).Delete(&ReleaseMetadata{})
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	release.Metadata = newMetadata
+
+	result = storage.DB.Save(release)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	log.Infow("release metadata updated", "tag", release.Tag)
+
+	return release, nil
+}
+
 // RejectRelease rejects a release identified by tag.
 func RejectRelease(tag string, preload bool) (*Release, error) {
 	if err := validate.IsValidVersion(tag); err != nil {

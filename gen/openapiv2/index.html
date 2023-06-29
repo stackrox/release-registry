@@ -303,6 +303,14 @@
                   <a href="#proto.api.v1.ReleaseServiceRejectResponse"><span class="badge">M</span>ReleaseServiceRejectResponse</a>
                 </li>
               
+                <li>
+                  <a href="#proto.api.v1.ReleaseServiceUpdateRequest"><span class="badge">M</span>ReleaseServiceUpdateRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ReleaseServiceUpdateResponse"><span class="badge">M</span>ReleaseServiceUpdateResponse</a>
+                </li>
+              
               
                 <li>
                   <a href="#proto.api.v1.ReleaseKind"><span class="badge">E</span>ReleaseKind</a>
@@ -1362,6 +1370,117 @@
 
         
       
+        <h3 id="proto.api.v1.ReleaseServiceUpdateRequest">ReleaseServiceUpdateRequest</h3>
+        <p>Represents an update request for a release.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>tag</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique tag to identify the release. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#proto.api.v1.ReleaseMetadata">ReleaseMetadata</a></td>
+                  <td>repeated</td>
+                  <td><p>List of metadata associated with the release. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>include_rejected</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Whether to include rejected releases in the response. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ReleaseServiceUpdateResponse">ReleaseServiceUpdateResponse</h3>
+        <p>Represents the response to the update request for a release.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>meta</td>
+                  <td><a href="#proto.shared.v1.Meta">proto.shared.v1.Meta</a></td>
+                  <td></td>
+                  <td><p>Meta information like ID and timestamps. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tag</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Unique tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>commit</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Commit hash associated with the release tag. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>creator</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Email address of actor who created the release. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>kind</td>
+                  <td><a href="#proto.api.v1.ReleaseKind">ReleaseKind</a></td>
+                  <td></td>
+                  <td><p>Kind of the release. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#proto.api.v1.ReleaseMetadata">ReleaseMetadata</a></td>
+                  <td>repeated</td>
+                  <td><p>List of metadata associated with the release. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>quality_milestones</td>
+                  <td><a href="#proto.api.v1.QualityMilestone">QualityMilestone</a></td>
+                  <td>repeated</td>
+                  <td><p>List of quality milestones that the release has passed. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>rejected</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Whether the release is rejected. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
 
       
         <h3 id="proto.api.v1.ReleaseKind">ReleaseKind</h3>
@@ -1439,6 +1558,13 @@
               </tr>
             
               <tr>
+                <td>Update</td>
+                <td><a href="#proto.api.v1.ReleaseServiceUpdateRequest">ReleaseServiceUpdateRequest</a></td>
+                <td><a href="#proto.api.v1.ReleaseServiceUpdateResponse">ReleaseServiceUpdateResponse</a></td>
+                <td><p>Update updates the metadata for a release identified by its tag.</p></td>
+              </tr>
+            
+              <tr>
                 <td>Approve</td>
                 <td><a href="#proto.api.v1.ReleaseServiceApproveRequest">ReleaseServiceApproveRequest</a></td>
                 <td><a href="#proto.api.v1.ReleaseServiceApproveResponse">ReleaseServiceApproveResponse</a></td>
@@ -1502,6 +1628,16 @@
               <tr>
                 <td>Get</td>
                 <td>GET</td>
+                <td>/v1/release/{tag}</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>Update</td>
+                <td>PATCH</td>
                 <td>/v1/release/{tag}</td>
                 <td></td>
               </tr>

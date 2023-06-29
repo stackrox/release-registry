@@ -59,6 +59,46 @@ func NewGetReleaseResponseFromRelease(release *models.Release) *v1.ReleaseServic
 	}
 }
 
+// NewUpdateReleaseResponseFromRelease converts a release from storage to service representation.
+func NewUpdateReleaseResponseFromRelease(release *models.Release) *v1.ReleaseServiceUpdateResponse {
+	return &v1.ReleaseServiceUpdateResponse{
+		Meta:              newV1MetaFromRelease(release),
+		Tag:               release.Tag,
+		Commit:            release.Commit,
+		Creator:           release.Creator,
+		Kind:              v1.ReleaseKind(release.Kind),
+		Metadata:          newV1ReleaseMetadataFromRelease(release),
+		Rejected:          release.Rejected,
+		QualityMilestones: newV1QualityMilestonesFromQualityMilestones(release.QualityMilestones),
+	}
+}
+
+// NewUpdateReleaseRequestFromRelease converts a Release from storage to service representation.
+func NewUpdateReleaseRequestFromRelease(release *models.Release, includeRejected bool) *v1.ReleaseServiceUpdateRequest {
+	return &v1.ReleaseServiceUpdateRequest{
+		Tag:             release.Tag,
+		Metadata:        newV1ReleaseMetadataFromRelease(release),
+		IncludeRejected: includeRejected,
+	}
+}
+
+// NewReleaseFromUpdateReleaseResponse converts a release from service to storage representation.
+func NewReleaseFromUpdateReleaseResponse(release *v1.ReleaseServiceUpdateResponse) *models.Release {
+	return &models.Release{
+		Model: gorm.Model{
+			ID:        uint(release.GetMeta().Id),
+			CreatedAt: release.GetMeta().GetCreatedAt().AsTime(),
+			UpdatedAt: release.GetMeta().GetCreatedAt().AsTime(),
+		},
+		Tag:               release.GetTag(),
+		Commit:            release.GetCommit(),
+		Creator:           release.GetCreator(),
+		Kind:              version.Kind(release.GetKind()),
+		Metadata:          newReleaseMetadataFromV1ReleaseMetadata(release.GetMetadata()),
+		QualityMilestones: newQualityMilestonesFromV1QualityMilestones(release.GetQualityMilestones()),
+	}
+}
+
 // NewReleaseFromGetReleaseResponse converts a Release from service to storage representation.
 func NewReleaseFromGetReleaseResponse(release *v1.ReleaseServiceGetResponse) *models.Release {
 	return &models.Release{

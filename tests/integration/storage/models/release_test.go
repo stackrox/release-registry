@@ -22,6 +22,9 @@ var defaultQualityMilestoneMetadata = []models.QualityMilestoneMetadata{
 	{Key: "Ghi", Value: "ghi"},
 }
 
+//nolint:gochecknoglobals
+var defaultReleaseMetadata = []models.ReleaseMetadata{{Key: "Key1", Value: "Value1"}, {Key: "Key2", Value: "Value2"}}
+
 func setupReleaseTest(t *testing.T) {
 	t.Helper()
 
@@ -43,7 +46,7 @@ func createFakeRelease(t *testing.T) models.Release {
 	release, err := models.CreateRelease(
 		configuration.New().Tenant.EmailDomain,
 		defaultTag, defaultCommit, defaultCreator,
-		[]models.ReleaseMetadata{},
+		defaultReleaseMetadata,
 	)
 	assert.NoError(t, err)
 
@@ -110,7 +113,7 @@ func TestCreateRelease(t *testing.T) {
 	assert.Equal(t, release.Tag, defaultTag)
 	assert.Equal(t, release.Commit, defaultCommit)
 	assert.Equal(t, release.Creator, defaultCreator)
-	assert.Equal(t, release.Metadata, []models.ReleaseMetadata{})
+	assert.Equal(t, release.Metadata, defaultReleaseMetadata)
 }
 
 func TestCreateReleaseInvalidSemVer(t *testing.T) {
@@ -134,6 +137,25 @@ func TestCreateReleaseNightlyVersion(t *testing.T) {
 	)
 	assert.NoError(t, err)
 	assert.Equal(t, nightlyTag, release.Tag)
+}
+
+func TestUpdateRelease(t *testing.T) {
+	setupReleaseTest(t)
+
+	release := createFakeRelease(t)
+	updatedMetadata := []models.ReleaseMetadata{
+		{Key: "Key1", Value: "Value1"},
+		{Key: "Key2", Value: "Value2"},
+		{Key: "Key3", Value: "Value3"},
+	}
+	updatedRelease, err := models.UpdateRelease(release.Tag, updatedMetadata, false)
+	assert.NoError(t, err)
+	assert.Len(t, updatedRelease.Metadata, len(updatedMetadata))
+
+	actualUpdatedRelease, err := models.GetRelease(release.Tag, true, false)
+	assert.NoError(t, err)
+	assert.Len(t, actualUpdatedRelease.Metadata, len(updatedMetadata))
+	utils.AssertReleasesAreEqual(t, updatedRelease, actualUpdatedRelease, true, true)
 }
 
 func TestRejectRelease(t *testing.T) {
@@ -230,7 +252,7 @@ func TestGetReleaseByTagWithQualityMilestones(t *testing.T) {
 	actualRelease, err := models.GetRelease(defaultTag, true, false)
 	assert.NoError(t, err)
 	assert.Equal(t, actualRelease.Tag, release.Tag)
-	assert.Len(t, actualRelease.Metadata, 0)
+	assert.Len(t, actualRelease.Metadata, 2)
 	assert.Len(t, actualRelease.QualityMilestones, 1)
 }
 

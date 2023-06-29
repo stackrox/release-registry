@@ -56,6 +56,7 @@ func (s *releaseImpl) Access() map[string]middleware.Access {
 		"/proto.api.v1.ReleaseService/Get":        middleware.Anonymous,
 		"/proto.api.v1.ReleaseService/List":       middleware.Anonymous,
 		"/proto.api.v1.ReleaseService/Reject":     middleware.Authenticated,
+		"/proto.api.v1.ReleaseService/Update":     middleware.Authenticated,
 	}
 }
 

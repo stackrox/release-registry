@@ -233,6 +233,36 @@
         "tags": [
           "ReleaseService"
         ]
+      },
+      "patch": {
+        "summary": "Update updates the metadata for a release identified by its tag.",
+        "operationId": "ReleaseService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ReleaseServiceUpdateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "tag",
+            "description": "Unique tag to identify the release.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ReleaseService"
+        ]
       }
     },
     "/v1/release/{tag}/approve": {
@@ -675,6 +705,50 @@
         }
       },
       "description": "Represents the response to the request to reject a release."
+    },
+    "v1ReleaseServiceUpdateResponse": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "$ref": "#/definitions/v1Meta",
+          "description": "Meta information like ID and timestamps."
+        },
+        "tag": {
+          "type": "string",
+          "description": "Unique tag."
+        },
+        "commit": {
+          "type": "string",
+          "description": "Commit hash associated with the release tag."
+        },
+        "creator": {
+          "type": "string",
+          "description": "Email address of actor who created the release."
+        },
+        "kind": {
+          "$ref": "#/definitions/v1ReleaseKind",
+          "description": "Kind of the release."
+        },
+        "metadata": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ReleaseMetadata"
+          },
+          "description": "List of metadata associated with the release."
+        },
+        "qualityMilestones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1QualityMilestone"
+          },
+          "description": "List of quality milestones that the release has passed."
+        },
+        "rejected": {
+          "type": "boolean",
+          "description": "Whether the release is rejected."
+        }
+      },
+      "description": "Represents the response to the update request for a release."
     }
   }
 }
