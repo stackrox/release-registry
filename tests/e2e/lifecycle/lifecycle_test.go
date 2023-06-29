@@ -21,6 +21,7 @@ import (
 // 3. List all QualityMilestoneDefinitions.
 // 4. Approve Release for QualityMilestone.
 // 5. List all Releases with prefix at QualityMilestone.
+// 6. Add additional metadata to Release.
 //
 //nolint:funlen
 func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
@@ -117,6 +118,28 @@ func TestReleasesCanBeCreatedAndApproved(t *testing.T) {
 		conversions.NewReleaseFromGetReleaseResponse(actualReleaseFromListAtQualityMilestone),
 		true,
 		false,
+	)
+
+	// 6. Add additional metadata to Release.
+	expectedRelease.Metadata = append(
+		expectedRelease.Metadata, models.ReleaseMetadata{
+			Key:   "CentralImageSHA",
+			Value: "sha256:c2c28dc4394477743c7e1b68a6b02e40839ea7e930c76e78be30d958ba628388",
+		},
+	)
+
+	updatedRelease, err := releaseClient.Update(
+		ctx,
+		conversions.NewUpdateReleaseRequestFromRelease(expectedRelease, false),
+	)
+	assert.NoError(t, err)
+
+	utils.AssertReleasesAreEqual(
+		t,
+		expectedRelease,
+		conversions.NewReleaseFromUpdateReleaseResponse(updatedRelease),
+		false,
+		true,
 	)
 }
 

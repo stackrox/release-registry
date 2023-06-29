@@ -66,6 +66,45 @@ message ReleaseServiceCreateResponse {
   repeated ReleaseMetadata metadata = 6;
 }
 
+// Represents an update request for a release.
+message ReleaseServiceUpdateRequest {
+  // Unique tag to identify the release.
+  string tag = 1;
+
+  // List of metadata associated with the release.
+  repeated ReleaseMetadata metadata = 2;
+
+  // Whether to include rejected releases in the response.
+  bool include_rejected = 3;
+}
+
+// Represents the response to the update request for a release.
+message ReleaseServiceUpdateResponse {
+  // Meta information like ID and timestamps.
+  shared.v1.Meta meta = 1;
+
+  // Unique tag.
+  string tag = 2;
+
+  // Commit hash associated with the release tag.
+  string commit = 3;
+
+  // Email address of actor who created the release.
+  string creator = 4;
+
+  // Kind of the release.
+  ReleaseKind kind = 5;
+
+  // List of metadata associated with the release.
+  repeated ReleaseMetadata metadata = 6;
+
+  // List of quality milestones that the release has passed.
+  repeated api.v1.QualityMilestone quality_milestones = 7;
+
+  // Whether the release is rejected.
+  bool rejected = 8;
+}
+
 // Represents a request to get a specific release.
 message ReleaseServiceGetRequest {
   // Unique tag.
@@ -258,6 +297,11 @@ service ReleaseService {
   // Get returns a release identified by its tag.
   rpc Get(ReleaseServiceGetRequest) returns (ReleaseServiceGetResponse) {
     option (google.api.http) = {get: "/v1/release/{tag}"};
+  }
+
+  // Update updates the metadata for a release identified by its tag.
+  rpc Update(ReleaseServiceUpdateRequest) returns (ReleaseServiceUpdateResponse) {
+    option (google.api.http) = {patch: "/v1/release/{tag}"};
   }
 
   // Approve approves a release identified by its tag for a quality milestone.
