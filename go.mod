@@ -3,18 +3,18 @@ module github.com/stackrox/release-registry
 go 1.19
 
 require (
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.17.1
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.17.0
 	github.com/spf13/viper v1.16.0
 	github.com/stackrox/infra-auth-lib v0.0.2
 	github.com/stretchr/testify v1.8.4
-	go.uber.org/zap v1.25.0
+	go.uber.org/zap v1.26.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20230822172742-b8732ec3820d
-	google.golang.org/grpc v1.58.0
+	google.golang.org/grpc v1.58.2
 	google.golang.org/protobuf v1.31.0
 	gorm.io/driver/postgres v1.5.2
-	gorm.io/driver/sqlite v1.5.2
+	gorm.io/driver/sqlite v1.5.3
 	gorm.io/gorm v1.25.4
 )
 
@@ -39,7 +39,7 @@ require (
 	github.com/prometheus/common v0.44.0 // indirect
 	github.com/prometheus/procfs v0.11.1 // indirect
 	golang.org/x/crypto v0.13.0 // indirect
-	golang.org/x/oauth2 v0.11.0 // indirect
+	golang.org/x/oauth2 v0.12.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
