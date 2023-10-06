@@ -1,5 +1,5 @@
 # Server
-FROM golang:1.19.5 as server
+FROM golang:1.20.9 as server
 
 WORKDIR /go/src/github.com/stackrox/release-registry
 
@@ -13,7 +13,7 @@ COPY Makefile Makefile
 RUN go build -o build/release-registry -a -ldflags '-linkmode external -extldflags "-static"' cmd/server/main.go
 
 # UI
-FROM node:18.15.0 as ui
+FROM node:18.18.0 as ui
 
 COPY ui ui
 
