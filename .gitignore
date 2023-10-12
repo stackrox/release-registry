@@ -9,7 +9,7 @@ data/*.sqlite
 data/*.sqlite-journal
 
 # VS Code debugger
-__debug_bin
+__debug_bin*
 
 # Helm
 configuration/
