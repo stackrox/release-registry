@@ -1,5 +1,5 @@
 # Server
-FROM golang:1.20.9 as server
+FROM golang:1.20.10 as server
 
 WORKDIR /go/src/github.com/stackrox/release-registry
 

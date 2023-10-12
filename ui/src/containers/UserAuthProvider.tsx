@@ -36,7 +36,6 @@ export default function UserAuthProvider({ children }: Props): ReactElement | nu
   }
 
   if (error) {
-    console.log(error);
     return (
       <FullPageError message="Unexpected error while authenticating. Please reach out to the service support team." />
     );
