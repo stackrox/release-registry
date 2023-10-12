@@ -1816,7 +1816,7 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@stackrox/infra-auth-lib@0.0.4":
+"@stackrox/infra-auth-lib@^0.0.4":
   version "0.0.4"
   resolved "https://npm.pkg.github.com/download/@stackrox/infra-auth-lib/0.0.4/949180b052cea937910fb2aaac4ffcf58aac1fad#949180b052cea937910fb2aaac4ffcf58aac1fad"
   integrity sha512-BzNuhUOV7CaicjqqyTkMIptlCAMEr2g8Ykg9jJWlHBkoNWnYTAfTTNVTcevkyaSCE1em2Er/Oh7QmPt8IBTrjQ==
