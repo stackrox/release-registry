@@ -6,6 +6,7 @@
 
 @import '~@patternfly/react-core/dist/styles/base.css';
 @import '~@patternfly/patternfly/patternfly-addons.css';
+@import './custom.css';
 
 /* reset the unthinking hardcoded resets of Tailwind Forms in v2 plugin,
    https://github.com/tailwindlabs/tailwindcss-forms/blob/master/src/index.js */
