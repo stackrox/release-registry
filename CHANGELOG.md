@@ -9,6 +9,11 @@ Please avoid adding duplicate information across this changelog and JIRA/doc inp
 
 ## [NEXT RELEASE]
 
+## [0.2.0]
+
+- Added an endpoint to update release metadata.
+- Updated UI to React 18 and migrated to Patternfly UI.
+
 ## [0.1.1]
 
 - Fix a problem with version sorting between development releases.
