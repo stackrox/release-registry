@@ -3,7 +3,7 @@ import { AlertCircle, Clipboard } from 'react-feather';
 import { ClipLoader } from 'react-spinners';
 import { AxiosPromise } from 'axios';
 import { useClipboard } from 'use-clipboard-copy';
-import { Tooltip, TooltipOverlay } from '@stackrox/ui-components';
+import { Tooltip } from '@patternfly/react-core';
 import { V1TokenResponse, UserServiceApi } from '@stackrox/infra-auth-lib';
 
 import useApiQuery from 'client/useApiQuery';
@@ -30,7 +30,7 @@ export default function UserServiceAccountToken(): ReactElement {
 
   if (error || !data?.Token) {
     return (
-      <Tooltip content={<TooltipOverlay>{error?.message || 'Unknown error'}</TooltipOverlay>}>
+      <Tooltip content={<div>{error?.message || 'Unknown error'}</div>}>
         <div className="inline-flex items-center">
           <AlertCircle size={16} />
           <span className="ml-2">
@@ -52,7 +52,7 @@ export default function UserServiceAccountToken(): ReactElement {
           onClick={clipboard.copy}
           className="ml-2"
         >
-          <Tooltip content={<TooltipOverlay>Copy to clipboard</TooltipOverlay>}>
+          <Tooltip content={<div>Copy to clipboard</div>}>
             <div className="flex items-center">
               <Clipboard size={16} />
               {clipboard.copied && <span className="ml-2 text-success-700">Copied!</span>}

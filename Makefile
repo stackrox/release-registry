@@ -84,7 +84,6 @@ server-helm-upload-local-values: pre-check ## Upload secrets from local configur
 		--data-file="${LOCAL_VALUES_FILE}" \
 		--project stackrox-infra
 
-
 .PHONY: server-helm-download-local-values
 server-helm-download-local-values: pre-check ## Downloads secrets into local configuration
 	@mkdir -p "$(dir ${LOCAL_VALUES_FILE})"
