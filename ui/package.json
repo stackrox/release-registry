@@ -55,7 +55,7 @@
     "@types/jest": "^27.0.2",
     "@types/lodash": "^4.14.173",
     "@types/node": "^18.16.2",
-    "@types/react": "^18.2.0",
+    "@types/react": "^18.2.30",
     "@types/react-dom": "^18.2.14",
     "@types/react-modal": "^3.12.1",
     "autoprefixer": "^10.3.4",
