@@ -22,7 +22,7 @@
     "gen:src": "./scripts/generate-client.sh"
   },
   "dependencies": {
-    "@patternfly/patternfly": "^4.224.2",
+    "@patternfly/patternfly": "^5.2.0",
     "@patternfly/react-core": "^4.276.8",
     "@stackrox/infra-auth-lib": "^0.0.4",
     "axios": "^0.21.4",
